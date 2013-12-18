@@ -53,6 +53,7 @@
     <Compile Include="Mechanisms\TestScope.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategies\SharpeRankingStrategy.cs" />
     <Compile Include="Strategies\Strategy.cs" />
     <Compile Include="Strategies\StrategyType.cs" />
   </ItemGroup>
