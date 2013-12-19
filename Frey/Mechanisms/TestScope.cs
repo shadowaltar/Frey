@@ -4,7 +4,7 @@ using Automata.Entities;
 
 namespace Automata.Mechanisms
 {
-    public class TestScope
+    public class TestScope :IDataScope
     {
         public DateTime Start { get; set; }
         public DateTime End { get; set; }

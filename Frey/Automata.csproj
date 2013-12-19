@@ -45,11 +45,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DataAccess.cs" />
+    <Compile Include="Core\Utils\StringExtensions.cs" />
+    <Compile Include="Core\Utils\StringBuilderExtensions.cs" />
+    <Compile Include="Core\Utils\CollectionExtensions.cs" />
+    <Compile Include="Core\Utils\DataExtensions.cs" />
+    <Compile Include="Core\Utils\ExceptionExtensions.cs" />
+    <Compile Include="Core\Utils\MultithreadingExtensions.cs" />
+    <Compile Include="Entities\PricesQueue.cs" />
     <Compile Include="Entities\Security.cs" />
     <Compile Include="Entities\Price.cs" />
     <Compile Include="Entities\Stock.cs" />
     <Compile Include="Mechanisms\BackTester.cs" />
     <Compile Include="Mechanisms\DataSource.cs" />
+    <Compile Include="Mechanisms\DataStatus.cs" />
+    <Compile Include="Mechanisms\IDataScope.cs" />
+    <Compile Include="Mechanisms\SecurityIdentifier.cs" />
+    <Compile Include="Mechanisms\SecurityUniverse.cs" />
     <Compile Include="Mechanisms\TestScope.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
