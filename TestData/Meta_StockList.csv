@@ -1,0 +1,21 @@
+Id|Code|Name|Exchange|SecurityType|Sector|Description
+1|AAPL|Apple Inc.|NASDAQ|Equity|Technology|
+2|FB|Facebook, Inc.|NASDAQ|Equity|Technology|
+3|GOOG|Google Inc.|NASDAQ|Equity|Technology|
+4|MSFT|Microsoft Corporation|NASDAQ|Equity|Technology|
+5|QQQ|PowerShares QQQ Trust, Series 1|NASDAQ|ETF||Nasdaq-100 Index
+6|AIG|American International Group, Inc.|NYSE|Equity|Financials|
+7|BAC|Bank of America Corporation|NYSE|Equity|Financials|
+8|C|Citigroup, Inc.|NYSE|Equity|Financials|
+9|EEM|iShares MSCI Emerging Markets|NYSE|ETF||MSCI Emerging Markets Index 
+10|EFA|iShares MSCI EAFE|NYSE|ETF||MSCI EAFE Index Fund
+11|EWJ|iShares MSCI Japan|NYSE|ETF||MSCI Japan Index
+12|FXI|iShares FTSE Xinhua China 25|NYSE|ETF||FTSE China 25 Index
+13|GDX|Market Vectors Gold Miners|NYSE|ETF||NYSE Arca Gold Miners Index
+14|GM|General Motors Company|NYSE|Equity|Cyclical Consumer Goods & Services|
+15|IWM|iShares Russell 2000|NYSE|ETF||Russell 3000 Index
+16|JPM|JPMorgan Chase & Co.|NYSE|Equity|Financials|
+17|SPY|SPDR S&P 500 ETF Trust|NYSE|ETF||S&P 500 Index
+18|V|Visa Inc.|NYSE|Equity|Industrials|
+19|VWO|Vanguard FTSE Emerging Markets ETF|NYSE|ETF||MSCI Emerging Markets Index
+20|XLF|Financial Select Sector SPDR|NYSE|ETF||Financial Select Sector Index

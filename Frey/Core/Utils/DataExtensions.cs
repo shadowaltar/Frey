@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Automata.Core.Utils
+namespace Automata.Core.Extensions
 {
     public static class DataExtensions
     {
@@ -70,6 +71,20 @@ namespace Automata.Core.Utils
         public static DateTime ToDateTime(this object value)
         {
             return value is DateTime ? (DateTime)value : DateTime.Parse(value.ToString());
+        }
+
+        /// <summary>
+        /// Parse a given object into DateTime. If the object is of type DateTime it will
+        /// be casted directly, else the object will be parsed into a string and then parsed
+        /// by <see cref="DateTime.Parse()"/> again.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="FormatException"></exception>
+        public static DateTime ToDateTime(this object value, string format)
+        {
+            return value is DateTime ? (DateTime)value 
+                : DateTime.ParseExact(value.ToString(), format, CultureInfo.InvariantCulture);
         }
 
         /// <summary>

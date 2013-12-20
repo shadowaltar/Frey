@@ -9,14 +9,14 @@ namespace Automata.Mechanisms
 {
     public class BackTester
     {
-        public BackTester(TestScope testScope)
+        public BackTester(IDataScope testScope)
         {
             TestScope = testScope;
 
             DataSource = new DataSource(new HistoricalDatabaseAccess());
         }
 
-        public TestScope TestScope { get; set; }
+        public IDataScope TestScope { get; set; }
 
         public List<Strategy> Strategies { get; set; }
 
@@ -52,7 +52,7 @@ namespace Automata.Mechanisms
 
         private void ProcessData(HashSet<Price> obj)
         {
-            
+
         }
     }
 }

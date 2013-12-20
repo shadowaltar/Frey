@@ -36,6 +36,9 @@
     <StartupObject>Automata.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LumenWorks.Framework.IO">
+      <HintPath>..\Libs\LumenWorks.Framework.IO.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,13 +48,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\CsvFileReader.cs" />
     <Compile Include="Core\DataAccess.cs" />
+    <Compile Include="Core\Exceptions\StaticDataReferenceException.cs" />
+    <Compile Include="Core\Exceptions\SecurityReferenceException.cs" />
+    <Compile Include="Core\Utilities.cs" />
     <Compile Include="Core\Utils\StringExtensions.cs" />
     <Compile Include="Core\Utils\StringBuilderExtensions.cs" />
     <Compile Include="Core\Utils\CollectionExtensions.cs" />
     <Compile Include="Core\Utils\DataExtensions.cs" />
     <Compile Include="Core\Utils\ExceptionExtensions.cs" />
     <Compile Include="Core\Utils\MultithreadingExtensions.cs" />
+    <Compile Include="Entities\Country.cs" />
+    <Compile Include="Entities\ExchangeTradedFund.cs" />
+    <Compile Include="Entities\ExchangeTradable.cs" />
+    <Compile Include="Entities\Market.cs" />
     <Compile Include="Entities\PricesQueue.cs" />
     <Compile Include="Entities\Security.cs" />
     <Compile Include="Entities\Price.cs" />
@@ -59,6 +70,7 @@
     <Compile Include="Mechanisms\BackTester.cs" />
     <Compile Include="Mechanisms\DataSource.cs" />
     <Compile Include="Mechanisms\DataStatus.cs" />
+    <Compile Include="Mechanisms\Factories\ScopeFactory.cs" />
     <Compile Include="Mechanisms\IDataScope.cs" />
     <Compile Include="Mechanisms\SecurityIdentifier.cs" />
     <Compile Include="Mechanisms\SecurityUniverse.cs" />

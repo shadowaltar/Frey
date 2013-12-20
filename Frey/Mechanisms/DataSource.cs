@@ -1,5 +1,5 @@
 ﻿using Automata.Core;
-using Automata.Core.Utils;
+using Automata.Core.Extensions;
 using Automata.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,8 @@ namespace Automata.Mechanisms
         private DataAccess access;
         private PricesQueue awaitingPrices;
 
-        private CancellationToken cancelToken;
+        private CancellationTokenSource cancellation;
+        // private CancellationToken cancelToken;
         private bool isSendingData;
         private bool isReceivingData;
         private DataStatus currentDataStatus = DataStatus.Initializing;
@@ -32,18 +33,17 @@ namespace Automata.Mechanisms
         public void Initialize()
         {
             awaitingPrices = PricesQueue.New();
-            access = new HistoricalDatabaseAccess();
+            access.Initialize();
         }
 
         public void Start()
         {
-            var cancelTokenSouce = new CancellationTokenSource();
-            cancelToken = cancelTokenSouce.Token;
+            cancellation = new CancellationTokenSource();
 
             isSendingData = true;
             isReceivingData = true;
 
-            var task = Task.Factory.StartNew(() => Publish(), cancelToken);
+            var task = Task.Factory.StartNew(() => Publish(), cancellation.Token);
             task.ContinueOnException(HandleDataSourceFailure);
             task.ContinueOnCompleted(t =>
             {
@@ -54,13 +54,17 @@ namespace Automata.Mechanisms
 
         public void Stop()
         {
+            // disable the loop and request a cancellation to the long-running thread.
             isSendingData = false;
-            Console.WriteLine("Stopping DataSource at: " + DateTime.Now.ToString("yyyyMMdd HH:mm:ss"));
+            cancellation.Cancel();
+
+            Console.WriteLine(Utilities.BracketNow + " Stopping DataSource.");
             access.Dispose();
         }
 
         private void HandleDataSourceFailure(Task<bool> result)
         {
+            throw result.Exception;
             // report
             // recover
             // try restart
@@ -70,6 +74,13 @@ namespace Automata.Mechanisms
         {
             while (isSendingData)
             {
+                if (cancellation.Token.IsCancellationRequested)
+                {
+                    Console.WriteLine(Utilities.BracketNow + " Stop receiving data.");
+                    isSendingData = false;
+                    break;
+                }
+
                 if (isReceivingData)
                 {
                     awaitingPrices.AddItems(access.Read(DataScope));
@@ -81,8 +92,8 @@ namespace Automata.Mechanisms
                     currentDataStatus = DataStatus.WaitingForData;
                     InvokeDataStatusChanged();
 
-                    Console.WriteLine("Waiting for data at: " + DateTime.Now.ToString("yyyyMMdd HH:mm:ss"));
-                    cancelToken.WaitHandle.WaitOne(50);
+                    Console.WriteLine(Utilities.BracketNow + " Waiting for data.");
+                    cancellation.Token.WaitHandle.WaitOne(50);
 
                     continue;
                 }

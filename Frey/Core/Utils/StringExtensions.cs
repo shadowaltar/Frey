@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Automata.Core.Utils
+namespace Automata.Core.Extensions
 {
     public static class StringExtensions
     {

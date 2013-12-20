@@ -1,9 +1,10 @@
 ﻿namespace Automata.Entities
 {
-    public class Stock : Security
+    public class Stock : ExchangeTradable
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Code { get; set; }
+        public override string ToString()
+        {
+            return Exchange.Code + ":" + Code;
+        }
     }
 }

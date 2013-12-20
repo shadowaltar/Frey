@@ -1,4 +1,5 @@
 ﻿using Automata.Mechanisms;
+using Automata.Mechanisms.Factories;
 using System.Threading;
 namespace Automata
 {
@@ -6,7 +7,8 @@ namespace Automata
     {
         static void Main(string[] args)
         {
-            var testScope = new TestScope();
+            var testScope = ScopeFactory.DailyAllUnitedStatesStocks(10);
+
             var tester = new BackTester(testScope);
 
             tester.Start();

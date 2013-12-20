@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Automata.Core.Utils
+namespace Automata.Core.Extensions
 {
     public static class ExceptionExtensions
     {

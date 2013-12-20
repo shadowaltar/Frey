@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Automata.Core.Utils
+namespace Automata.Core.Extensions
 {
     public static class MultithreadingExtensions
     {

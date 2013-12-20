@@ -1,6 +1,7 @@
 ﻿namespace Automata.Entities
 {
-    public class Security
+    public abstract class Security
     {
+        public int Id { get; set; }
     }
 }

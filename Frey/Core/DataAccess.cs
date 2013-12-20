@@ -7,37 +7,29 @@ using System.Text;
 
 namespace Automata.Core
 {
-    public class DataAccess : IDisposable
+    public abstract class DataAccess : IDisposable
     {
         public void Dispose()
         {
 
         }
 
-        internal IEnumerable<Price> Read(IDataScope DataScope)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract HashSet<Price> Read(IDataScope dataScope);
+
+        public abstract void Initialize();
     }
 
     public class HistoricalDatabaseAccess : DataAccess
     {
+        private List<HashSet<Price>> allHistoricalPrices = new List<HashSet<Price>>();
+
         public Action<HashSet<Price>> NewInfo;
 
-        public HistoricalDatabaseAccess()
-        {
-            // init db conn
-        }
-
-        public HashSet<Price> Read()
+        public override HashSet<Price> Read(IDataScope dataScope)
         {
             // (fake) read db
-            var securities = new Dictionary<int, Security>();
+            var securities = dataScope.Securities;
             var prices = new HashSet<Price>();
-
-            // fake security 1
-            var stock1 = SecurityUniverse.Lookup<Stock>(SecurityIdentifier.Code, "GOOG");
-            securities.Add(stock1.Id, stock1);
 
             // fake price 1
             var price = new Price { Open = 100, High = 102, Low = 99, Close = 101 };
@@ -47,6 +39,14 @@ namespace Automata.Core
             prices.Add(price);
 
             return prices;
+        }
+
+        public override void Initialize()
+        {
+            var reader = new CsvFileReader();
+            var data = reader.Read("../TestData/NYSE_SPY.csv", true);
+            // the data read here is grouped by a security.
+            // need to regroup it by datetime.
         }
     }
 }
