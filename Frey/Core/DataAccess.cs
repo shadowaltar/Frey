@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Automata.Core.Extensions;
 using Automata.Entities;
 using Automata.Mechanisms;
 using System;
@@ -15,43 +16,54 @@ namespace Automata.Core
 
         }
 
-        public abstract HashSet<Price> Read(IDataScope dataScope);
+        public abstract HashSet<Price> Read();
 
-        public abstract void Initialize();
+        public abstract void Initialize(IDataScope dataScope);
     }
 
-    public class HistoricalDatabaseAccess : DataAccess
+    public class HistoricalStaticDataFileAccess : DataAccess
     {
-        private List<HashSet<Price>> allHistoricalPrices = new List<HashSet<Price>>();
+        private readonly Dictionary<DateTime, HashSet<Price>> allHistoricalPrices = new Dictionary<DateTime, HashSet<Price>>();
+        private readonly List<DateTime> dataTimes = new List<DateTime>();
+        private int nextDataTimeIndex;
 
-        public Action<HashSet<Price>> NewInfo;
-
-        public override HashSet<Price> Read(IDataScope dataScope)
+        public override HashSet<Price> Read()
         {
-            // (fake) read db
-            var securities = dataScope.Securities;
-            var prices = new HashSet<Price>();
+            if (allHistoricalPrices.Count == 0 || nextDataTimeIndex >= dataTimes.Count)
+                return null;
 
-            // fake price 1
-            var price = new Price { Open = 100, High = 102, Low = 99, Close = 101 };
-            var securityIdOfPrice = 1;
-            price.Security = securities[securityIdOfPrice];
-
-            prices.Add(price);
-
-            return prices;
+            var idx = nextDataTimeIndex;
+            nextDataTimeIndex++;
+            return allHistoricalPrices[dataTimes[idx]];
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public override void Initialize()
+        /// <param name="dataScope"></param>
+        public override void Initialize(IDataScope dataScope)
         {
-            var reader = new CsvFileReader();
-            var filePath = Path.Combine(Context.StaticDataFileDirectory, "NYSE_SPY.csv");
-            var data = reader.Read(filePath, true);
-            // the data read here is grouped by a security.
-            // need to regroup it by datetime.
+            var securities = dataScope.Securities;
+
+            dataTimes.Clear();
+            allHistoricalPrices.Clear();
+            foreach (var security in securities)
+            {
+                foreach (var price in Context.ReadPricesFromDataFile(security))
+                {
+                    if (price.Time >= dataScope.Start && price.Time <= dataScope.End)
+                    {
+                        if (!allHistoricalPrices.ContainsKey(price.Time))
+                        {
+                            allHistoricalPrices[price.Time] = new HashSet<Price>();
+                            dataTimes.Add(price.Time);
+                        }
+                        allHistoricalPrices[price.Time].Add(price);
+                    }
+                }
+            }
+            dataTimes.Reverse();
+            dataTimes.Sort();
         }
     }
 }

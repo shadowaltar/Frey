@@ -14,7 +14,7 @@ namespace Automata
             tester.Start();
 
             //while(true)
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
 
             tester.Stop();
         }

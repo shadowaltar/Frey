@@ -26,14 +26,13 @@ namespace Automata.Mechanisms
 
         public IDataScope DataScope { get; set; }
 
-        public event Action<HashSet<Price>> NotifyDataArrive;
-        public event Action<DataStatus> SourceStatusChanged;
+        public event Action<HashSet<Price>> NotifyNewPriceData;
         public event Action<DataStatus> DataStatusChanged;
 
         public void Initialize()
         {
             awaitingPrices = PricesQueue.New();
-            access.Initialize();
+            access.Initialize(DataScope);
         }
 
         public void Start()
@@ -64,10 +63,8 @@ namespace Automata.Mechanisms
 
         private void HandleDataSourceFailure(Task<bool> result)
         {
-            throw result.Exception;
-            // report
-            // recover
-            // try restart
+            if (result != null && result.Exception != null)
+                throw result.Exception;
         }
 
         private bool Publish()
@@ -83,7 +80,9 @@ namespace Automata.Mechanisms
 
                 if (isReceivingData)
                 {
-                    awaitingPrices.AddItems(access.Read(DataScope));
+                    var items = access.Read();
+                    if (items != null)
+                        awaitingPrices.AddItems(items);
                 }
 
                 var prices = awaitingPrices.NextItems();
@@ -94,8 +93,6 @@ namespace Automata.Mechanisms
 
                     Console.WriteLine(Utilities.BracketNow + " Waiting for data.");
                     cancellation.Token.WaitHandle.WaitOne(50);
-
-                    continue;
                 }
                 else
                 {
@@ -106,6 +103,7 @@ namespace Automata.Mechanisms
                     }
 
                     // send data
+                    Console.WriteLine(Utilities.BracketNow + " Sending data.");
                     InvokeNotifyDataArrive(prices);
                 }
             }
@@ -121,8 +119,8 @@ namespace Automata.Mechanisms
 
         private void InvokeNotifyDataArrive(HashSet<Price> prices)
         {
-            if (NotifyDataArrive != null)
-                NotifyDataArrive(prices);
+            if (NotifyNewPriceData != null)
+                NotifyNewPriceData(prices);
         }
     }
 }

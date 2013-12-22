@@ -13,7 +13,7 @@ namespace Automata.Mechanisms
         {
             TestScope = testScope;
 
-            DataSource = new DataSource(new HistoricalDatabaseAccess());
+            DataSource = new DataSource(new HistoricalStaticDataFileAccess());
         }
 
         public IDataScope TestScope { get; set; }
@@ -38,19 +38,19 @@ namespace Automata.Mechanisms
             UnsubscribeDataSource();
         }
 
-        #endregion
-
         private void SubscribeDataSource()
         {
-            DataSource.NotifyDataArrive += ProcessData;
+            DataSource.NotifyNewPriceData += ProcessPriceData;
         }
 
         private void UnsubscribeDataSource()
         {
-            DataSource.NotifyDataArrive -= ProcessData;
+            DataSource.NotifyNewPriceData -= ProcessPriceData;
         }
 
-        private void ProcessData(HashSet<Price> obj)
+        #endregion
+
+        private void ProcessPriceData(HashSet<Price> prices)
         {
 
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Automata.Core
@@ -15,11 +17,6 @@ namespace Automata.Core
         public static string BracketNow
         {
             get { return "[" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "]"; }
-        }
-
-        public static string RetrieveParentFolder(string containedFolder)
-        {
-
         }
     }
 }
