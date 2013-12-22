@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Automata.Program</StartupObject>
@@ -43,6 +45,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -52,6 +55,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LumenWorks.Framework.IO">
@@ -82,16 +86,23 @@
     <Compile Include="Entities\ETF.cs" />
     <Compile Include="Entities\ExchangeTradable.cs" />
     <Compile Include="Entities\Exchange.cs" />
-    <Compile Include="Entities\PricesQueue.cs" />
     <Compile Include="Entities\Security.cs" />
     <Compile Include="Entities\Price.cs" />
     <Compile Include="Entities\Equity.cs" />
+    <Compile Include="Mechanisms\Order.cs" />
+    <Compile Include="Mechanisms\OrderType.cs" />
+    <Compile Include="Mechanisms\Position.cs" />
+    <Compile Include="Mechanisms\PriceCache.cs" />
+    <Compile Include="Mechanisms\PriceQueue.cs" />
+    <Compile Include="Mechanisms\Side.cs" />
+    <Compile Include="Mechanisms\TimeScale.cs" />
+    <Compile Include="Mechanisms\Trade.cs" />
     <Compile Include="Mechanisms\BackTester.cs" />
     <Compile Include="Mechanisms\DataPriceSource.cs" />
     <Compile Include="Mechanisms\DataSource.cs" />
     <Compile Include="Mechanisms\DataStatus.cs" />
     <Compile Include="Mechanisms\Factories\ScopeFactory.cs" />
-    <Compile Include="Mechanisms\IDataScope.cs" />
+    <Compile Include="Mechanisms\ITradingScope.cs" />
     <Compile Include="Mechanisms\SecurityIdentifier.cs" />
     <Compile Include="Mechanisms\ReferenceUniverse.cs" />
     <Compile Include="Mechanisms\TestScope.cs" />
@@ -99,7 +110,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategies\SharpeRankingStrategy.cs" />
     <Compile Include="Strategies\Strategy.cs" />
-    <Compile Include="Strategies\StrategyType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

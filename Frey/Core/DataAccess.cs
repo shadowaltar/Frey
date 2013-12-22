@@ -18,12 +18,12 @@ namespace Automata.Core
 
         public abstract HashSet<Price> Read();
 
-        public abstract void Initialize(IDataScope dataScope);
+        public abstract void Initialize(ITradingScope tradingScope);
     }
 
     public class HistoricalStaticDataFileAccess : DataAccess
     {
-        private readonly Dictionary<DateTime, HashSet<Price>> allHistoricalPrices = new Dictionary<DateTime, HashSet<Price>>();
+        private readonly PriceCache allHistoricalPrices = new PriceCache();
         private readonly List<DateTime> dataTimes = new List<DateTime>();
         private int nextDataTimeIndex;
 
@@ -40,10 +40,10 @@ namespace Automata.Core
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dataScope"></param>
-        public override void Initialize(IDataScope dataScope)
+        /// <param name="tradingScope"></param>
+        public override void Initialize(ITradingScope tradingScope)
         {
-            var securities = dataScope.Securities;
+            var securities = tradingScope.Securities;
 
             dataTimes.Clear();
             allHistoricalPrices.Clear();
@@ -51,7 +51,7 @@ namespace Automata.Core
             {
                 foreach (var price in Context.ReadPricesFromDataFile(security))
                 {
-                    if (price.Time >= dataScope.Start && price.Time <= dataScope.End)
+                    if (price.Time >= tradingScope.Start && price.Time <= tradingScope.End)
                     {
                         if (!allHistoricalPrices.ContainsKey(price.Time))
                         {

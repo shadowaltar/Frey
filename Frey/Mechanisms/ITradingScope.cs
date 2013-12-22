@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Automata.Mechanisms
 {
-    public interface IDataScope
+    public interface ITradingScope
     {
         DateTime Start { get; set; }
         DateTime End { get; set; }

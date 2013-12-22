@@ -9,7 +9,7 @@ namespace Automata.Mechanisms.Factories
 {
     public class ScopeFactory
     {
-        public static IDataScope DailyAllUnitedStatesStocks(int yearsAgo)
+        public static ITradingScope DailyAllUnitedStatesStocks(int yearsAgo)
         {
             if (yearsAgo <= 0)
             {

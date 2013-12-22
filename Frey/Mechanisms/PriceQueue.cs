@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Automata.Core.Extensions;
+using Automata.Entities;
 
-namespace Automata.Entities
+namespace Automata.Mechanisms
 {
-    public class PricesQueue : ConcurrentQueue<HashSet<Price>>
+    public class PriceQueue : ConcurrentQueue<HashSet<Price>>
     {
-        private PricesQueue() { }
+        private PriceQueue() { }
 
-        public static PricesQueue New()
+        public static PriceQueue New()
         {
-            return new PricesQueue();
+            return new PriceQueue();
         }
 
         public HashSet<Price> NextItems()

@@ -16,7 +16,7 @@ namespace Automata.Mechanisms
         }
 
         private DataAccess access;
-        private PricesQueue awaitingPrices;
+        private PriceQueue awaitingPrices;
 
         private CancellationTokenSource cancellation;
         // private CancellationToken cancelToken;
@@ -24,15 +24,15 @@ namespace Automata.Mechanisms
         private bool isReceivingData;
         private DataStatus currentDataStatus = DataStatus.Initializing;
 
-        public IDataScope DataScope { get; set; }
+        public ITradingScope TradingScope { get; set; }
 
         public event Action<HashSet<Price>> NotifyNewPriceData;
         public event Action<DataStatus> DataStatusChanged;
 
         public void Initialize()
         {
-            awaitingPrices = PricesQueue.New();
-            access.Initialize(DataScope);
+            awaitingPrices = PriceQueue.New();
+            access.Initialize(TradingScope);
         }
 
         public void Start()
@@ -55,9 +55,8 @@ namespace Automata.Mechanisms
         {
             // disable the loop and request a cancellation to the long-running thread.
             isSendingData = false;
-            cancellation.Cancel();
-
             Console.WriteLine(Utilities.BracketNow + " Stopping DataSource.");
+            cancellation.Cancel();
             access.Dispose();
         }
 

@@ -4,7 +4,7 @@ using Automata.Entities;
 
 namespace Automata.Mechanisms
 {
-    public class TestScope : IDataScope
+    public class TestScope : ITradingScope
     {
         public TestScope()
         {
