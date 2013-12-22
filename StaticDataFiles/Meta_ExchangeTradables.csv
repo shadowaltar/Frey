@@ -7,7 +7,7 @@ Id|Code|Name|Exchange|SecurityType|Sector|Description
 6|AIG|American International Group, Inc.|NYSE|Equity|Financials|
 7|BAC|Bank of America Corporation|NYSE|Equity|Financials|
 8|C|Citigroup, Inc.|NYSE|Equity|Financials|
-9|EEM|iShares MSCI Emerging Markets|NYSE|ETF||MSCI Emerging Markets Index 
+9|EEM|iShares MSCI Emerging Markets|NYSE|ETF||MSCI Emerging Markets Index?
 10|EFA|iShares MSCI EAFE|NYSE|ETF||MSCI EAFE Index Fund
 11|EWJ|iShares MSCI Japan|NYSE|ETF||MSCI Japan Index
 12|FXI|iShares FTSE Xinhua China 25|NYSE|ETF||FTSE China 25 Index
@@ -17,5 +17,5 @@ Id|Code|Name|Exchange|SecurityType|Sector|Description
 16|JPM|JPMorgan Chase & Co.|NYSE|Equity|Financials|
 17|SPY|SPDR S&P 500 ETF Trust|NYSE|ETF||S&P 500 Index
 18|V|Visa Inc.|NYSE|Equity|Industrials|
-19|VWO|Vanguard FTSE Emerging Markets ETF|NYSE|ETF||MSCI Emerging Markets Index
+19|VWO|Vanguard FTSE Emerging Markets ETF|NYSE|ETF||MSCI Emerging Markets Index
 20|XLF|Financial Select Sector SPDR|NYSE|ETF||Financial Select Sector Index

@@ -1,4 +1,5 @@
-﻿using Automata.Entities;
+﻿using System.IO;
+using Automata.Entities;
 using Automata.Mechanisms;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,8 @@ namespace Automata.Core
         public override void Initialize()
         {
             var reader = new CsvFileReader();
-            var data = reader.Read("../TestData/NYSE_SPY.csv", true);
+            var filePath = Path.Combine(Context.StaticDataFileDirectory, "NYSE_SPY.csv");
+            var data = reader.Read(filePath, true);
             // the data read here is grouped by a security.
             // need to regroup it by datetime.
         }

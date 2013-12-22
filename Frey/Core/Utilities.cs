@@ -16,5 +16,10 @@ namespace Automata.Core
         {
             get { return "[" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "]"; }
         }
+
+        public static string RetrieveParentFolder(string containedFolder)
+        {
+
+        }
     }
 }

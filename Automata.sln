@@ -3,16 +3,47 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata", "Frey\Automata.csproj", "{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StaticDataFiles", "StaticDataFiles", "{9E799772-BDD6-4589-9F29-85E30E1A91B2}"
+	ProjectSection(SolutionItems) = preProject
+		StaticDataFiles\Meta_ExchangeTradables.csv = StaticDataFiles\Meta_ExchangeTradables.csv
+		StaticDataFiles\NASDAQ_AAPL.csv = StaticDataFiles\NASDAQ_AAPL.csv
+		StaticDataFiles\NASDAQ_FB.csv = StaticDataFiles\NASDAQ_FB.csv
+		StaticDataFiles\NASDAQ_GOOG.csv = StaticDataFiles\NASDAQ_GOOG.csv
+		StaticDataFiles\NASDAQ_MSFT.csv = StaticDataFiles\NASDAQ_MSFT.csv
+		StaticDataFiles\NASDAQ_QQQ.csv = StaticDataFiles\NASDAQ_QQQ.csv
+		StaticDataFiles\NYSE_AIG.csv = StaticDataFiles\NYSE_AIG.csv
+		StaticDataFiles\NYSE_BAC.csv = StaticDataFiles\NYSE_BAC.csv
+		StaticDataFiles\NYSE_C.csv = StaticDataFiles\NYSE_C.csv
+		StaticDataFiles\NYSE_EEM.csv = StaticDataFiles\NYSE_EEM.csv
+		StaticDataFiles\NYSE_EFA.csv = StaticDataFiles\NYSE_EFA.csv
+		StaticDataFiles\NYSE_EWJ.csv = StaticDataFiles\NYSE_EWJ.csv
+		StaticDataFiles\NYSE_FXI.csv = StaticDataFiles\NYSE_FXI.csv
+		StaticDataFiles\NYSE_GDX.csv = StaticDataFiles\NYSE_GDX.csv
+		StaticDataFiles\NYSE_GM.csv = StaticDataFiles\NYSE_GM.csv
+		StaticDataFiles\NYSE_IWM.csv = StaticDataFiles\NYSE_IWM.csv
+		StaticDataFiles\NYSE_JPM.csv = StaticDataFiles\NYSE_JPM.csv
+		StaticDataFiles\NYSE_SPY.csv = StaticDataFiles\NYSE_SPY.csv
+		StaticDataFiles\NYSE_V.csv = StaticDataFiles\NYSE_V.csv
+		StaticDataFiles\NYSE_VWO.csv = StaticDataFiles\NYSE_VWO.csv
+		StaticDataFiles\NYSE_XLF.csv = StaticDataFiles\NYSE_XLF.csv
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Debug|x86.ActiveCfg = Debug|x86
+		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Debug|x86.Build.0 = Debug|x86
 		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Release|x86.ActiveCfg = Release|x86
+		{EEE53082-7C83-42F0-8D7B-9D1BE68313F1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
