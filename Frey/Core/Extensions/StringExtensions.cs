@@ -13,8 +13,8 @@ namespace Automata.Core.Extensions
 {
     public static class StringExtensions
     {
-        private static readonly Regex EnglishOnlyRegex = new Regex("^[A-Za-z0-9 !\"#$%&'()*+,./:;<=>?@\\^_`{|}~-]*$");
-        private static readonly char[] InvalidFileOrPathChars = Path.GetInvalidFileNameChars()
+        private static readonly Regex englishOnlyRegex = new Regex("^[A-Za-z0-9 !\"#$%&'()*+,./:;<=>?@\\^_`{|}~-]*$");
+        private static readonly char[] invalidFileOrPathChars = Path.GetInvalidFileNameChars()
             .Concat(Path.GetInvalidPathChars()).Distinct().ToArray();
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Automata.Core.Extensions
         /// <returns></returns>
         public static bool IsEnglishOnly(this string value)
         {
-            return EnglishOnlyRegex.IsMatch(value.Trim());
+            return englishOnlyRegex.IsMatch(value.Trim());
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Automata.Core.Extensions
         {
             if (value == null)
                 return value;
-            return InvalidFileOrPathChars.Aggregate(value, (current, c) => current.Replace(c, substitution));
+            return invalidFileOrPathChars.Aggregate(value, (current, c) => current.Replace(c, substitution));
         }
 
         /// <summary>

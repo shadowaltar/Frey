@@ -48,17 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Context.cs" />
     <Compile Include="Core\CsvFileReader.cs" />
     <Compile Include="Core\DataAccess.cs" />
     <Compile Include="Core\Exceptions\StaticDataReferenceException.cs" />
     <Compile Include="Core\Exceptions\SecurityReferenceException.cs" />
     <Compile Include="Core\Utilities.cs" />
-    <Compile Include="Core\Utils\StringExtensions.cs" />
-    <Compile Include="Core\Utils\StringBuilderExtensions.cs" />
-    <Compile Include="Core\Utils\CollectionExtensions.cs" />
-    <Compile Include="Core\Utils\DataExtensions.cs" />
-    <Compile Include="Core\Utils\ExceptionExtensions.cs" />
-    <Compile Include="Core\Utils\MultithreadingExtensions.cs" />
+    <Compile Include="Core\Extensions\StringExtensions.cs" />
+    <Compile Include="Core\Extensions\StringBuilderExtensions.cs" />
+    <Compile Include="Core\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Core\Extensions\DataExtensions.cs" />
+    <Compile Include="Core\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Core\Extensions\MultithreadingExtensions.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\ExchangeTradedFund.cs" />
     <Compile Include="Entities\ExchangeTradable.cs" />

@@ -41,6 +41,9 @@ namespace Automata.Core
             return prices;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Initialize()
         {
             var reader = new CsvFileReader();
