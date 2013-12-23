@@ -7,6 +7,7 @@ using Automata.Core.Extensions;
 using Automata.Strategies;
 using Automata.Entities;
 using Automata.Core;
+using System.Collections.Concurrent;
 
 namespace Automata.Mechanisms
 {
@@ -15,7 +16,7 @@ namespace Automata.Mechanisms
         public BackTester(ITradingScope testScope)
         {
             TestScope = testScope;
-
+            PriceData = new ConcurrentQueue<HashSet<Price>>();
             DataSource = new DataSource(new HistoricalStaticDataFileAccess());
         }
 
@@ -23,7 +24,7 @@ namespace Automata.Mechanisms
 
         public Strategy Strategy { get; set; }
 
-        public PriceCache Data { get; protected set; }
+        public ConcurrentQueue<HashSet<Price>> PriceData { get; protected set; }
 
         public List<Position> Positions { get { return positions; } }
         public List<Order> ExecutedOrders { get { return executedOrders; } }
@@ -41,6 +42,7 @@ namespace Automata.Mechanisms
         public void Start()
         {
             Strategy.TradingScope = TestScope;
+            Strategy.Initialize();
 
             DataSource.TradingScope = TestScope;
             DataSource.Initialize();
@@ -75,14 +77,27 @@ namespace Automata.Mechanisms
         {
             while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
             {
+                // dequeue one day only
+                HashSet<Price> prices = null;
+                if (!PriceData.TryDequeue(out prices))
+                {
+                    continue;
+                }
+
                 // generate entries and exits
-                var exitOrders = Strategy.GenerateExits(Data, Positions);
-                var entryOrders = Strategy.GenerateEntries(Data, Positions);
-                CheckCrossTrades(exitOrders, entryOrders);
+                var orders = Strategy.GenerateOrders(prices, Positions);
+                CheckCrossTrades(orders);
 
                 // execute the exits, assuming all are executed immediately
-                var closePositionTask = Task.Factory.StartNew(() => ClosePositions(exitOrders, Positions));
+                var closePositionTask = Task.Factory.StartNew(() => ClosePositions(orders, Positions));
+
+                // execute the entries, assuming all are executed immediately
+                var orderExecutionTask = Task.Factory.StartNew(() => ExecuteOrders(orders));
+
+                // wait for all the orders to be filled.
                 closePositionTask.Wait();
+                orderExecutionTask.Wait();
+
                 var newClosedTrades = closePositionTask.Result;
                 if (!newClosedTrades.IsNullOrEmpty())
                 {
@@ -94,9 +109,6 @@ namespace Automata.Mechanisms
                     ComputeProfits(newClosedTrades);
                 }
 
-                // execute the entries, assuming all are executed immediately
-                var orderExecutionTask = Task.Factory.StartNew(() => ExecuteOrders(entryOrders));
-                orderExecutionTask.Wait();
                 var newPositions = orderExecutionTask.Result;
                 if (!newPositions.IsNullOrEmpty())
                 {
@@ -115,17 +127,24 @@ namespace Automata.Mechanisms
         {
         }
 
-        private List<Trade> ClosePositions(List<Order> exitOrders, List<Position> positions)
+        private List<Trade> ClosePositions(IEnumerable<Order> orders, List<Position> positions)
         {
-            return null;
+            if (positions.IsNullOrEmpty() || orders.IsNullOrEmpty())
+                return null;
+            var exitOrders = orders.Where(o => o.IsClosingPosition);
+            throw new NotImplementedException();
         }
 
-        private List<Position> ExecuteOrders(List<Order> entryOrders)
+        private List<Position> ExecuteOrders(IEnumerable<Order> orders)
         {
-            return null;
+            if (orders.IsNullOrEmpty())
+                return null;
+            var entryOrders = orders.Where(o => !o.IsClosingPosition);
+            var positions = new List<Position>();
+            return positions;
         }
 
-        private void CheckCrossTrades(List<Order> exitOrders, List<Order> entryOrders)
+        private void CheckCrossTrades(List<Order> orders)
         {
         }
 
@@ -135,9 +154,14 @@ namespace Automata.Mechanisms
             cancellation.Cancel();
         }
 
-        private void ProcessPriceData(HashSet<Price> prices)
+        /// <summary>
+        /// Process the prices data come from the data source.
+        /// Here we assumed that the data are causal.
+        /// </summary>
+        /// <param name="prices"></param>
+        private void ProcessPriceData(HashSet<Price> price)
         {
-            // save data to the cache.
+            PriceData.Enqueue(price);
         }
     }
 }

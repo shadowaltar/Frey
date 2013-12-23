@@ -1,6 +1,6 @@
 ﻿namespace Automata.Mechanisms
 {
-    public enum DataPriceSource
+    public enum DataPriceSourceType
     {
         YahooHistorical,
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Automata.Entities;
 using Automata.Mechanisms;
+using System.Collections.Concurrent;
 
 namespace Automata.Strategies
 {
@@ -11,8 +12,12 @@ namespace Automata.Strategies
         public abstract bool IsTimeToStop { get; }
         public ITradingScope TradingScope { get; set; }
 
-        public abstract List<Order> GenerateExits(PriceCache data, List<Position> existingPositions);
+        public virtual void Initialize()
+        {
+        }
 
-        public abstract List<Order> GenerateEntries(PriceCache data, List<Position> existingPositions);
+        public abstract List<Order> GenerateExits(HashSet<Price> data, List<Position> existingPositions);
+
+        public abstract List<Order> GenerateOrders(HashSet<Price> data, List<Position> existingPositions);
     }
 }

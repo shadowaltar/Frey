@@ -4,8 +4,8 @@ namespace Automata.Mechanisms
 {
     public class Order
     {
-        public Order(Security security, Side side, double price, double quantity)
-            : this(security, side, OrderType.Market, price, quantity, 0)
+        public Order(Security security, Side side, double quantity)
+            : this(security, side, OrderType.Market, double.NaN, quantity, 0)
         {
         }
 
@@ -26,6 +26,7 @@ namespace Automata.Mechanisms
 
         public Security Security { get; set; }
         public Side Side { get; set; }
+        public bool IsClosingPosition { get; set; }
         public OrderType Type { get; set; }
         public double Price { get; set; }
         public double Quantity { get; set; }

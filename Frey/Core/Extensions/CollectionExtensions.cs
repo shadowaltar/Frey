@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -252,6 +253,26 @@ namespace Automata.Core.Extensions
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Dequeue all items from the <see cref="ConcurrentQueue"/> using <see cref="ConcurrentQueue.TryDequeue"/>
+        /// method. when fetching the items in the loop, if <see cref="ConcurrentQueue.TryDequeue"/>
+        /// returns false, the loop will exit and the result items are returned.
+        /// It is possible that during the loop other items are inserted
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queue"></param>
+        /// <returns></returns>
+        public static IList<T> DequeueAll<T>(this ConcurrentQueue<T> queue)
+        {
+            var results = new List<T>();
+            T item;
+            while (queue.TryDequeue(out item))
+            {
+                results.Add(item);
+            }
+            return results;
         }
     }
 }

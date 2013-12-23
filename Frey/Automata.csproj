@@ -61,6 +61,9 @@
     <Reference Include="LumenWorks.Framework.IO">
       <HintPath>..\Libs\LumenWorks.Framework.IO.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\Libs\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,6 +78,7 @@
     <Compile Include="Core\DataAccess.cs" />
     <Compile Include="Core\Exceptions\StaticDataReferenceException.cs" />
     <Compile Include="Core\Exceptions\SecurityReferenceException.cs" />
+    <Compile Include="Core\Extensions\DateExtensions.cs" />
     <Compile Include="Core\Utilities.cs" />
     <Compile Include="Core\Extensions\StringExtensions.cs" />
     <Compile Include="Core\Extensions\StringBuilderExtensions.cs" />
@@ -92,13 +96,11 @@
     <Compile Include="Mechanisms\Order.cs" />
     <Compile Include="Mechanisms\OrderType.cs" />
     <Compile Include="Mechanisms\Position.cs" />
-    <Compile Include="Mechanisms\PriceCache.cs" />
-    <Compile Include="Mechanisms\PriceQueue.cs" />
     <Compile Include="Mechanisms\Side.cs" />
     <Compile Include="Mechanisms\TimeScale.cs" />
     <Compile Include="Mechanisms\Trade.cs" />
     <Compile Include="Mechanisms\BackTester.cs" />
-    <Compile Include="Mechanisms\DataPriceSource.cs" />
+    <Compile Include="Mechanisms\DataPriceSourceType.cs" />
     <Compile Include="Mechanisms\DataSource.cs" />
     <Compile Include="Mechanisms\DataStatus.cs" />
     <Compile Include="Mechanisms\Factories\ScopeFactory.cs" />

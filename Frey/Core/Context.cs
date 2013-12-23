@@ -94,12 +94,12 @@ namespace Automata.Core
             var fileName = security.Code.Replace(":", "_") + ".csv";
             var filePath = Path.Combine(StaticDataFileDirectory, fileName);
             var data = reader.Read(filePath, true);
-            return Convert(DataPriceSource.YahooHistorical, data, security);
+            return Convert(DataPriceSourceType.YahooHistorical, data, security);
         }
 
-        private static IEnumerable<Price> Convert(DataPriceSource priceSourceType, List<string[]> data, Security security)
+        private static IEnumerable<Price> Convert(DataPriceSourceType priceSourceType, List<string[]> data, Security security)
         {
-            if (priceSourceType == DataPriceSource.YahooHistorical)
+            if (priceSourceType == DataPriceSourceType.YahooHistorical)
             {
                 var duration = TimeSpan.FromDays(1);
                 return data.Select(x => new Price

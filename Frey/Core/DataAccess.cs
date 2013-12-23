@@ -11,30 +11,25 @@ namespace Automata.Core
 {
     public abstract class DataAccess : IDisposable
     {
-        public void Dispose()
+        public virtual void Dispose()
         {
-
         }
 
-        public abstract HashSet<Price> Read();
+        public abstract HashSet<Price> GetNextTimeslotPrices();
 
         public abstract void Initialize(ITradingScope tradingScope);
     }
 
     public class HistoricalStaticDataFileAccess : DataAccess
     {
-        private readonly PriceCache allHistoricalPrices = new PriceCache();
-        private readonly List<DateTime> dataTimes = new List<DateTime>();
-        private int nextDataTimeIndex;
+        private readonly Queue<HashSet<Price>> allHistoricalPrices = new Queue<HashSet<Price>>();
 
-        public override HashSet<Price> Read()
+        public override HashSet<Price> GetNextTimeslotPrices()
         {
-            if (allHistoricalPrices.Count == 0 || nextDataTimeIndex >= dataTimes.Count)
+            if (allHistoricalPrices.Count == 0)
                 return null;
 
-            var idx = nextDataTimeIndex;
-            nextDataTimeIndex++;
-            return allHistoricalPrices[dataTimes[idx]];
+            return allHistoricalPrices.Dequeue();
         }
 
         /// <summary>
@@ -45,25 +40,24 @@ namespace Automata.Core
         {
             var securities = tradingScope.Securities;
 
-            dataTimes.Clear();
             allHistoricalPrices.Clear();
+            var prices = new HashSet<Price>();
             foreach (var security in securities)
             {
                 foreach (var price in Context.ReadPricesFromDataFile(security))
                 {
                     if (price.Time >= tradingScope.Start && price.Time <= tradingScope.End)
                     {
-                        if (!allHistoricalPrices.ContainsKey(price.Time))
-                        {
-                            allHistoricalPrices[price.Time] = new HashSet<Price>();
-                            dataTimes.Add(price.Time);
-                        }
-                        allHistoricalPrices[price.Time].Add(price);
+                        prices.Add(price);
                     }
                 }
             }
-            dataTimes.Reverse();
-            dataTimes.Sort();
+
+            var orderedPrices = prices.OrderBy(p => p.Time).ThenBy(p => p.Security.Code);
+            foreach (var group in orderedPrices.GroupBy(p => p.Time).OrderBy(g => g.Key))
+            {
+                allHistoricalPrices.Enqueue(group.ToHashSet());
+            }
         }
     }
 }

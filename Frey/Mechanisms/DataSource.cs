@@ -2,6 +2,7 @@
 using Automata.Core.Extensions;
 using Automata.Entities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Automata.Mechanisms
         }
 
         private DataAccess access;
-        private PriceQueue awaitingPrices;
+        private Queue<HashSet<Price>> awaitingPrices = new Queue<HashSet<Price>>();
 
         private CancellationTokenSource cancellation;
         // private CancellationToken cancelToken;
@@ -31,7 +32,6 @@ namespace Automata.Mechanisms
 
         public void Initialize()
         {
-            awaitingPrices = PriceQueue.New();
             access.Initialize(TradingScope);
         }
 
@@ -79,12 +79,17 @@ namespace Automata.Mechanisms
 
                 if (isReceivingData)
                 {
-                    var items = access.Read();
+                    var items = access.GetNextTimeslotPrices();
                     if (items != null)
-                        awaitingPrices.AddItems(items);
+                    {
+                        awaitingPrices.Enqueue(items);
+                    }
                 }
 
-                var prices = awaitingPrices.NextItems();
+                HashSet<Price> prices = null;
+                if (awaitingPrices.Count > 0)
+                    prices = awaitingPrices.Dequeue();
+
                 if (prices == null)
                 {
                     currentDataStatus = DataStatus.WaitingForData;
@@ -103,7 +108,7 @@ namespace Automata.Mechanisms
 
                     // send data
                     Console.WriteLine(Utilities.BracketNow + " Sending data.");
-                    InvokeNotifyDataArrive(prices);
+                    InvokeNotifyPriceDataArrive(prices);
                 }
             }
 
@@ -116,10 +121,10 @@ namespace Automata.Mechanisms
                 DataStatusChanged(currentDataStatus);
         }
 
-        private void InvokeNotifyDataArrive(HashSet<Price> prices)
+        private void InvokeNotifyPriceDataArrive(HashSet<Price> price)
         {
             if (NotifyNewPriceData != null)
-                NotifyNewPriceData(prices);
+                NotifyNewPriceData(price);
         }
     }
 }
