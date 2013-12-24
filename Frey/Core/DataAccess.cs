@@ -32,10 +32,6 @@ namespace Automata.Core
             return allHistoricalPrices.Dequeue();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tradingScope"></param>
         public override void Initialize(ITradingScope tradingScope)
         {
             var securities = tradingScope.Securities;

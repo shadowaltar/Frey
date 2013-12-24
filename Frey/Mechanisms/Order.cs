@@ -1,4 +1,5 @@
 ﻿using Automata.Entities;
+using Automata.Mechanisms.Utils;
 
 namespace Automata.Mechanisms
 {
@@ -22,6 +23,14 @@ namespace Automata.Mechanisms
             Price = price;
             Quantity = quantity;
             StopLossPrice = stopLossPrice;
+        }
+
+        public static Order CreateToClose(Position position)
+        {
+            return new Order(position.Security, position.Side.Opposite(), position.ActualQuantity)
+            {
+                IsClosingPosition = true
+            };
         }
 
         public Security Security { get; set; }

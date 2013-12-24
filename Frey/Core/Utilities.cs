@@ -18,5 +18,10 @@ namespace Automata.Core
         {
             get { return "[" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "]"; }
         }
+
+        public static string BracketTime(this DateTime time)
+        {
+            return "[" + time.ToString("yyyyMMdd HH:mm:ss") + "]";
+        }
     }
 }

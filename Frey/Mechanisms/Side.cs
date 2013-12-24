@@ -3,6 +3,7 @@
     public enum Side
     {
         Long,
+        Hold,
         Short,
     }
 }

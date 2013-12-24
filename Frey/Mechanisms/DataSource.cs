@@ -20,7 +20,7 @@ namespace Automata.Mechanisms
         private Queue<HashSet<Price>> awaitingPrices = new Queue<HashSet<Price>>();
 
         private CancellationTokenSource cancellation;
-        // private CancellationToken cancelToken;
+
         private bool isSendingData;
         private bool isReceivingData;
         private DataStatus currentDataStatus = DataStatus.Initializing;
@@ -95,8 +95,8 @@ namespace Automata.Mechanisms
                     currentDataStatus = DataStatus.WaitingForData;
                     InvokeDataStatusChanged();
 
-                    Console.WriteLine(Utilities.BracketNow + " Waiting for data.");
-                    cancellation.Token.WaitHandle.WaitOne(50);
+                    //Console.WriteLine(Utilities.BracketNow + " Waiting for data.");
+                    cancellation.Token.WaitHandle.WaitOne(5);
                 }
                 else
                 {
@@ -107,7 +107,7 @@ namespace Automata.Mechanisms
                     }
 
                     // send data
-                    Console.WriteLine(Utilities.BracketNow + " Sending data.");
+                    //Console.WriteLine(Utilities.BracketNow + " Sending data.");
                     InvokeNotifyPriceDataArrive(prices);
                 }
             }

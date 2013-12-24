@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Automata.Core.Extensions;
+using Automata.Core.Exceptions;
 using Automata.Entities;
 using Automata.Mechanisms;
 using System.Collections.Concurrent;
@@ -19,12 +20,14 @@ namespace Automata.Strategies
     /// </summary>
     public class SharpeRankingStrategy : Strategy
     {
-        public SharpeRankingStrategy()
+        public SharpeRankingStrategy(int periods = 20, int portfolioSize = 3)
         {
             PriceHistory = new Dictionary<Security, List<Price>>();
+            Period = periods;
+            PortfolioSize = portfolioSize;
         }
 
-        public override bool IsTimeToStop { get { return false; } }
+        public override bool IsTimeToStop { get; protected set; }
 
         private readonly Dictionary<Security, double> ranks = new Dictionary<Security, double>();
         public Dictionary<Security, List<Price>> PriceHistory { get; private set; }
@@ -35,6 +38,9 @@ namespace Automata.Strategies
         private DateTime dateCounter;
         private int counter = 0;
 
+        public int Period { get; set; }
+        public int PortfolioSize { get; set; }
+
         public override void Initialize()
         {
             initStartDate = TradingScope.Start.ClosestFuture(DayOfWeek.Tuesday);
@@ -44,7 +50,16 @@ namespace Automata.Strategies
 
         public override List<Order> GenerateOrders(HashSet<Price> data, List<Position> existingPositions)
         {
+            // check if meets stop trading criteria
+            if (data.Any(p => p.Time == TradingScope.End))
+            {
+                IsTimeToStop = true;
+                // generate 'all close' orders
+                return existingPositions.Select(p => Order.CreateToClose(p)).ToList();
+            }
+
             counter++;
+            var orders = new List<Order>();
             // save the incoming data into cache
             foreach (var price in data)
             {
@@ -56,24 +71,68 @@ namespace Automata.Strategies
                 PriceHistory[security].Add(price);
             }
 
-            if (counter == 20) // approx 4 weeks later without considering holidays
+            // approx 4 weeks later without considering holidays
+            if (counter == Period)
             {
-                List<Order> orders = new List<Order>();
-                List<Price> prices = null;
                 var ranks = new List<Rank>();
                 foreach (var security in PriceHistory.Keys)
                 {
-                    prices = PriceHistory[security];
+                    var prices = PriceHistory[security];
                     ranks.Add(ComputeRank(prices, security));
                 }
-                var orders = ranks.OrderByDescending(r => r.SharpeRatio)
-                    .Take(3).Select(r => new Order(r.Security, Side.Long, 100));
-                PriceHistory.Clear();
+                // var orderedRanks = ranks.OrderByDescending(r => r.RankValue).Take(PortfolioSize);
+                var newOrders = new List<Order>();
+                foreach (var rank in ranks.OrderByDescending(r => r.RankValue).Take(PortfolioSize))
+                {
+                    var security = rank.Security;
+                    var lastPrice = PriceHistory[security].Last();
+                    var q = ComputeQuantity(security, lastPrice);
+                    newOrders.Add(new Order(security, Side.Long, lastPrice.AdjustedClose, q, 0));
+                }
+                orders.AddRange(newOrders);
 
                 counter = 0;
+
+                // check existing positions to see if already holding the security, or need to sell
+                // those not in the ranks anymore.
+                if (!existingPositions.IsNullOrEmpty())
+                {
+                    var closePositionOrders = new List<Order>();
+                    foreach (var position in existingPositions)
+                    {
+                        var order = orders.FirstOrDefault(o => o.Security == position.Security); // maintains a hold
+                        if (order != null)
+                        {
+                            if (order.Side == Side.Long || order.Side == Side.Hold)
+                            {
+                                order.Side = Side.Hold;
+                            }
+                            else if (order.Side == Side.Short)
+                            {
+                                throw new InvalidShortSellException();
+                            }
+                        }
+                        else
+                        {
+                            closePositionOrders.Add(Order.CreateToClose(position));
+                        }
+                    }
+                    orders.AddRange(closePositionOrders);
+                }
+                PriceHistory.Clear();
+
+                Console.WriteLine(Utilities.BracketNow + " Orders Generated.");
             }
-            //    Console.WriteLine(Utilities.BracketNow + " Generating Entry Orders.");
-            return null;
+            return orders;
+        }
+
+        protected override double ComputeQuantity(Security security, Price referencePrice)
+        {
+            var a = 100000 * .02 / referencePrice.AdjustedClose;
+            if (a < 100)
+                return 100;
+            var b = a % 100;
+            return a - b;
         }
 
         private Rank ComputeRank(List<Price> prices, Security security)
@@ -83,21 +142,23 @@ namespace Automata.Strategies
             if (prices.Count == 1)
                 return new Rank(security) { Return = 0, Sigma = 0 };
 
+            var startingPrice = prices.First().AdjustedClose;
+            var holdingPeriodReturn = (prices.Last().AdjustedClose - startingPrice) / startingPrice;
             var returns = new List<double>();
+
             for (var i = 1; i < prices.Count; i++)
             {
                 var prevClose = prices[i - 1].AdjustedClose;
-                returns.Add((prices[i].AdjustedClose - prevClose) / prevClose);
+                returns.Add((prices[i].AdjustedClose - prevClose) / prevClose + 1);
             }
-            var s = new Rank(security) { Return = returns.Average(), Sigma = returns.StandardDeviation() };
+            var s = new Rank(security)
+            {
+                Return = holdingPeriodReturn,
+                Sigma = returns.StandardDeviation()
+            };
             s.SharpeRatio = s.Return / s.Sigma;
+            s.RankValue = s.Return;
             return s;
-        }
-
-        public override List<Order> GenerateExits(HashSet<Price> data, List<Position> existingPositions)
-        {
-            Console.WriteLine(Utilities.BracketNow + " Generating Exit Orders.");
-            return null;
         }
 
         public class Rank
@@ -113,6 +174,8 @@ namespace Automata.Strategies
             public double Sigma { get; set; }
 
             public double SharpeRatio { get; set; }
+
+            public double RankValue { get; set; }
         }
     }
 }
