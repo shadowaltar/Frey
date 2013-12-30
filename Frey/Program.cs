@@ -1,7 +1,7 @@
 ﻿using Automata.Mechanisms;
 using Automata.Mechanisms.Factories;
-using System.Threading;
 using Automata.Strategies;
+using System.Threading;
 
 namespace Automata
 {
@@ -12,14 +12,11 @@ namespace Automata
             var testScope = ScopeFactory.DailyAllUnitedStatesStocks(10);
             var tester = new BackTester(testScope)
             {
-                Strategy = new SharpeRankingStrategy(20,1)
+                Strategy = new SharpeRankingStrategy(20, 1)
             };
             tester.Start();
 
-            while (true)
-            {
-                Thread.Sleep(600000);
-            }
+            Thread.Sleep(600000);
 
             tester.Stop();
         }

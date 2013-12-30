@@ -2,7 +2,6 @@
 using Automata.Core.Extensions;
 using Automata.Entities;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +15,8 @@ namespace Automata.Mechanisms
             this.access = access;
         }
 
-        private DataAccess access;
-        private Queue<HashSet<Price>> awaitingPrices = new Queue<HashSet<Price>>();
+        private readonly DataAccess access;
+        private readonly Queue<HashSet<Price>> awaitingPrices = new Queue<HashSet<Price>>();
 
         private CancellationTokenSource cancellation;
 

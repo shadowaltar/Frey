@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Automata.Core.Extensions
 {
@@ -193,7 +192,7 @@ namespace Automata.Core.Extensions
         /// <returns></returns>
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> list)
         {
-            return list == null || list.Count() == 0;
+            return list == null || !list.Any();
         }
 
         /// <summary>
@@ -256,8 +255,8 @@ namespace Automata.Core.Extensions
         }
 
         /// <summary>
-        /// Dequeue all items from the <see cref="ConcurrentQueue"/> using <see cref="ConcurrentQueue.TryDequeue"/>
-        /// method. when fetching the items in the loop, if <see cref="ConcurrentQueue.TryDequeue"/>
+        /// Dequeue all items using <see cref="ConcurrentQueue{T}.TryDequeue"/>
+        /// method. when fetching the items in the loop, if <see cref="ConcurrentQueue{T}.TryDequeue"/>
         /// returns false, the loop will exit and the result items are returned.
         /// It is possible that during the loop other items are inserted
         /// </summary>

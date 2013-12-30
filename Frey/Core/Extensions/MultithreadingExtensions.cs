@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,24 +6,6 @@ namespace Automata.Core.Extensions
 {
     public static class MultithreadingExtensions
     {
-        public static Task ContinueOnException<TResult>(this Task<TResult> task,
-            Action<Task<TResult>> continueWith)
-        {
-            return ContinueOnException(task, continueWith, null);
-        }
-
-        public static Task ContinueOnCancelled<TResult>(this Task<TResult> task,
-            Action<Task<TResult>> continueWith)
-        {
-            return ContinueOnCancelled(task, continueWith, null);
-        }
-
-        public static Task ContinueOnCompleted<TResult>(this Task<TResult> task,
-            Action<Task<TResult>> continueWith)
-        {
-            return ContinueOnCompleted(task, continueWith, null);
-        }
-
         /// <summary>
         /// Run the 2nd task <paramref name="continueWith"/>
         /// when <paramref name="task"/> is not finished because of any exception. Then
@@ -39,7 +18,7 @@ namespace Automata.Core.Extensions
         /// <param name="onFinished"></param>
         /// <returns></returns>
         public static Task ContinueOnException<TResult>(this Task<TResult> task,
-            Action<Task<TResult>> continueWith, Action<Task> onFinished)
+            Action<Task<TResult>> continueWith, Action<Task> onFinished = null)
         {
             return task.ContinueOn(continueWith, TaskContinuationOptions.OnlyOnFaulted, onFinished);
         }
@@ -56,7 +35,7 @@ namespace Automata.Core.Extensions
         /// <param name="onFinished"></param>
         /// <returns></returns>
         public static Task ContinueOnCancelled<TResult>(this Task<TResult> task,
-            Action<Task<TResult>> continueWith, Action<Task> onFinished)
+            Action<Task<TResult>> continueWith, Action<Task> onFinished = null)
         {
             return task.ContinueOn(continueWith, TaskContinuationOptions.OnlyOnCanceled, onFinished);
         }
@@ -73,7 +52,7 @@ namespace Automata.Core.Extensions
         /// <param name="onFinished"></param>
         /// <returns></returns>
         public static Task ContinueOnCompleted<TResult>(this Task<TResult> task,
-            Action<Task<TResult>> continueWith, Action<Task> onFinished)
+            Action<Task<TResult>> continueWith, Action<Task> onFinished = null)
         {
             return task.ContinueOn(continueWith, TaskContinuationOptions.OnlyOnRanToCompletion, onFinished);
         }
@@ -90,19 +69,19 @@ namespace Automata.Core.Extensions
                 .ContinueWith(onFinished, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public static void RunAsyncWithDelay(this Action action, int delayInMilliseconds)
+        public static Task RunAsyncWithDelay(this Action action, int delayInMilliseconds)
         {
             if (action == null)
-                return;
+                return null;
 
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
 
-            var task = Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 token.WaitHandle.WaitOne(delayInMilliseconds);
                 action();
-            });
+            }, token);
         }
 
         /// <summary>

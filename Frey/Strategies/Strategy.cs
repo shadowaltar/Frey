@@ -16,7 +16,7 @@ namespace Automata.Strategies
         {
         }
 
-        public abstract List<Order> GenerateOrders(HashSet<Price> data, List<Position> existingPositions);
+        public abstract List<Order> GenerateOrders(HashSet<Price> prices, List<Position> existingPositions);
         protected abstract double ComputeQuantity(Security security, Price referencePrice);
     }
 }

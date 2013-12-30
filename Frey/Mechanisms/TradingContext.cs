@@ -1,79 +1,73 @@
 ﻿using Automata.Entities;
-using Automata.Core.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Automata.Mechanisms
 {
     public abstract class TradingContext
     {
-        protected readonly ReaderWriterLockSlim priceHistoryDataLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        protected readonly ReaderWriterLockSlim orderHistoryDataLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        protected readonly ReaderWriterLockSlim tradeHistoryDataLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        protected readonly ReaderWriterLockSlim PriceHistoryDataLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        protected readonly ReaderWriterLockSlim OrderHistoryDataLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        protected readonly ReaderWriterLockSlim TradeHistoryDataLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         private readonly List<Price> priceHistory = new List<Price>(1000000);
         private readonly List<Order> orderHistory = new List<Order>(50000);
         private readonly List<Trade> tradeHistory = new List<Trade>(10000);
 
-        public virtual List<Price> PriceHistory
+        public List<Price> PriceHistory
         {
             get
             {
                 try
                 {
-                    priceHistoryDataLock.EnterReadLock();
+                    PriceHistoryDataLock.EnterReadLock();
                     return priceHistory;
                 }
                 finally
                 {
-                    priceHistoryDataLock.ExitReadLock();
+                    PriceHistoryDataLock.ExitReadLock();
                 }
             }
         }
 
-        public virtual List<Order> OrderHistory
+        public List<Order> OrderHistory
         {
             get
             {
                 try
                 {
-                    orderHistoryDataLock.EnterReadLock();
+                    OrderHistoryDataLock.EnterReadLock();
                     return orderHistory;
                 }
                 finally
                 {
-                    orderHistoryDataLock.ExitReadLock();
+                    OrderHistoryDataLock.ExitReadLock();
                 }
             }
         }
 
-        public virtual List<Trade> TradeHistory
+        public List<Trade> TradeHistory
         {
             get
             {
                 try
                 {
-                    tradeHistoryDataLock.EnterReadLock();
+                    TradeHistoryDataLock.EnterReadLock();
                     return tradeHistory;
                 }
                 finally
                 {
-                    tradeHistoryDataLock.ExitReadLock();
+                    TradeHistoryDataLock.ExitReadLock();
                 }
             }
         }
 
-        protected virtual void SavePricesToHistory(IEnumerable<Price> prices)
+        protected void SavePricesToHistory(IEnumerable<Price> prices)
         {
             try
             {
-                priceHistoryDataLock.EnterWriteLock();
-                if (prices.IsNullOrEmpty())
-                    return;
-
+                PriceHistoryDataLock.EnterWriteLock();
                 foreach (var price in prices.OrderBy(p => p.Time).ThenBy(p => p.Security.Code))
                 {
                     priceHistory.Add(price);
@@ -81,39 +75,33 @@ namespace Automata.Mechanisms
             }
             finally
             {
-                priceHistoryDataLock.ExitWriteLock();
+                PriceHistoryDataLock.ExitWriteLock();
             }
         }
 
-        protected virtual void SaveOrdersToHistory(IEnumerable<Order> orders)
+        protected void SaveOrdersToHistory(IEnumerable<Order> orders)
         {
             try
             {
-                orderHistoryDataLock.EnterWriteLock();
-                if (orders.IsNullOrEmpty())
-                    return;
-
+                OrderHistoryDataLock.EnterWriteLock();
                 orderHistory.AddRange(orders);
             }
             finally
             {
-                orderHistoryDataLock.ExitWriteLock();
+                OrderHistoryDataLock.ExitWriteLock();
             }
         }
 
-        protected virtual void SaveTradesToHistory(IEnumerable<Trade> trades)
+        protected void SaveTradesToHistory(IEnumerable<Trade> trades)
         {
             try
             {
-                tradeHistoryDataLock.EnterWriteLock();
-                if (trades.IsNullOrEmpty())
-                    return;
-
+                TradeHistoryDataLock.EnterWriteLock();
                 tradeHistory.AddRange(trades);
             }
             finally
             {
-                tradeHistoryDataLock.ExitWriteLock();
+                TradeHistoryDataLock.ExitWriteLock();
             }
         }
 

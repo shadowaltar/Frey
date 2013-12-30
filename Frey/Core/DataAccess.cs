@@ -1,11 +1,9 @@
-﻿using System.IO;
-using Automata.Core.Extensions;
+﻿using Automata.Core.Extensions;
 using Automata.Entities;
 using Automata.Mechanisms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Automata.Core
 {

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using Automata.Core.Extensions;
+﻿using Automata.Core.Extensions;
 using Automata.Entities;
 using Automata.Mechanisms;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Automata.Core
 {
@@ -53,37 +52,40 @@ namespace Automata.Core
 
             foreach (var x in data)
             {
-                if (x[2] == "Equity")
+                switch (x[2])
                 {
-                    var security = new Equity
+                    case "Equity":
                     {
-                        Id = x[0].ToInt(),
-                        Code = x[1],
-                        Symbol = x[3],
-                        Name = x[4],
-                        Exchange = References.LookupExchange(x[5]),
-                        Sector = x[6],
-                        Description = x[7]
-                    };
-                    yield return security;
-                }
-                else if (x[2] == "ETF")
-                {
-                    var security = new ETF
+                        var security = new Equity
+                        {
+                            Id = x[0].ToInt(),
+                            Code = x[1],
+                            Symbol = x[3],
+                            Name = x[4],
+                            Exchange = References.LookupExchange(x[5]),
+                            Sector = x[6],
+                            Description = x[7]
+                        };
+                        yield return security;
+                    }
+                        break;
+                    case "ETF":
                     {
-                        Id = x[0].ToInt(),
-                        Code = x[1],
-                        Symbol = x[3],
-                        Name = x[4],
-                        Exchange = References.LookupExchange(x[5]),
-                        Description = x[7]
-                    };
+                        var security = new ETF
+                        {
+                            Id = x[0].ToInt(),
+                            Code = x[1],
+                            Symbol = x[3],
+                            Name = x[4],
+                            Exchange = References.LookupExchange(x[5]),
+                            Description = x[7]
+                        };
 
-                    yield return security;
-                }
-                else
-                {
-                    throw new NotImplementedException();
+                        yield return security;
+                    }
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 }
             }
         }
@@ -97,7 +99,7 @@ namespace Automata.Core
             return Convert(DataPriceSourceType.YahooHistorical, data, security);
         }
 
-        private static IEnumerable<Price> Convert(DataPriceSourceType priceSourceType, List<string[]> data, Security security)
+        private static IEnumerable<Price> Convert(DataPriceSourceType priceSourceType, IEnumerable<string[]> data, Security security)
         {
             if (priceSourceType == DataPriceSourceType.YahooHistorical)
             {

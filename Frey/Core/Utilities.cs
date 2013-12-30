@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Automata.Core
 {
@@ -19,7 +14,7 @@ namespace Automata.Core
             get { return "[" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "]"; }
         }
 
-        public static string BracketTime(this DateTime time)
+        public static string PrintBracket(this DateTime time)
         {
             return "[" + time.ToString("yyyyMMdd HH:mm:ss") + "]";
         }

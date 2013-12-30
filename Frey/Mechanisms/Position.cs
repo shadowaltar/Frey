@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Automata.Core;
 using Automata.Entities;
-using Automata.Core;
+using System;
 
 namespace Automata.Mechanisms
 {
@@ -26,8 +26,8 @@ namespace Automata.Mechanisms
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2}: {3} x{4}",
-                Utilities.BracketTime(ExecutionTime), Security.Code, Side, ActualEntryPrice, ActualQuantity);
+            return string.Format("{0} {1} {2}: {3}x{4}",
+                ExecutionTime.PrintBracket(), Security.Code, Side, ActualEntryPrice, ActualQuantity);
         }
     }
 }

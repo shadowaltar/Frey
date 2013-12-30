@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Automata.Core.Extensions;
+﻿using Automata.Core;
 using Automata.Core.Exceptions;
+using Automata.Core.Extensions;
 using Automata.Entities;
 using Automata.Mechanisms;
-using System.Collections.Concurrent;
-using Automata.Core;
 using MathNet.Numerics.Statistics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Automata.Strategies
 {
@@ -29,39 +28,31 @@ namespace Automata.Strategies
 
         public override bool IsTimeToStop { get; protected set; }
 
-        private readonly Dictionary<Security, double> ranks = new Dictionary<Security, double>();
         public Dictionary<Security, List<Price>> PriceHistory { get; private set; }
 
-        private DateTime initStartDate;
-
-        private DateTime periodEnd;
-        private DateTime dateCounter;
-        private int counter = 0;
+        private int counter;
 
         public int Period { get; set; }
         public int PortfolioSize { get; set; }
 
         public override void Initialize()
         {
-            initStartDate = TradingScope.Start.ClosestFuture(DayOfWeek.Tuesday);
-            dateCounter = initStartDate;
-            periodEnd = dateCounter.AddWeeks(4);
         }
 
-        public override List<Order> GenerateOrders(HashSet<Price> data, List<Position> existingPositions)
+        public override List<Order> GenerateOrders(HashSet<Price> prices, List<Position> existingPositions)
         {
             // check if meets stop trading criteria
-            if (data.Any(p => p.Time == TradingScope.End))
+            if (prices.Any(p => p.Time == TradingScope.End))
             {
                 IsTimeToStop = true;
                 // generate 'all close' orders
-                return existingPositions.Select(p => Order.CreateToClose(p)).ToList();
+                return existingPositions.Select(Order.CreateToClose).ToList();
             }
 
             counter++;
             var orders = new List<Order>();
-            // save the incoming data into cache
-            foreach (var price in data)
+            // save the incoming prices into cache
+            foreach (var price in prices)
             {
                 var security = price.Security;
                 if (!PriceHistory.ContainsKey(security))
@@ -77,17 +68,16 @@ namespace Automata.Strategies
                 var ranks = new List<Rank>();
                 foreach (var security in PriceHistory.Keys)
                 {
-                    var prices = PriceHistory[security];
-                    ranks.Add(ComputeRank(prices, security));
+                    ranks.Add(ComputeRank(PriceHistory[security], security));
                 }
-                // var orderedRanks = ranks.OrderByDescending(r => r.RankValue).Take(PortfolioSize);
+
                 var newOrders = new List<Order>();
                 foreach (var rank in ranks.OrderByDescending(r => r.RankValue).Take(PortfolioSize))
                 {
                     var security = rank.Security;
                     var lastPrice = PriceHistory[security].Last();
                     var q = ComputeQuantity(security, lastPrice);
-                    newOrders.Add(new Order(security, Side.Long, lastPrice.AdjustedClose, q, 0));
+                    newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, 0));
                 }
                 orders.AddRange(newOrders);
 
@@ -128,7 +118,7 @@ namespace Automata.Strategies
 
         protected override double ComputeQuantity(Security security, Price referencePrice)
         {
-            var a = 100000 * .02 / referencePrice.AdjustedClose;
+            var a = 100000 * .02 / referencePrice.Close;
             if (a < 100)
                 return 100;
             var b = a % 100;
@@ -142,14 +132,14 @@ namespace Automata.Strategies
             if (prices.Count == 1)
                 return new Rank(security) { Return = 0, Sigma = 0 };
 
-            var startingPrice = prices.First().AdjustedClose;
-            var holdingPeriodReturn = (prices.Last().AdjustedClose - startingPrice) / startingPrice;
+            var startingPrice = prices.First().Close;
+            var holdingPeriodReturn = (prices.Last().Close - startingPrice) / startingPrice;
             var returns = new List<double>();
 
             for (var i = 1; i < prices.Count; i++)
             {
-                var prevClose = prices[i - 1].AdjustedClose;
-                returns.Add((prices[i].AdjustedClose - prevClose) / prevClose + 1);
+                var prevClose = prices[i - 1].Close;
+                returns.Add((prices[i].Close - prevClose) / prevClose + 1);
             }
             var s = new Rank(security)
             {

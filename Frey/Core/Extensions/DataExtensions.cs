@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Automata.Core.Extensions
 {
@@ -63,7 +62,7 @@ namespace Automata.Core.Extensions
         /// <summary>
         /// Parse a given object into DateTime. If the object is of type DateTime it will
         /// be casted directly, else the object will be parsed into a string and then parsed
-        /// by <see cref="DateTime.Parse()"/> again.
+        /// by <see cref="DateTime.Parse(string)"/> again.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -76,14 +75,15 @@ namespace Automata.Core.Extensions
         /// <summary>
         /// Parse a given object into DateTime. If the object is of type DateTime it will
         /// be casted directly, else the object will be parsed into a string and then parsed
-        /// by <see cref="DateTime.Parse()"/> again.
+        /// by <see cref="DateTime.Parse(string)"/> again.
         /// </summary>
         /// <param name="value"></param>
+        /// <param name="format"></param>
         /// <returns></returns>
         /// <exception cref="FormatException"></exception>
         public static DateTime ToDateTime(this object value, string format)
         {
-            return value is DateTime ? (DateTime)value 
+            return value is DateTime ? (DateTime)value
                 : DateTime.ParseExact(value.ToString(), format, CultureInfo.InvariantCulture);
         }
 
@@ -276,21 +276,6 @@ namespace Automata.Core.Extensions
         }
 
         /// <summary>
-        /// Delete rows from a table by given a SELECT filter string.
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public static DataTable Delete(this DataTable table, string filter)
-        {
-            table.ThrowIfNull();
-            filter.ThrowIfNull();
-
-            table.Select(filter).Delete();
-            return table;
-        }
-
-        /// <summary>
         /// Delete rows from a table by given a SELECT filter as a formatted string.
         /// </summary>
         /// <param name="table"></param>
@@ -301,8 +286,10 @@ namespace Automata.Core.Extensions
         {
             table.ThrowIfNull();
             formattedFilter.ThrowIfNull();
-
-            table.SelectFormat(formattedFilter, args).Delete();
+            if (args == null || !args.Any())
+                table.Select(formattedFilter).Delete();
+            else
+                table.SelectFormat(formattedFilter, args).Delete();
             return table;
         }
 
@@ -328,33 +315,38 @@ namespace Automata.Core.Extensions
             return source.Rows.Count == 0;
         }
 
+        /// <summary>
+        /// Returns true if the <paramref name="table"/> is null or contains zero rows.
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
         public static bool IsNullOrEmpty(this DataTable table)
         {
             return table == null || table.Rows.Count == 0;
         }
 
+        /// <summary>
+        /// Returns true if the <paramref name="dataSet"/> is null, contains no tables, or all the tables are empty.
+        /// </summary>
+        /// <param name="dataSet"></param>
+        /// <returns></returns>
         public static bool IsNullOrEmpty(this DataSet dataSet)
         {
             if (dataSet == null || dataSet.Tables.Count == 0)
                 return true;
 
-            foreach (DataTable table in dataSet.Tables)
-            {
-                if (table.IsNullOrEmpty())
-                    return false;
-            }
-            return true;
+            return dataSet.Tables.Cast<DataTable>().All(table => !table.IsNullOrEmpty());
         }
 
         /// <summary>
         /// Duplicate a <see cref="DataTable"/> which the source and the copied result are
         /// in difference reference values; optional allows to
-        /// trim spaces for all the cell values which types are string.
+        /// trim spaces for all the cell values which types are string if <paramref name="trimText"/> is true.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="trimText"></param>
         /// <returns></returns>
-        public static DataTable Duplicate(this DataTable source, bool trimText)
+        public static DataTable Duplicate(this DataTable source, bool trimText = false)
         {
             if (source == null) return null;
 
@@ -364,7 +356,7 @@ namespace Automata.Core.Extensions
             foreach (DataRow row in source.Rows)
             {
                 var r = result.NewRow();
-                for (int i = 0; i < source.Columns.Count; i++)
+                for (var i = 0; i < source.Columns.Count; i++)
                 {
                     if (trimText && source.Columns[i].DataType == typeof(string)) // if trim, and is text col
                     {
@@ -378,17 +370,6 @@ namespace Automata.Core.Extensions
                 result.Rows.Add(r);
             }
             return result;
-        }
-
-        /// <summary>
-        /// Duplicate a <see cref="DataTable"/> which the source and the copied result are
-        /// in difference reference values.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static DataTable Duplicate(this DataTable source)
-        {
-            return Duplicate(source, false);
         }
 
         /// <summary>
@@ -596,9 +577,6 @@ namespace Automata.Core.Extensions
 
             var result = new DataTable();
             result.Columns.Add(columnName, typeof(T));
-
-            if (list.Count() == 0)
-                return result;
 
             foreach (var item in list)
             {

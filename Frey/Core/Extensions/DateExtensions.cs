@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Automata.Core.Extensions
 {
@@ -52,8 +49,8 @@ namespace Automata.Core.Extensions
             {
                 // we are here to find out if there is a 1-day or 2-days weekend
                 // in the time interval remaining after subtracting the complete weeks
-                int firstDayOfWeek = (int)firstDay.DayOfWeek;
-                int lastDayOfWeek = (int)lastDay.DayOfWeek;
+                var firstDayOfWeek = (int)firstDay.DayOfWeek;
+                var lastDayOfWeek = (int)lastDay.DayOfWeek;
                 if (lastDayOfWeek < firstDayOfWeek)
                     lastDayOfWeek += 7;
                 if (firstDayOfWeek <= 6)

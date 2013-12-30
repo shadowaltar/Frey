@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Automata.Core;
+using Automata.Core.Exceptions;
+using Automata.Core.Extensions;
+using Automata.Entities;
+using Automata.Strategies;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Automata.Core.Extensions;
-using Automata.Strategies;
-using Automata.Entities;
-using Automata.Core;
-using System.Collections.Concurrent;
-using Automata.Core.Exceptions;
 
 namespace Automata.Mechanisms
 {
@@ -32,16 +32,12 @@ namespace Automata.Mechanisms
         public double Equity { get; set; }
         private double initEquity;
 
+        private readonly List<Position> positions = new List<Position>();
         public List<Position> Positions { get { return positions; } }
-        public List<Order> ExecutedOrders { get { return executedOrders; } }
-        public List<Trade> Trades { get { return trades; } }
 
         public DataSource DataSource { get; set; }
 
         private CancellationTokenSource cancellation;
-        private readonly List<Order> executedOrders = new List<Order>();
-        private readonly List<Position> positions = new List<Position>();
-        private readonly List<Trade> trades = new List<Trade>();
 
         #region lifecycle methods
 
@@ -84,7 +80,7 @@ namespace Automata.Mechanisms
             while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
             {
                 // dequeue one day only
-                HashSet<Price> prices = null;
+                HashSet<Price> prices;
                 if (!PriceData.TryDequeue(out prices))
                 {
                     continue;
@@ -94,31 +90,40 @@ namespace Automata.Mechanisms
                 var orders = Strategy.GenerateOrders(prices, Positions);
                 CheckCrossTrades(orders);
 
-                // execute the exits, assuming all are executed immediately
-                var closePositionTask = Task.Factory.StartNew(() => ClosePositions(orders, Positions, prices));
-
-                // execute the entries, assuming all are executed immediately
-                var orderExecutionTask = Task.Factory.StartNew(() => ExecuteOrders(orders, prices));
-
-                // wait for all the orders to be filled.
-                closePositionTask.Wait();
-                orderExecutionTask.Wait();
-
-                var newClosedTrades = closePositionTask.Result;
-                if (!newClosedTrades.IsNullOrEmpty())
+                Task<List<Trade>> closePositionTask = null;
+                Task<List<Position>> orderExecutionTask = null;
+                if (orders.Any())
                 {
-                    foreach (var trade in newClosedTrades)
-                    {
-                        Positions.Remove(trade.Position);
-                    }
-                    ComputeProfits(newClosedTrades);
+                    // assuming all are executed immediately
+                    closePositionTask = Task.Factory.StartNew(() => ClosePositions(orders, Positions, prices));
+                    orderExecutionTask = Task.Factory.StartNew(() => ExecuteOrders(orders, prices));
+
+                    // wait for all the orders to be filled.
+                    closePositionTask.Wait();
+                    orderExecutionTask.Wait();
                 }
 
-                var newPositions = orderExecutionTask.Result;
-                if (!newPositions.IsNullOrEmpty())
+                if (closePositionTask != null)
                 {
-                    Positions.AddRange(newPositions);
-                    ComputeRisks(newPositions);
+                    var newClosedTrades = closePositionTask.Result;
+                    if (!newClosedTrades.IsNullOrEmpty())
+                    {
+                        foreach (var trade in newClosedTrades)
+                        {
+                            Positions.Remove(trade.Position);
+                        }
+                        ComputeProfits(newClosedTrades);
+                    }
+                }
+
+                if (orderExecutionTask != null)
+                {
+                    var newPositions = orderExecutionTask.Result;
+                    if (!newPositions.IsNullOrEmpty())
+                    {
+                        Positions.AddRange(newPositions);
+                        ComputeRisks(newPositions);
+                    }
                 }
             }
             Console.WriteLine(Utilities.BracketNow + " Stopped trading.");
@@ -145,54 +150,63 @@ namespace Automata.Mechanisms
         }
 
         private List<Trade> ClosePositions(IEnumerable<Order> orders,
-            List<Position> positions, HashSet<Price> prices)
+            List<Position> existingPositions, HashSet<Price> prices)
         {
-            if (positions.IsNullOrEmpty() || orders.IsNullOrEmpty())
+            if (existingPositions.IsNullOrEmpty())
                 return null;
-            var exitOrders = orders.Where(o => o.IsClosingPosition);
+
+            var exitOrders = orders.Where(o => o.IsClosingPosition).ToList();
+            if (exitOrders.Count == 0)
+                return null;
 
             // save exit orders to history
-            if (!exitOrders.IsNullOrEmpty())
-                Task.Factory.StartNew(() => SaveOrdersToHistory(exitOrders));
+            SaveOrdersToHistory(exitOrders);
 
-            var trades = new List<Trade>();
+            var results = new List<Trade>();
             foreach (var order in exitOrders)
             {
-                var position = positions.FirstOrDefault(p => p.Security == order.Security);
-                var price = prices.FirstOrDefault(p => p.Security == position.Security);
-                if (position == null || price == null)
-                {
+                var position = existingPositions.FirstOrDefault(p => p.Security == order.Security);
+                if (position == null)
                     throw new InvalidStrategyBehaviorException();
-                }
-                var trade = new Trade();
-                trade.Position = position;
-                trade.ExitOrder = order;
-                trade.ExecutionTime = price.Time;
-                trade.ActuralExitPrice = price.AdjustedClose;
-                trade.Return = price.AdjustedClose - position.ActualEntryPrice;
+
+                var price = prices.FirstOrDefault(p => p.Security == position.Security);
+                if (price == null)
+                    throw new InvalidStrategyBehaviorException();
+
+                // the market price of order to close the position, is the stock's close price of the day
+                order.Price = price.Close;
+                var trade = new Trade
+                {
+                    Position = position,
+                    ExitOrder = order,
+                    ExecutionTime = price.Time,
+                    ActuralExitPrice = order.Price,
+                    Return = order.Price - position.ActualEntryPrice
+                };
                 trade.Profit = trade.Return * position.ActualQuantity;
-                trades.Add(trade);
+                results.Add(trade);
                 Console.WriteLine(Utilities.BracketNow + " Close Position: " + trade);
             }
 
-            // save trades to history
-            if (!trades.IsNullOrEmpty())
-                Task.Factory.StartNew(() => SaveTradesToHistory(trades));
+            if (results.Count > 0)
+                SaveTradesToHistory(results); // save trades to history
 
-            return trades;
+            return results;
         }
 
         private List<Position> ExecuteOrders(List<Order> orders, HashSet<Price> prices)
         {
             if (orders.IsNullOrEmpty())
                 return null;
-            var entryOrders = orders.Where(o => !o.IsClosingPosition);
+
+            var entryOrders = orders.Where(o => !o.IsClosingPosition).ToList();
+            if (entryOrders.Count == 0)
+                return null;
 
             // save entry orders to history
-            if (!entryOrders.IsNullOrEmpty())
-                Task.Factory.StartNew(() => SaveOrdersToHistory(entryOrders));
+            SaveOrdersToHistory(entryOrders);
 
-            var positions = new List<Position>();
+            var results = new List<Position>();
             foreach (var order in entryOrders)
             {
                 var price = prices.FirstOrDefault(p => p.Security == order.Security);
@@ -200,7 +214,6 @@ namespace Automata.Mechanisms
                 {
                     throw new InvalidStrategyBehaviorException();
                 }
-                order.Price = price.AdjustedClose;
 
                 // not handling the "Side.Hold" at the moment.
                 if (order.Side == Side.Hold)
@@ -209,18 +222,17 @@ namespace Automata.Mechanisms
                 }
 
                 var position = new Position(order, order.Price, order.Quantity, price.Time);
-                positions.Add(position);
+                results.Add(position);
                 Console.WriteLine(Utilities.BracketNow + " New Position: " + position);
             }
-            return positions;
+            return results;
         }
 
         private void CheckCrossTrades(List<Order> orders)
         {
             foreach (var order in orders)
             {
-                var orderCount = orders.Count(o => o.Security == order.Security);
-                if (orderCount > 1)
+                if (orders.Count(o => o.Security == order.Security) > 1)
                 {
                     throw new InvalidStrategyBehaviorException();
                 }
