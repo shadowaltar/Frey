@@ -1,4 +1,5 @@
-﻿using Automata.Mechanisms;
+﻿using Automata.Core;
+using Automata.Mechanisms;
 using Automata.Mechanisms.Factories;
 using Automata.Strategies;
 using System.Threading;
@@ -9,6 +10,9 @@ namespace Automata
     {
         static void Main(string[] args)
         {
+            var x = YahooStockPriceDownloader.GetUrl("SLY");
+            YahooStockPriceDownloader.Download("SLY", "NYSE", Context.StaticDataFileDirectory);
+
             var testScope = ScopeFactory.DailyAllUnitedStatesStocks(10);
             var tester = new BackTester(testScope)
             {

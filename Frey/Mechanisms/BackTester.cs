@@ -23,118 +23,11 @@ namespace Automata.Mechanisms
             initEquity = Equity;
         }
 
-        public ITradingScope TradingScope { get; set; }
-
-        public Strategy Strategy { get; set; }
-
         public ConcurrentQueue<HashSet<Price>> PriceData { get; protected set; }
 
-        public double Equity { get; set; }
-        private double initEquity;
-
-        private readonly List<Position> positions = new List<Position>();
-        public List<Position> Positions { get { return positions; } }
-
-        public DataSource DataSource { get; set; }
-
-        private CancellationTokenSource cancellation;
-
-        #region lifecycle methods
-
-        public void Start()
-        {
-            Strategy.TradingScope = TradingScope;
-            Strategy.Initialize();
-
-            DataSource.TradingScope = TradingScope;
-            DataSource.Initialize();
-
-            SubscribeDataSource();
-            DataSource.Start();
-
-            cancellation = new CancellationTokenSource();
-            Task.Factory.StartNew(Trade, cancellation.Token);
-        }
-
-        public void Stop()
-        {
-            StopTrading();
-            DataSource.Stop();
-            UnsubscribeDataSource();
-        }
-
-        private void SubscribeDataSource()
-        {
-            DataSource.NotifyNewPriceData += ProcessPriceData;
-        }
-
-        private void UnsubscribeDataSource()
-        {
-            DataSource.NotifyNewPriceData -= ProcessPriceData;
-        }
-
-        #endregion
-
-        protected override void Trade()
-        {
-            while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
-            {
-                // dequeue one day only
-                HashSet<Price> prices;
-                if (!PriceData.TryDequeue(out prices))
-                {
-                    continue;
-                }
-
-                // generate entries and exits
-                var orders = Strategy.GenerateOrders(prices, Positions);
-                CheckCrossTrades(orders);
-
-                Task<List<Trade>> closePositionTask = null;
-                Task<List<Position>> orderExecutionTask = null;
-                if (orders.Any())
-                {
-                    // assuming all are executed immediately
-                    closePositionTask = Task.Factory.StartNew(() => ClosePositions(orders, Positions, prices));
-                    orderExecutionTask = Task.Factory.StartNew(() => ExecuteOrders(orders, prices));
-
-                    // wait for all the orders to be filled.
-                    closePositionTask.Wait();
-                    orderExecutionTask.Wait();
-                }
-
-                if (closePositionTask != null)
-                {
-                    var newClosedTrades = closePositionTask.Result;
-                    if (!newClosedTrades.IsNullOrEmpty())
-                    {
-                        foreach (var trade in newClosedTrades)
-                        {
-                            Positions.Remove(trade.Position);
-                        }
-                        ComputeProfits(newClosedTrades);
-                    }
-                }
-
-                if (orderExecutionTask != null)
-                {
-                    var newPositions = orderExecutionTask.Result;
-                    if (!newPositions.IsNullOrEmpty())
-                    {
-                        Positions.AddRange(newPositions);
-                        ComputeRisks(newPositions);
-                    }
-                }
-            }
-            Console.WriteLine(Utilities.BracketNow + " Stopped trading.");
-            Console.WriteLine(Utilities.BracketNow + " Equity: " + Equity);
-            Console.WriteLine(Utilities.BracketNow + " Return: " + (Equity / initEquity - 1));
-            TradeHistory.TrimExcess();
-            Console.WriteLine(TradeHistory);
-        }
-
         private readonly object equitySyncRoot = new object();
-        private void ComputeProfits(List<Trade> newClosedTrades)
+
+        protected override void ComputeProfits(List<Trade> newClosedTrades)
         {
             lock (equitySyncRoot)
             {
@@ -145,11 +38,11 @@ namespace Automata.Mechanisms
             }
         }
 
-        private void ComputeRisks(List<Position> newPositions)
+        protected override void ComputeRisks(List<Position> newPositions)
         {
         }
 
-        private List<Trade> ClosePositions(IEnumerable<Order> orders,
+        protected override List<Trade> ClosePositions(IEnumerable<Order> orders,
             List<Position> existingPositions, HashSet<Price> prices)
         {
             if (existingPositions.IsNullOrEmpty())
@@ -194,7 +87,7 @@ namespace Automata.Mechanisms
             return results;
         }
 
-        private List<Position> ExecuteOrders(List<Order> orders, HashSet<Price> prices)
+        protected override List<Position> ExecuteOrders(List<Order> orders, HashSet<Price> prices)
         {
             if (orders.IsNullOrEmpty())
                 return null;
@@ -228,7 +121,7 @@ namespace Automata.Mechanisms
             return results;
         }
 
-        private void CheckCrossTrades(List<Order> orders)
+        protected override void CheckCrossTrades(List<Order> orders)
         {
             foreach (var order in orders)
             {
@@ -239,21 +132,25 @@ namespace Automata.Mechanisms
             }
         }
 
-        private void StopTrading()
-        {
-            Console.WriteLine(Utilities.BracketNow + " Stopping trading.");
-            cancellation.Cancel();
-        }
-
         /// <summary>
         /// Process the prices data come from the data source.
         /// Here we assumed that the data are causal.
         /// </summary>
         /// <param name="prices"></param>
-        private void ProcessPriceData(HashSet<Price> prices)
+        protected override void OnNewPriceData(HashSet<Price> prices)
         {
             PriceData.Enqueue(prices);
             Task.Factory.StartNew(() => SavePricesToHistory(prices));
+        }
+
+        protected override HashSet<Price> RetrievePrices()
+        {
+            HashSet<Price> prices;
+            if (!PriceData.TryDequeue(out prices))
+            {
+                return null;
+            }
+            return prices;
         }
     }
 }

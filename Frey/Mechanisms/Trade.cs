@@ -12,6 +12,21 @@ namespace Automata.Mechanisms
         public double Return { get; set; }
         public double Profit { get; set; }
 
+        /// <summary>
+        /// Get the transaction cost to open the position (execute the entry order).
+        /// </summary>
+        public double OpenPositionTransactionCost { get { return Position.TransactionCost; } }
+
+        /// <summary>
+        /// Get or set the transaction cost to close the position (execute the exit order).
+        /// </summary>
+        public double ClosePositionTransactionCost { get; set; }
+
+        /// <summary>
+        /// Get the total transaction cost to complete the trade.
+        /// </summary>
+        public double TotalTransactionCost { get { return OpenPositionTransactionCost + ClosePositionTransactionCost; } }
+
         public override string ToString()
         {
             return string.Format("{0} {1}: ({2}-{3})x{4} ={5}",

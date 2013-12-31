@@ -20,6 +20,8 @@ namespace Automata.Mechanisms
         public double ActualEntryPrice { get; private set; }
         public double ActualQuantity { get; private set; }
 
+        public double TransactionCost { get; set; }
+
         public DateTime ExecutionTime { get; set; }
 
         public Order Order { get; private set; }

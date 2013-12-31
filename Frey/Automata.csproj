@@ -88,6 +88,7 @@
     <Compile Include="Core\Extensions\DataExtensions.cs" />
     <Compile Include="Core\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Core\Extensions\MultithreadingExtensions.cs" />
+    <Compile Include="Core\YahooPriceDownloader.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\ETF.cs" />
     <Compile Include="Entities\ExchangeTradable.cs" />
