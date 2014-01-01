@@ -39,14 +39,14 @@ namespace Automata.Strategies
         {
         }
 
-        public override List<Order> GenerateOrders(HashSet<Price> prices, List<Position> existingPositions)
+        public override List<Order> GenerateOrders(HashSet<Price> prices, Portfolio portfolio, DateTime orderTime)
         {
             // check if meets stop trading criteria
             if (prices.Any(p => p.Time == TradingScope.End))
             {
                 IsTimeToStop = true;
                 // generate 'all close' orders
-                return existingPositions.Select(Order.CreateToClose).ToList();
+                return portfolio.Select(ep => Order.CreateToClose(ep, orderTime)).ToList();
             }
 
             counter++;
@@ -76,8 +76,8 @@ namespace Automata.Strategies
                 {
                     var security = rank.Security;
                     var lastPrice = PriceHistory[security].Last();
-                    var q = ComputeQuantity(security, lastPrice);
-                    newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, 0));
+                    var q = ComputeQuantity(portfolio, security, lastPrice);
+                    newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, 0, orderTime));
                 }
                 orders.AddRange(newOrders);
 
@@ -85,10 +85,10 @@ namespace Automata.Strategies
 
                 // check existing positions to see if already holding the security, or need to sell
                 // those not in the ranks anymore.
-                if (!existingPositions.IsNullOrEmpty())
+                if (!portfolio.IsNullOrEmpty())
                 {
                     var closePositionOrders = new List<Order>();
-                    foreach (var position in existingPositions)
+                    foreach (var position in portfolio)
                     {
                         var order = orders.FirstOrDefault(o => o.Security == position.Security); // maintains a hold
                         if (order != null)
@@ -96,6 +96,7 @@ namespace Automata.Strategies
                             if (order.Side == Side.Long || order.Side == Side.Hold)
                             {
                                 order.Side = Side.Hold;
+                                orders.Remove(order);
                             }
                             else if (order.Side == Side.Short)
                             {
@@ -104,21 +105,24 @@ namespace Automata.Strategies
                         }
                         else
                         {
-                            closePositionOrders.Add(Order.CreateToClose(position));
+                            closePositionOrders.Add(Order.CreateToClose(position, orderTime));
                         }
                     }
                     orders.AddRange(closePositionOrders);
                 }
                 PriceHistory.Clear();
 
-                Console.WriteLine(Utilities.BracketNow + " Orders Generated.");
+            }
+            foreach (var order in orders)
+            {
+                Console.WriteLine(Utilities.BracketNow + " New Order: " + order);
             }
             return orders;
         }
 
-        protected override double ComputeQuantity(Security security, Price referencePrice)
+        protected override double ComputeQuantity(Portfolio portfolio, Security security, Price referencePrice)
         {
-            var a = 100000 * .02 / referencePrice.Close;
+            var a = portfolio.CashPosition.Equity * .15 / referencePrice.Close;
             if (a < 100)
                 return 100;
             var b = a % 100;

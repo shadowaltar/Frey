@@ -90,6 +90,8 @@
     <Compile Include="Core\Extensions\MultithreadingExtensions.cs" />
     <Compile Include="Core\YahooPriceDownloader.cs" />
     <Compile Include="Entities\Country.cs" />
+    <Compile Include="Entities\Cash.cs" />
+    <Compile Include="Entities\Currency.cs" />
     <Compile Include="Entities\ETF.cs" />
     <Compile Include="Entities\ExchangeTradable.cs" />
     <Compile Include="Entities\Exchange.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="Entities\Equity.cs" />
     <Compile Include="Mechanisms\Order.cs" />
     <Compile Include="Mechanisms\OrderType.cs" />
+    <Compile Include="Mechanisms\Portfolio.cs" />
     <Compile Include="Mechanisms\Position.cs" />
     <Compile Include="Mechanisms\Side.cs" />
     <Compile Include="Mechanisms\TimeScale.cs" />

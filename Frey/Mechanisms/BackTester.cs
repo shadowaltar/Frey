@@ -19,23 +19,15 @@ namespace Automata.Mechanisms
             TradingScope = testScope;
             PriceData = new ConcurrentQueue<HashSet<Price>>();
             DataSource = new DataSource(new HistoricalStaticDataFileAccess());
-            Equity = 100000;
-            initEquity = Equity;
         }
 
         public ConcurrentQueue<HashSet<Price>> PriceData { get; protected set; }
 
         private readonly object equitySyncRoot = new object();
 
-        protected override void ComputeProfits(List<Trade> newClosedTrades)
+        protected override double CheckMarginRequirement()
         {
-            lock (equitySyncRoot)
-            {
-                foreach (var trade in newClosedTrades)
-                {
-                    Equity += trade.Profit;
-                }
-            }
+            return Portfolio.CashPosition.Equity;
         }
 
         protected override void ComputeRisks(List<Position> newPositions)

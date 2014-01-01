@@ -1,4 +1,6 @@
-﻿using Automata.Entities;
+﻿using System.Diagnostics;
+using System.IO;
+using Automata.Entities;
 using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
 using System.Collections.Generic;
@@ -21,8 +23,8 @@ namespace Automata.Mechanisms
         private readonly List<Order> orderHistory = new List<Order>(50000);
         private readonly List<Trade> tradeHistory = new List<Trade>(10000);
 
-        private readonly List<Position> positions = new List<Position>();
-        public List<Position> Positions { get { return positions; } }
+        private readonly Portfolio portfolio = new Portfolio();
+        public Portfolio Portfolio { get { return portfolio; } }
 
         public List<Price> PriceHistory
         {
@@ -72,8 +74,6 @@ namespace Automata.Mechanisms
             }
         }
 
-        public double Equity { get; set; }
-
         protected double initEquity;
 
         public DataSource DataSource { get; set; }
@@ -83,6 +83,19 @@ namespace Automata.Mechanisms
         public ITradingScope TradingScope { get; set; }
 
         private CancellationTokenSource cancellation;
+
+        protected void SavePriceToHistory(Price price)
+        {
+            try
+            {
+                PriceHistoryDataLock.EnterWriteLock();
+                priceHistory.Add(price);
+            }
+            finally
+            {
+                PriceHistoryDataLock.ExitWriteLock();
+            }
+        }
 
         protected void SavePricesToHistory(IEnumerable<Price> prices)
         {
@@ -100,6 +113,19 @@ namespace Automata.Mechanisms
             }
         }
 
+        protected void SaveOrderToHistory(Order order)
+        {
+            try
+            {
+                OrderHistoryDataLock.EnterWriteLock();
+                orderHistory.Add(order);
+            }
+            finally
+            {
+                OrderHistoryDataLock.ExitWriteLock();
+            }
+        }
+
         protected void SaveOrdersToHistory(IEnumerable<Order> orders)
         {
             try
@@ -110,6 +136,19 @@ namespace Automata.Mechanisms
             finally
             {
                 OrderHistoryDataLock.ExitWriteLock();
+            }
+        }
+
+        protected void SaveTradeToHistory(Trade trade)
+        {
+            try
+            {
+                TradeHistoryDataLock.EnterWriteLock();
+                tradeHistory.Add(trade);
+            }
+            finally
+            {
+                TradeHistoryDataLock.ExitWriteLock();
             }
         }
 
@@ -138,8 +177,11 @@ namespace Automata.Mechanisms
                     continue;
                 }
 
+                // use the timestamp of the price data to be the timestamp of order
+                var orderTime = prices.First().Time;
+
                 // generate entries and exits
-                var orders = Strategy.GenerateOrders(prices, Positions);
+                var orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
                 CheckCrossTrades(orders);
 
                 Task<List<Trade>> closePositionTask = null;
@@ -147,8 +189,18 @@ namespace Automata.Mechanisms
                 if (orders.Any())
                 {
                     // assuming all are executed immediately
-                    closePositionTask = Task.Factory.StartNew(() => ClosePositions(orders, Positions, prices));
-                    orderExecutionTask = Task.Factory.StartNew(() => ExecuteOrders(orders, prices));
+                    closePositionTask = Task.Factory.StartNew(() =>
+                    {
+                        var trades = ClosePositions(orders, Portfolio, prices);
+                        ComputeCashPosition(trades);
+                        return trades;
+                    });
+                    orderExecutionTask = Task.Factory.StartNew(() =>
+                    {
+                        var positions = ExecuteOrders(orders, prices);
+                        ComputeCashPosition(positions);
+                        return positions;
+                    });
 
                     // wait for all the orders to be filled.
                     closePositionTask.Wait();
@@ -162,9 +214,9 @@ namespace Automata.Mechanisms
                     {
                         foreach (var trade in newClosedTrades)
                         {
-                            Positions.Remove(trade.Position);
+                            Portfolio.Remove(trade.Position);
                         }
-                        ComputeProfits(newClosedTrades);
+                        // ComputeProfits(newClosedTrades);
                     }
                 }
 
@@ -173,19 +225,80 @@ namespace Automata.Mechanisms
                     var newPositions = orderExecutionTask.Result;
                     if (!newPositions.IsNullOrEmpty())
                     {
-                        Positions.AddRange(newPositions);
+                        Portfolio.AddRange(newPositions);
                         ComputeRisks(newPositions);
                     }
                 }
             }
-            Console.WriteLine(Utilities.BracketNow + " Stopped trading.");
-            Console.WriteLine(Utilities.BracketNow + " Equity: " + Equity);
-            Console.WriteLine(Utilities.BracketNow + " Return: " + (Equity / initEquity - 1));
             TradeHistory.TrimExcess();
-            Console.WriteLine(TradeHistory);
+
+            Console.WriteLine();
+            var reportFileName = ("Result_" + Utilities.Now + ".csv").Replace(":", string.Empty);
+            using (var sw = new StreamWriter(new FileStream(reportFileName, FileMode.CreateNew)))
+                foreach (var trade in TradeHistory)
+                {
+                    Console.WriteLine(trade);
+                    sw.WriteLine(trade.PrintCSVFriendly());
+                }
+            Console.WriteLine(Utilities.BracketNow + " Stopped trading.");
+            Console.WriteLine(Utilities.BracketNow + " Period From {0} To {1}", TradingScope.Start, TradingScope.End);
+            Console.WriteLine(Utilities.BracketNow + " Equity: " + Portfolio.CashPosition.Equity);
+            Console.WriteLine(Utilities.BracketNow + " Return: " + (Portfolio.CashPosition.Equity / initEquity - 1));
+            Process.Start(reportFileName);
         }
 
-        protected abstract void ComputeProfits(List<Trade> newClosedTrades);
+        private void ComputeCashPosition(IEnumerable<Trade> trades)
+        {
+            if (trades == null) return;
+            foreach (var trade in trades)
+            {
+                if (trade.ExitOrder.Side == Side.Long)
+                    Portfolio.CashPosition.Add(-trade.ExitEquity);
+                else if (trade.ExitOrder.Side == Side.Short)
+                    Portfolio.CashPosition.Add(trade.ExitEquity);
+            }
+        }
+
+        private void ComputeCashPosition(IEnumerable<Position> positions)
+        {
+            if (positions == null) return;
+            foreach (var position in positions)
+            {
+                if (position.Order.Side == Side.Long)
+                    Portfolio.CashPosition.Add(-position.Equity);
+                else if (position.Order.Side == Side.Short)
+                    Portfolio.CashPosition.Add(position.Equity);
+            }
+        }
+
+        public virtual void AddCash(double quantity, Currency currency, DateTime contributeTime)
+        {
+            if (Portfolio.CashPosition == null)
+            {
+                initEquity = quantity;
+                Portfolio.CashPosition = Position.NewCash(quantity, currency, contributeTime);
+                SaveOrderToHistory(Portfolio.CashPosition.Order);
+            }
+            else
+            {
+                var cashOrder = CashOrder.NewContribute(Portfolio, quantity, contributeTime);
+                Portfolio.CashPosition.Add(quantity);
+                SaveOrderToHistory(cashOrder);
+            }
+        }
+
+        public virtual void WithdrawCash(double quantity, DateTime withdrawTime)
+        {
+            var availableCash = CheckMarginRequirement();
+            if (availableCash > 0)
+            {
+                var cashOrder = CashOrder.NewWithdrawal(Portfolio, quantity, withdrawTime);
+                SaveOrderToHistory(cashOrder);
+                Portfolio.CashPosition.Add(-quantity);
+            }
+        }
+
+        protected abstract double CheckMarginRequirement();
 
         protected abstract void ComputeRisks(List<Position> newPositions);
 

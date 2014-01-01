@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Automata.Entities;
 using Automata.Mechanisms;
 using System.Collections.Concurrent;
@@ -16,7 +17,7 @@ namespace Automata.Strategies
         {
         }
 
-        public abstract List<Order> GenerateOrders(HashSet<Price> prices, List<Position> existingPositions);
-        protected abstract double ComputeQuantity(Security security, Price referencePrice);
+        public abstract List<Order> GenerateOrders(HashSet<Price> prices, Portfolio portfolio, DateTime orderTime);
+        protected abstract double ComputeQuantity(Portfolio portfolio, Security security, Price referencePrice);
     }
 }

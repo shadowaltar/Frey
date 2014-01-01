@@ -1,4 +1,6 @@
-﻿namespace Automata.Mechanisms.Utils
+﻿using Automata.Entities;
+
+namespace Automata.Mechanisms.Utils
 {
     public static class TradingLogicUtililites
     {
@@ -13,6 +15,11 @@
                 default:
                     return Side.Hold;
             }
+        }
+
+        public static string Code(this Currency currency)
+        {
+            return "CURRENCY:" + currency;
         }
     }
 }

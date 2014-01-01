@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Automata.Core
 {
@@ -31,6 +26,18 @@ namespace Automata.Core
                 using (var wc = new WebClient())
                 {
                     wc.DownloadFile(url, filePath);
+                }
+                if (File.Exists(filePath))
+                {
+                    var fileSize = new FileInfo(filePath).Length;
+                    var fileSizeFormatted = fileSize > 1024
+                        ? (fileSize/1024).ToString("##.000") + "KBytes"
+                        : fileSize + "Bytes";
+                    Console.WriteLine("File for {0} is downloaded, the size is: {1}", code, fileSizeFormatted);
+                }
+                else
+                {
+                    Console.WriteLine("Cannot download {0}!", code);
                 }
             }
             catch

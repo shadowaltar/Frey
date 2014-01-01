@@ -4,5 +4,6 @@
     {
         Market,
         Limit,
+        PortfolioCashFlow,
     }
 }
