@@ -14,6 +14,16 @@ namespace Automata.Core
             get { return "[" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "]"; }
         }
 
+        public static void WriteTimedLine(string value)
+        {
+            Console.WriteLine(BracketNow + " " + value);
+        }
+
+        public static void WriteTimedLine(string value, params object[] arg)
+        {
+            Console.WriteLine(BracketNow + " " + value, arg);
+        }
+
         public static string Print(this DateTime time)
         {
             return time.ToString("yyyy-MM-dd HH:mm:ss");

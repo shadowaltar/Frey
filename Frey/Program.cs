@@ -1,5 +1,4 @@
-﻿using Automata.Core;
-using Automata.Entities;
+﻿using Automata.Entities;
 using Automata.Mechanisms;
 using Automata.Mechanisms.Factories;
 using Automata.Strategies;

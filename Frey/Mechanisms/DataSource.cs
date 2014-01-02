@@ -94,7 +94,6 @@ namespace Automata.Mechanisms
                     currentDataStatus = DataStatus.WaitingForData;
                     InvokeDataStatusChanged();
 
-                    //Console.WriteLine(Utilities.BracketNow + " Waiting for data.");
                     cancellation.Token.WaitHandle.WaitOne(5);
                 }
                 else
@@ -105,8 +104,6 @@ namespace Automata.Mechanisms
                         InvokeDataStatusChanged();
                     }
 
-                    // send data
-                    //Console.WriteLine(Utilities.BracketNow + " Sending data.");
                     InvokeNotifyPriceDataArrive(prices);
                 }
             }

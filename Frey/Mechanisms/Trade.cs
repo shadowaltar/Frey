@@ -12,7 +12,7 @@ namespace Automata.Mechanisms
         public double Return { get; set; }
         public double Profit { get; set; }
         public double ExitEquity { get { return Position.ActualQuantity * ActuralExitPrice; } }
-        public double EntryEquity { get { return Position.Equity; } }
+        public double EntryEquity { get { return Position.Value; } }
 
         /// <summary>
         /// Get the transaction cost to open the position (execute the entry order).
@@ -33,14 +33,22 @@ namespace Automata.Mechanisms
         {
             return string.Format("{0} {1}: ({2}-{3})x{4} ={5}",
                 ExecutionTime.PrintBracket(), Position.Security.Code,
-                ActuralExitPrice, Position.ActualEntryPrice, Position.ActualQuantity, Profit);
+                ActuralExitPrice, Position.ActualEntryPrice, Position.ActualQuantity, Math.Round(Profit, 6));
         }
 
         public string PrintCSVFriendly()
         {
             return string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
                 ExecutionTime.Print(), Position.Security.Code,
-                ActuralExitPrice, Position.ActualEntryPrice, Position.ActualQuantity, Profit);
+                ActuralExitPrice, Position.ActualEntryPrice, Position.ActualQuantity, Math.Round(Profit, 6));
+        }
+
+        public string PrintCSVFriendly(double previousPortfolioEquity)
+        {
+            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}",
+                ExecutionTime.Print(), Position.Security.Code,
+                ActuralExitPrice, Position.ActualEntryPrice, Position.ActualQuantity, Profit,
+                previousPortfolioEquity + Math.Round(Profit, 6));
         }
     }
 }

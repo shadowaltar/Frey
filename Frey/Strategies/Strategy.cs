@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Automata.Entities;
+﻿using Automata.Entities;
 using Automata.Mechanisms;
-using System.Collections.Concurrent;
+using System;
+using System.Collections.Generic;
 
 namespace Automata.Strategies
 {

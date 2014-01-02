@@ -24,7 +24,7 @@ namespace Automata.Mechanisms
 
         public double ActualEntryPrice { get; protected set; }
         public double ActualQuantity { get; protected set; }
-        public virtual double Equity { get { return ActualEntryPrice * ActualQuantity; } }
+        public virtual double Value { get { return ActualEntryPrice * ActualQuantity; } }
 
         public double TransactionCost { get; set; }
         public DateTime ExecutionTime { get; set; }
@@ -50,7 +50,7 @@ namespace Automata.Mechanisms
 
     public class CashPosition : Position
     {
-        private readonly ReaderWriterLockSlim quantityLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim balanceLock = new ReaderWriterLockSlim();
 
         public CashPosition(double quantity, Currency currency, DateTime contributeTime)
             : base(new CashOrder(new Cash { Code = currency.Code() }, quantity, contributeTime),
@@ -63,27 +63,27 @@ namespace Automata.Mechanisms
         {
             try
             {
-                quantityLock.EnterWriteLock();
+                balanceLock.EnterWriteLock();
                 ActualQuantity += quantity;
             }
             finally
             {
-                quantityLock.ExitWriteLock();
+                balanceLock.ExitWriteLock();
             }
         }
 
-        public override double Equity
+        public override double Value
         {
             get
             {
                 try
                 {
-                    quantityLock.EnterReadLock();
+                    balanceLock.EnterReadLock();
                     return ActualQuantity;
                 }
                 finally
                 {
-                    quantityLock.ExitReadLock();
+                    balanceLock.ExitReadLock();
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace Automata.Mechanisms
         public override string ToString()
         {
             return string.Format("{0} {1}",
-                Security.Code, Equity);
+                Security.Code, Math.Round(Value, 6));
         }
     }
 }

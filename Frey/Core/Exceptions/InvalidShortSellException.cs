@@ -1,6 +1,6 @@
 ﻿namespace Automata.Core.Exceptions
 {
-    public class InvalidShortSellException : InvalidStrategyBehaviorException
+    public class InvalidShortSellException : InvalidOrderBehaviorException
     {
     }
 }

@@ -76,6 +76,7 @@
     <Compile Include="Core\Context.cs" />
     <Compile Include="Core\CsvFileReader.cs" />
     <Compile Include="Core\DataAccess.cs" />
+    <Compile Include="Core\Exceptions\InvalidOrderBehaviorException.cs" />
     <Compile Include="Core\Exceptions\InvalidShortSellException.cs" />
     <Compile Include="Core\Exceptions\InvalidStrategyBehaviorException.cs" />
     <Compile Include="Core\Exceptions\StaticDataReferenceException.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Mechanisms\Order.cs" />
     <Compile Include="Mechanisms\OrderType.cs" />
     <Compile Include="Mechanisms\Portfolio.cs" />
+    <Compile Include="Mechanisms\PortfolioState.cs" />
     <Compile Include="Mechanisms\Position.cs" />
     <Compile Include="Mechanisms\Side.cs" />
     <Compile Include="Mechanisms\TimeScale.cs" />

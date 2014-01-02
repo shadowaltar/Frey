@@ -2,12 +2,10 @@
 using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
 using Automata.Entities;
-using Automata.Strategies;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Automata.Mechanisms
@@ -23,14 +21,12 @@ namespace Automata.Mechanisms
 
         public ConcurrentQueue<HashSet<Price>> PriceData { get; protected set; }
 
-        private readonly object equitySyncRoot = new object();
-
         protected override double CheckMarginRequirement()
         {
-            return Portfolio.CashPosition.Equity;
+            return Portfolio.CashPosition.Value;
         }
 
-        protected override void ComputeRisks(List<Position> newPositions)
+        protected override void ComputeRisks(IEnumerable<Position> newPositions)
         {
         }
 
@@ -40,15 +36,8 @@ namespace Automata.Mechanisms
             if (existingPositions.IsNullOrEmpty())
                 return null;
 
-            var exitOrders = orders.Where(o => o.IsClosingPosition).ToList();
-            if (exitOrders.Count == 0)
-                return null;
-
-            // save exit orders to history
-            SaveOrdersToHistory(exitOrders);
-
             var results = new List<Trade>();
-            foreach (var order in exitOrders)
+            foreach (var order in orders)
             {
                 var position = existingPositions.FirstOrDefault(p => p.Security == order.Security);
                 if (position == null)
@@ -70,7 +59,7 @@ namespace Automata.Mechanisms
                 };
                 trade.Profit = trade.Return * position.ActualQuantity;
                 results.Add(trade);
-                Console.WriteLine(Utilities.BracketNow + " Close Position: " + trade);
+                Utilities.WriteTimedLine("Close Position: " + trade);
             }
 
             if (results.Count > 0)
@@ -84,15 +73,8 @@ namespace Automata.Mechanisms
             if (orders.IsNullOrEmpty())
                 return null;
 
-            var entryOrders = orders.Where(o => !o.IsClosingPosition).ToList();
-            if (entryOrders.Count == 0)
-                return null;
-
-            // save entry orders to history
-            SaveOrdersToHistory(entryOrders);
-
             var results = new List<Position>();
-            foreach (var order in entryOrders)
+            foreach (var order in orders)
             {
                 var price = prices.FirstOrDefault(p => p.Security == order.Security);
                 if (price == null)

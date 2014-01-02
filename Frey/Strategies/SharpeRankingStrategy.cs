@@ -122,7 +122,7 @@ namespace Automata.Strategies
 
         protected override double ComputeQuantity(Portfolio portfolio, Security security, Price referencePrice)
         {
-            var a = portfolio.CashPosition.Equity * .15 / referencePrice.Close;
+            var a = portfolio.CashPosition.Value * .15 / referencePrice.Close;
             if (a < 100)
                 return 100;
             var b = a % 100;
