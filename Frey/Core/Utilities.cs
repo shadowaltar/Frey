@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Automata.Core
 {
@@ -32,6 +33,22 @@ namespace Automata.Core
         public static string PrintBracket(this DateTime time)
         {
             return "[" + time.ToString("yyyyMMdd HH:mm:ss") + "]";
+        }
+    }
+
+    public static class IndexGenerator
+    {
+        private static readonly object lockSlim = new object();
+
+        private static int id;
+
+        public static int NextId()
+        {
+            lock (lockSlim)
+            {
+                Interlocked.Increment(ref id);
+                return id;
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Automata
             testScope.Securities.RemoveAll(s => s.Code == "NASDAQ:GOOG");
             var tester = new BackTester(testScope)
             {
-                Strategy = new SharpeRankingStrategy(20, 1)
+                Strategy = new SharpeRankingStrategy(20, 3)
             };
             tester.AddCash(100000, Currency.USD, testScope.Start);
             tester.Start();

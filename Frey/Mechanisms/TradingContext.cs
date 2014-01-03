@@ -175,10 +175,8 @@ namespace Automata.Mechanisms
 
                 // use the timestamp of the price data to be the timestamp of order
                 var orderTime = prices.First().Time;
-
                 // generate entries and exits
                 var orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
-
 
                 if (orders.Any())
                 {
@@ -187,7 +185,7 @@ namespace Automata.Mechanisms
                     // assuming all are executed immediately
                     var closePositionTask = Task.Factory.StartNew(() =>
                     {
-                        var exitOrders = orders.Where(o => o.IsClosingPosition).ToList();
+                        var exitOrders = orders.Where(o => o.IsClosing).ToList();
                         var trades = ClosePositions(exitOrders, Portfolio, prices);
                         SaveOrdersToHistory(exitOrders);
                         ComputePortfolio(trades);
@@ -195,7 +193,7 @@ namespace Automata.Mechanisms
                     });
                     var orderExecutionTask = Task.Factory.StartNew(() =>
                     {
-                        var entryOrders = orders.Where(o => !o.IsClosingPosition).ToList();
+                        var entryOrders = orders.Where(o => !o.IsClosing).ToList();
                         var positions = ExecuteOrders(entryOrders, prices);
                         SaveOrdersToHistory(entryOrders);
                         ComputePortfolio(positions);
@@ -235,6 +233,11 @@ namespace Automata.Mechanisms
             foreach (var trade in trades)
             {
                 Portfolio.ClosePosition(trade);
+                if (Portfolio.CashPosition.Value < 0)
+                {
+                    Utilities.WriteTimedLine("Exploded!");
+                    Console.ReadLine();
+                }
             }
         }
 

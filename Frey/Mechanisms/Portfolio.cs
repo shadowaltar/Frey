@@ -8,8 +8,6 @@ namespace Automata.Mechanisms
     {
         public CashPosition CashPosition { get; set; }
 
-        public double Equity { get; set; }
-
         private readonly List<PortfolioState> states = new List<PortfolioState>();
         public List<PortfolioState> States { get { return states; } }
 
@@ -24,12 +22,12 @@ namespace Automata.Mechanisms
             else
                 throw new InvalidOrderBehaviorException();
 
-            CashPosition.Add(balanceChange);
 
             var ps = new PortfolioState(drawDown, balanceChange,
                 trade.ExecutionTime, PortfolioAction.ClosePosition);
-
             States.Add(ps);
+
+            CashPosition.Add(balanceChange);
             Remove(trade.Position);
         }
 
@@ -44,13 +42,11 @@ namespace Automata.Mechanisms
             else
                 throw new InvalidOrderBehaviorException();
 
-            CashPosition.Add(balanceChange);
-
             var ps = new PortfolioState(0, balanceChange,
                 position.ExecutionTime, PortfolioAction.EnterPosition);
-
             States.Add(ps);
 
+            CashPosition.Add(balanceChange);
             Add(position);
         }
     }

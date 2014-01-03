@@ -21,6 +21,18 @@ namespace Automata.Core
         private static readonly ReferenceUniverse references;
         public static ReferenceUniverse References { get { return references; } }
 
+        public static void DownloadYahooPriceFiles()
+        {
+            var reader = new CsvFileReader();
+            var rows = reader.Read(Path.Combine(StaticDataFileDirectory, "Meta_ExchangeTradables.csv"), true, '|');
+            foreach (var code in rows.Select(r => r[1]))
+            {
+                var exchange = code.Split(':')[0];
+                var symbol = code.Split(':')[1];
+                YahooStockPriceDownloader.Download(symbol, exchange, StaticDataFileDirectory);
+            }
+        }
+
         public static IEnumerable<Country> ReadCountriesFromDataFile()
         {
             var reader = new CsvFileReader();
@@ -55,34 +67,34 @@ namespace Automata.Core
                 switch (x[2])
                 {
                     case "Equity":
-                    {
-                        var security = new Equity
                         {
-                            Id = x[0].ToInt(),
-                            Code = x[1],
-                            Symbol = x[3],
-                            Name = x[4],
-                            Exchange = References.LookupExchange(x[5]),
-                            Sector = x[6],
-                            Description = x[7]
-                        };
-                        yield return security;
-                    }
+                            var security = new Equity
+                            {
+                                Id = x[0].ToInt(),
+                                Code = x[1],
+                                Symbol = x[3],
+                                Name = x[4],
+                                Exchange = References.LookupExchange(x[5]),
+                                Sector = x[6],
+                                Description = x[7]
+                            };
+                            yield return security;
+                        }
                         break;
                     case "ETF":
-                    {
-                        var security = new ETF
                         {
-                            Id = x[0].ToInt(),
-                            Code = x[1],
-                            Symbol = x[3],
-                            Name = x[4],
-                            Exchange = References.LookupExchange(x[5]),
-                            Description = x[7]
-                        };
+                            var security = new ETF
+                            {
+                                Id = x[0].ToInt(),
+                                Code = x[1],
+                                Symbol = x[3],
+                                Name = x[4],
+                                Exchange = References.LookupExchange(x[5]),
+                                Description = x[7]
+                            };
 
-                        yield return security;
-                    }
+                            yield return security;
+                        }
                         break;
                     default:
                         throw new NotImplementedException();

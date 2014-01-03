@@ -82,6 +82,7 @@
     <Compile Include="Core\Exceptions\StaticDataReferenceException.cs" />
     <Compile Include="Core\Exceptions\SecurityReferenceException.cs" />
     <Compile Include="Core\Extensions\DateExtensions.cs" />
+    <Compile Include="Core\ReportTime.cs" />
     <Compile Include="Core\Utilities.cs" />
     <Compile Include="Core\Extensions\StringExtensions.cs" />
     <Compile Include="Core\Extensions\StringBuilderExtensions.cs" />

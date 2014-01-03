@@ -62,6 +62,19 @@ namespace Automata.Strategies
                 PriceHistory[security].Add(price);
             }
 
+            // close position if hits the stoploss price
+            foreach (var position in portfolio)
+            {
+                var price = prices.FirstOrDefault(p => p.Security == position.Security);
+                if (price != null)
+                {
+                    if (price.Close <= position.Order.StopLossPrice)
+                    {
+                        orders.Add(Order.CreateToClose(position, orderTime, true));
+                    }
+                }
+            }
+
             // approx 4 weeks later without considering holidays
             if (counter == Period)
             {
@@ -74,10 +87,14 @@ namespace Automata.Strategies
                 var newOrders = new List<Order>();
                 foreach (var rank in ranks.OrderByDescending(r => r.RankValue).Take(PortfolioSize))
                 {
-                    var security = rank.Security;
-                    var lastPrice = PriceHistory[security].Last();
-                    var q = ComputeQuantity(portfolio, security, lastPrice);
-                    newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, 0, orderTime));
+                    if (rank.SharpeRatio > 0)
+                    {
+                        var security = rank.Security;
+                        var lastPrice = PriceHistory[security].Last();
+                        var q = ComputeQuantity(portfolio, security, lastPrice);
+                        newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, ComputeStopLoss(lastPrice),
+                            orderTime));
+                    }
                 }
                 orders.AddRange(newOrders);
 
@@ -90,11 +107,17 @@ namespace Automata.Strategies
                     var closePositionOrders = new List<Order>();
                     foreach (var position in portfolio)
                     {
-                        var order = orders.FirstOrDefault(o => o.Security == position.Security); // maintains a hold
-                        if (order != null)
+                        // must not be the closing order already decided by the stoploss logic
+                        var order = orders.FirstOrDefault(o => o.Security == position.Security);
+                        if (order == null)
+                        {
+                            closePositionOrders.Add(Order.CreateToClose(position, orderTime));
+                        }
+                        else if (!order.IsStopLossClosing)
                         {
                             if (order.Side == Side.Long || order.Side == Side.Hold)
                             {
+                                // maintains a hold
                                 order.Side = Side.Hold;
                                 orders.Remove(order);
                             }
@@ -103,21 +126,21 @@ namespace Automata.Strategies
                                 throw new InvalidShortSellException();
                             }
                         }
-                        else
-                        {
-                            closePositionOrders.Add(Order.CreateToClose(position, orderTime));
-                        }
                     }
                     orders.AddRange(closePositionOrders);
                 }
                 PriceHistory.Clear();
-
             }
             foreach (var order in orders)
             {
                 Console.WriteLine(Utilities.BracketNow + " New Order: " + order);
             }
             return orders;
+        }
+
+        private double ComputeStopLoss(Price lastPrice)
+        {
+            return lastPrice.Close * .80; // stoploss is when drawdown = 10%
         }
 
         protected override double ComputeQuantity(Portfolio portfolio, Security security, Price referencePrice)

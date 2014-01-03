@@ -13,10 +13,10 @@ namespace Automata.Mechanisms
             Action = action;
         }
 
+        public PortfolioAction Action { get; set; }
         public double Drawdown { get; set; }
         public double BalanceChange { get; set; }
         public DateTime Time { get; set; }
-        public PortfolioAction Action { get; set; }
 
         public override string ToString()
         {

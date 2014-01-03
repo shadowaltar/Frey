@@ -30,17 +30,19 @@ namespace Automata.Mechanisms
             Time = orderTime;
         }
 
-        public static Order CreateToClose(Position position, DateTime orderTime)
+        public static Order CreateToClose(Position position, DateTime orderTime, bool isStopLossClose = false)
         {
             return new Order(position.Security, position.Side.Opposite(), position.ActualQuantity, orderTime)
             {
-                IsClosingPosition = true
+                IsClosing = true,
+                IsStopLossClosing = isStopLossClose,
             };
         }
 
         public Security Security { get; private set; }
         public Side Side { get; set; }
-        public bool IsClosingPosition { get; private set; }
+        public bool IsClosing { get; private set; }
+        public bool IsStopLossClosing { get; private set; }
         public OrderType Type { get; set; }
         public double Price { get; set; }
         public double Quantity { get; private set; }
@@ -51,10 +53,10 @@ namespace Automata.Mechanisms
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2}{3}: {4}x{5}; SL{6}", Time.PrintBracket(),
+            return string.Format("{0} {1} {2}{3}: {4}x{5}; {6}", Time.PrintBracket(),
                 Security.Code, Type, Side,
                 double.IsNaN(Price) ? "Any" : Price.ToString(),
-                Quantity, StopLossPrice);
+                Quantity, IsStopLossClosing ? "SL!" : "SL:" + StopLossPrice);
         }
     }
 
