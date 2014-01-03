@@ -33,16 +33,16 @@ namespace Automata.Core
                     var fileSizeFormatted = fileSize > 1024
                         ? (fileSize/1024).ToString("##.000") + "KBytes"
                         : fileSize + "Bytes";
-                    Console.WriteLine("File for {0} is downloaded, the size is: {1}", code, fileSizeFormatted);
+                    Utilities.WriteTimedLine("File for {0} is downloaded, the size is: {1}", code, fileSizeFormatted);
                 }
                 else
                 {
-                    Console.WriteLine("Cannot download {0}!", code);
+                    Utilities.WriteTimedLine("Cannot download {0}!", code);
                 }
             }
             catch
             {
-                Console.WriteLine("Cannot download {0}!", code);
+                Utilities.WriteTimedLine("Cannot download {0}!", code);
             }
         }
     }
