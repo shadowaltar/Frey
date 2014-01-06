@@ -41,14 +41,6 @@ namespace Automata.Strategies
 
         public override List<Order> GenerateOrders(HashSet<Price> prices, Portfolio portfolio, DateTime orderTime)
         {
-            // check if meets stop trading criteria
-            if (prices.Any(p => p.Time == TradingScope.End))
-            {
-                IsTimeToStop = true;
-                // generate 'all close' orders
-                return portfolio.Select(ep => Order.CreateToClose(ep, orderTime)).ToList();
-            }
-
             counter++;
             var orders = new List<Order>();
             // save the incoming prices into cache
@@ -91,7 +83,7 @@ namespace Automata.Strategies
                     {
                         var security = rank.Security;
                         var lastPrice = PriceHistory[security].Last();
-                        var q = ComputeQuantity(portfolio, security, lastPrice);
+                        var q = ComputeQuantity(portfolio, lastPrice);
                         newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, ComputeStopLoss(lastPrice),
                             orderTime));
                     }
@@ -143,7 +135,7 @@ namespace Automata.Strategies
             return lastPrice.Close * .80; // stoploss is when drawdown = 10%
         }
 
-        protected override double ComputeQuantity(Portfolio portfolio, Security security, Price referencePrice)
+        private static double ComputeQuantity(Portfolio portfolio, Price referencePrice)
         {
             var a = portfolio.CashPosition.Value * .15 / referencePrice.Close;
             if (a < 100)

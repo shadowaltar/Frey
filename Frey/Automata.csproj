@@ -130,8 +130,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interactions\ViewModels\" />
-    <Folder Include="Interactions\Views\" />
     <Folder Include="Quantitatives\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

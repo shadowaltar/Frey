@@ -1,4 +1,5 @@
 ﻿using Automata.Core;
+using Automata.Core.Extensions;
 using Automata.Entities;
 using System;
 using System.Collections.Generic;
@@ -67,6 +68,30 @@ namespace Automata.Mechanisms.Factories
             scope.Countries.Add(usa);
             scope.Exchanges.AddRange(exchanges);
             scope.Securities.AddRange(securities);
+
+            scope.End = DateTime.Parse("2013-12-13").Date;
+            scope.Start = scope.End.AddYears(-yearsAgo);
+            scope.PriceInterval = TimeSpan.FromDays(1);
+
+            return scope;
+        }
+
+        public static ITradingScope DailyPairStocks(int yearsAgo, string codeOne, string codeTwo)
+        {
+            if (yearsAgo <= 0)
+            {
+                throw new ArgumentException();
+            }
+
+            var scope = new TestScope();
+            var s1 = Context.References.Lookup<Equity>(codeOne);
+            var s2 = Context.References.Lookup<Equity>(codeTwo);
+            scope.Securities.Add(s1);
+            scope.Securities.Add(s2);
+            scope.Countries.Add(s1.Exchange.Country);
+            scope.Countries.AddIfNotExist(s2.Exchange.Country);
+            scope.Exchanges.Add(s1.Exchange);
+            scope.Exchanges.AddIfNotExist(s2.Exchange);
 
             scope.End = DateTime.Parse("2013-12-13").Date;
             scope.Start = scope.End.AddYears(-yearsAgo);

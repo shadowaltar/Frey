@@ -161,6 +161,8 @@ namespace Automata.Mechanisms
             }
         }
 
+
+
         protected virtual void Trade()
         {
             while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
@@ -176,33 +178,25 @@ namespace Automata.Mechanisms
                 // use the timestamp of the price data to be the timestamp of order
                 var orderTime = prices.First().Time;
                 // generate entries and exits
-                var orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
+                List<Order> orders;
+                if (!Strategy.CheckIfStopTrading(prices, Portfolio, orderTime, out orders))
+                {
+                    orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
+                }
 
                 if (orders.Any())
                 {
                     CheckCrossTrades(orders);
 
-                    // assuming all are executed immediately
-                    var closePositionTask = Task.Factory.StartNew(() =>
-                    {
-                        var exitOrders = orders.Where(o => o.IsClosing).ToList();
-                        var trades = ClosePositions(exitOrders, Portfolio, prices);
-                        SaveOrdersToHistory(exitOrders);
-                        ComputePortfolio(trades);
-                        return trades;
-                    });
-                    var orderExecutionTask = Task.Factory.StartNew(() =>
-                    {
-                        var entryOrders = orders.Where(o => !o.IsClosing).ToList();
-                        var positions = ExecuteOrders(entryOrders, prices);
-                        SaveOrdersToHistory(entryOrders);
-                        ComputePortfolio(positions);
-                        return positions;
-                    });
+                    var exitOrders = orders.Where(o => o.IsClosing).ToList();
+                    var trades = ClosePositions(exitOrders, Portfolio, prices);
+                    SaveOrdersToHistory(exitOrders);
+                    ComputePortfolio(trades);
 
-                    // wait for all the orders to be filled.
-                    closePositionTask.Wait();
-                    orderExecutionTask.Wait();
+                    var entryOrders = orders.Where(o => !o.IsClosing).ToList();
+                    var positions = ExecuteOrders(entryOrders, prices);
+                    SaveOrdersToHistory(entryOrders);
+                    ComputePortfolio(positions);
                 }
             }
             TradeHistory.TrimExcess();

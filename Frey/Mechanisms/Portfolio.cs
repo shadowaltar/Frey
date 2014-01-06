@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Automata.Core.Exceptions;
+using Automata.Core.Extensions;
+using Automata.Entities;
 
 namespace Automata.Mechanisms
 {
@@ -10,6 +13,16 @@ namespace Automata.Mechanisms
 
         private readonly List<PortfolioState> states = new List<PortfolioState>();
         public List<PortfolioState> States { get { return states; } }
+
+        public bool Contains(Security security)
+        {
+            return this.Any(p => p.Security == security);
+        }
+
+        public Position this[Security security]
+        {
+            get { return this.FirstOrDefault(p => p.Security == security); }
+        }
 
         public void ClosePosition(Trade trade)
         {

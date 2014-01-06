@@ -24,6 +24,23 @@ namespace Automata.Mechanisms
             InitializeSecurities();
         }
 
+        public T Lookup<T>(string code) where T : Security
+        {
+            try
+            {
+                SecurityCacheLock.EnterReadLock();
+                if (Securities.ContainsKey(code))
+                {
+                    return Securities[code] as T;
+                }
+                throw new SecurityReferenceException();
+            }
+            finally
+            {
+                SecurityCacheLock.ExitReadLock();
+            }
+        }
+
         public T Lookup<T>(SecurityIdentifier securityIdentifier, string value)
             where T : Security
         {

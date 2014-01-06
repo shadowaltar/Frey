@@ -20,3 +20,5 @@ Id|Code|SecurityType|Symbol|Name|Exchange.Code|Sector|Description
 19|NYSE:VWO|ETF|VWO|Vanguard FTSE Emerging Markets ETF|NYSE||MSCI Emerging Markets Index
 20|NYSE:XLF|ETF|XLF|Financial Select Sector SPDR|NYSE||Financial Select Sector Index
 21|NYSE:SLY|ETF|SLY|SPDR S&P 600 Small Cap ETF|NYSE||S&P Small Cap 600 Index
+22|NYSE:KO|Equity|KO|The Coca-Cola Company|NYSE|Non-Cyclical Consumer Goods & Services|
+23|NYSE:PEP|Equity|PEP|PepsiCo, Inc.|NYSE|Non-Cyclical Consumer Goods & Services|

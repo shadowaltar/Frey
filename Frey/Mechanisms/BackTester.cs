@@ -99,7 +99,7 @@ namespace Automata.Mechanisms
         {
             foreach (var order in orders)
             {
-                if (orders.Count(o => o.Security == order.Security) > 1)
+                if (orders.Any(o=>o.Side!=order.Side && o.Security==order.Security))
                 {
                     throw new InvalidStrategyBehaviorException();
                 }
