@@ -1,8 +1,14 @@
-﻿<Window x:Class="Automata.Dashboard.MainWindow"
+﻿<controls:MetroWindow x:Class="Automata.Dashboard.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
         Title="MainWindow" Height="350" Width="525">
+    <i:Interaction.Behaviors>
+        <behaviours:BorderlessWindowBehavior/>
+    </i:Interaction.Behaviors>
     <Grid>
-        
+        <Button Content="Button" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
-</Window>
+</controls:MetroWindow>

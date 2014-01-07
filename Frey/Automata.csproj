@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\MiscDownloader.cs" />
     <Compile Include="Core\Objects.cs" />
     <Compile Include="Core\Context.cs" />
     <Compile Include="Core\CsvFileReader.cs" />
