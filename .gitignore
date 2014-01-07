@@ -1,7 +1,6 @@
 /Automata.v11.suo
 
 /Frey/bin
-
 /Frey/obj
 
 /Libs
@@ -9,4 +8,6 @@
 /_Resharper.Automata
 
 /Frey/Automata.csproj.user
-/AutomataConsole/obj/
+
+/Automata.Dashboard/obj
+/Automata.Dashboard/bin

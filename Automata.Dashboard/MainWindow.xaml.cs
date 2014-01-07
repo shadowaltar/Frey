@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AutomataConsole.Views
+namespace Automata.Dashboard
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class UserControl1 : UserControl
+    public partial class MainWindow : Window
     {
-        public UserControl1()
+        public MainWindow()
         {
             InitializeComponent();
         }

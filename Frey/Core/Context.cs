@@ -1,6 +1,7 @@
 ﻿using Automata.Core.Extensions;
 using Automata.Entities;
 using Automata.Mechanisms;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,16 +11,14 @@ namespace Automata.Core
 {
     public static class Context
     {
-        static Context()
+        public static void Initialize(Objects objects)
         {
-            references = new TestReferences();
-            references.Initialize();
+            References = objects.Get<IReferenceUniverse>();
         }
 
         public static string StaticDataFileDirectory { get { return "../../../../StaticDataFiles"; } }
 
-        private static readonly ReferenceUniverse references;
-        public static ReferenceUniverse References { get { return references; } }
+        public static IReferenceUniverse References { get; private set; }
 
         public static void DownloadYahooPriceFiles()
         {

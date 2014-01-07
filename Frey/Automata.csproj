@@ -58,11 +58,17 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro">
+      <HintPath>..\Libs\Caliburn.Micro.dll</HintPath>
+    </Reference>
     <Reference Include="LumenWorks.Framework.IO">
       <HintPath>..\Libs\LumenWorks.Framework.IO.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Numerics">
       <HintPath>..\Libs\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\Libs\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Objects.cs" />
     <Compile Include="Core\Context.cs" />
     <Compile Include="Core\CsvFileReader.cs" />
     <Compile Include="Core\DataAccess.cs" />

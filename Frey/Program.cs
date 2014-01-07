@@ -11,6 +11,8 @@ namespace Automata
     {
         static void Main(string[] args)
         {
+            Context.Initialize(Objects.Instance);
+
             // sharpe ratio ranking:
             // var tradingContext = TestSharpeRanking();
 
@@ -36,8 +38,8 @@ namespace Automata
 
         private static TradingContext TestPairTrading()
         {
-            YahooStockPriceDownloader.Download("EWC","NYSE",Context.StaticDataFileDirectory);
-            YahooStockPriceDownloader.Download("EWA","NYSE",Context.StaticDataFileDirectory);
+            //YahooStockPriceDownloader.Download("EWC","NYSE",Context.StaticDataFileDirectory);
+            //YahooStockPriceDownloader.Download("EWA","NYSE",Context.StaticDataFileDirectory);
             var pairScope = ScopeFactory.DailyPairStocks(10, "NYSE:EWC", "NYSE:EWA");
             var tester = new BackTester(pairScope)
             {
