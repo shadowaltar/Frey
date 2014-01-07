@@ -24,9 +24,10 @@ namespace Automata.Mechanisms.Factories
             scope.Exchanges.AddRange(exchanges);
             scope.Securities.AddRange(securities);
 
-            scope.End = DateTime.Parse("2013-12-13").Date;
+            scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.PriceInterval = TimeSpan.FromDays(1);
+            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
 
             return scope;
         }
@@ -47,9 +48,10 @@ namespace Automata.Mechanisms.Factories
             scope.Exchanges.AddRange(exchanges);
             scope.Securities.AddRange(securities);
 
-            scope.End = DateTime.Parse("2013-12-13").Date;
+            scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.PriceInterval = TimeSpan.FromDays(1);
+            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
 
             return scope;
         }
@@ -69,9 +71,10 @@ namespace Automata.Mechanisms.Factories
             scope.Exchanges.AddRange(exchanges);
             scope.Securities.AddRange(securities);
 
-            scope.End = DateTime.Parse("2013-12-13").Date;
+            scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.PriceInterval = TimeSpan.FromDays(1);
+            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
 
             return scope;
         }
@@ -93,9 +96,28 @@ namespace Automata.Mechanisms.Factories
             scope.Exchanges.Add(s1.Exchange);
             scope.Exchanges.AddIfNotExist(s2.Exchange);
 
-            scope.End = DateTime.Parse("2013-12-13").Date;
+            scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.PriceInterval = TimeSpan.FromDays(1);
+            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
+
+            return scope;
+        }
+
+        public static ITradingScope DailyForex(int yearsAgo, string symbol)
+        {
+            if (yearsAgo <= 0)
+            {
+                throw new ArgumentException();
+            }
+            var scope = new TestScope();
+            var fx = Context.References.Lookup<Forex>(symbol);
+            scope.Securities.Add(fx);
+            scope.LeverageMultiplier = 50;
+            scope.End = new DateTime(2010, 6, 1).Date;
+            scope.Start = scope.End.AddYears(-yearsAgo);
+            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.DataPriceSourceType = DataPriceSourceType.DailyFXHistorical;
 
             return scope;
         }

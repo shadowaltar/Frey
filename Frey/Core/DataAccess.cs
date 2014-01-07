@@ -38,7 +38,8 @@ namespace Automata.Core
             var prices = new HashSet<Price>();
             foreach (var security in securities)
             {
-                foreach (var price in Context.ReadPricesFromDataFile(security))
+                var dynamicPrices = Context.ReadPricesFromDataFile(security, tradingScope.TickDuration, tradingScope.DataPriceSourceType);
+                foreach (var price in dynamicPrices)
                 {
                     if (price.Time >= tradingScope.Start && price.Time <= tradingScope.End)
                     {

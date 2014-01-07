@@ -8,6 +8,8 @@ namespace Automata.Core.Extensions
 {
     public static class DataExtensions
     {
+        private static double doubleTolerance = Context.DoubleTolerance;
+
         /// <summary>
         /// Parse a given object into integer.
         /// </summary>
@@ -57,6 +59,11 @@ namespace Automata.Core.Extensions
         public static double ToDouble(this object value)
         {
             return Convert.ToDouble(value);
+        }
+
+        public static bool ApproxEqualTo(this double value, double anotherValue)
+        {
+            return Math.Abs(value - anotherValue) < doubleTolerance;
         }
 
         /// <summary>

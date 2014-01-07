@@ -9,6 +9,9 @@
 
         public Country Country { get; set; }
 
+        private static readonly Exchange otc = new Exchange { Code = "OTC", Id = -1, Name = "Over The Counter", Mic = "N/A" };
+        public static Exchange OTC { get { return otc; } }
+
         protected bool Equals(Exchange other)
         {
             return string.Equals(Code, other.Code);

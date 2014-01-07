@@ -31,7 +31,10 @@ namespace Automata.Mechanisms
 
         public void Initialize()
         {
-            access.Initialize(TradingScope);
+            using (ReportTime.StartWithMessage("DataSource Initialization Used: {0}"))
+            {
+                access.Initialize(TradingScope);
+            }
         }
 
         public void Start()

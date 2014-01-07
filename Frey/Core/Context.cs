@@ -20,6 +20,7 @@ namespace Automata.Core
         public static string StaticDataFileDirectory { get { return "../../../../StaticDataFiles"; } }
 
         public static IReferenceUniverse References { get; private set; }
+        public const double DoubleTolerance = 1E-8;
 
         public static void DownloadYahooPriceFiles()
         {
@@ -72,7 +73,7 @@ namespace Automata.Core
                             Code = x[2],
                             Description = x[3],
                             Base = (Currency)Enum.Parse(typeof(Currency), x[2].Substring(3)),
-                            Quote = (Currency)Enum.Parse(typeof(Currency), x[2].Substring(0,3)),
+                            Quote = (Currency)Enum.Parse(typeof(Currency), x[2].Substring(0, 3)),
                         };
                         yield return forex;
                         break;
@@ -127,13 +128,13 @@ namespace Automata.Core
             }
         }
 
-        public static IEnumerable<Price> ReadPricesFromDataFile(Security security)
+        public static IEnumerable<Price> ReadPricesFromDataFile(Security security, TimeSpan duration, DataPriceSourceType sourceType = DataPriceSourceType.Unknown)
         {
             var reader = new CsvFileReader();
             var fileName = security.Code.Replace(":", "_") + ".csv";
             var filePath = Path.Combine(StaticDataFileDirectory, fileName);
             var data = reader.Read(filePath, true);
-            return Convert(DataPriceSourceType.YahooHistorical, data, security);
+            return Convert(data, security, duration, sourceType);
         }
 
         //public static IEnumerable<Price> ReadForexPriceFromDataFile(string symbol)
@@ -141,27 +142,47 @@ namespace Automata.Core
 
         //}
 
-        private static IEnumerable<Price> Convert(DataPriceSourceType priceSourceType, IEnumerable<string[]> data, Security security)
+        private static IEnumerable<Price> Convert(IEnumerable<string[]> data, Security security, TimeSpan duration, DataPriceSourceType priceSourceType = DataPriceSourceType.Unknown)
         {
-            if (priceSourceType == DataPriceSourceType.YahooHistorical)
+            switch (priceSourceType)
             {
-                var duration = TimeSpan.FromDays(1);
-                return data.Select(x => new Price
-                {
-                    Time = x[0].ToDateTime("yyyy-MM-dd"),
-                    Duration = duration,
+                case DataPriceSourceType.YahooHistorical:
+                    foreach (var datum in data)
+                    {
+                        yield return new Price
+                        {
+                            Time = datum[0].ToDateTime("yyyy-MM-dd"),
+                            Duration = duration,
 
-                    Open = x[1].ToDouble(),
-                    High = x[2].ToDouble(),
-                    Low = x[3].ToDouble(),
-                    Close = x[4].ToDouble(),
-                    Volume = x[5].ToDouble(),
-                    AdjustedClose = x[6].ToDouble(),
+                            Open = datum[1].ToDouble(),
+                            High = datum[2].ToDouble(),
+                            Low = datum[3].ToDouble(),
+                            Close = datum[4].ToDouble(),
+                            Volume = datum[5].ToDouble(),
+                            AdjustedClose = datum[6].ToDouble(),
 
-                    Security = security,
-                });
+                            Security = security,
+                        };
+                    }
+                    break;
+                case DataPriceSourceType.DailyFXHistorical:
+                    foreach (var x in data)
+                    {
+                        yield return new Price
+                        {
+                            Time = (x[0] + x[1]).ToDateTime("M/d/yyyyHH:mm:ss"),
+                            Duration = duration,
+
+                            Open = x[2].ToDouble(),
+                            High = x[3].ToDouble(),
+                            Low = x[4].ToDouble(),
+                            Close = x[5].ToDouble(),
+
+                            Security = security,
+                        };
+                    }
+                    break;
             }
-            throw new NotImplementedException();
         }
     }
 }

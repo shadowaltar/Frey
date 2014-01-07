@@ -21,5 +21,10 @@ namespace Automata.Mechanisms.Utils
         {
             return "CURRENCY:" + currency;
         }
+
+        public static string Code(this Forex forex)
+        {
+            return "FOREX:" + forex.Code;
+        }
     }
 }

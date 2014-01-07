@@ -14,6 +14,11 @@ namespace Automata.Core
             return new ReportTime();
         }
 
+        public static ReportTime StartWithMessage(string formattedString)
+        {
+            return new ReportTime(formattedString);
+        }
+
         public ReportTime()
         {
             sw = new Stopwatch();
