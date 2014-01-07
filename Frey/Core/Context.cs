@@ -14,6 +14,7 @@ namespace Automata.Core
         public static void Initialize(Objects objects)
         {
             References = objects.Get<IReferenceUniverse>();
+            References.Initialize();
         }
 
         public static string StaticDataFileDirectory { get { return "../../../../StaticDataFiles"; } }
@@ -55,6 +56,31 @@ namespace Automata.Core
             });
         }
 
+        public static IEnumerable<Security> ReadCurrenciesFromDataFile()
+        {
+            var reader = new CsvFileReader();
+            var filePath = Path.Combine(StaticDataFileDirectory, "Meta_Currency.csv");
+            var data = reader.Read(filePath, true, '|');
+            foreach (var x in data)
+            {
+                switch (x[1])
+                {
+                    case "FOREX":
+                        var forex = new Forex
+                        {
+                            Id = x[0].ToInt(),
+                            Code = x[2],
+                            Description = x[3],
+                            Base = (Currency)Enum.Parse(typeof(Currency), x[2].Substring(3)),
+                            Quote = (Currency)Enum.Parse(typeof(Currency), x[2].Substring(0,3)),
+                        };
+                        yield return forex;
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
         public static IEnumerable<Security> ReadSecuritiesFromDataFile()
         {
             var reader = new CsvFileReader();
@@ -109,6 +135,11 @@ namespace Automata.Core
             var data = reader.Read(filePath, true);
             return Convert(DataPriceSourceType.YahooHistorical, data, security);
         }
+
+        //public static IEnumerable<Price> ReadForexPriceFromDataFile(string symbol)
+        //{
+
+        //}
 
         private static IEnumerable<Price> Convert(DataPriceSourceType priceSourceType, IEnumerable<string[]> data, Security security)
         {

@@ -106,6 +106,7 @@
     <Compile Include="Entities\ETF.cs" />
     <Compile Include="Entities\ExchangeTradable.cs" />
     <Compile Include="Entities\Exchange.cs" />
+    <Compile Include="Entities\Forex.cs" />
     <Compile Include="Entities\Security.cs" />
     <Compile Include="Entities\Price.cs" />
     <Compile Include="Entities\Equity.cs" />

@@ -166,10 +166,14 @@ namespace Automata.Mechanisms
         protected override void InitializeSecurities()
         {
             try
-            {
+             {
                 SecurityCacheLock.EnterWriteLock();
                 Securities.Clear();
                 foreach (var security in Context.ReadSecuritiesFromDataFile())
+                {
+                    Securities[security.Code] = security;
+                }
+                foreach (var security in Context.ReadCurrenciesFromDataFile())
                 {
                     Securities[security.Code] = security;
                 }

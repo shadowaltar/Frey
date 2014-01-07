@@ -13,7 +13,7 @@ namespace Automata
         static void Main(string[] args)
         {
             Context.Initialize(Objects.Instance);
-            DownloadFxFiles();
+            //DownloadFxFiles();
             // sharpe ratio ranking:
             // var tradingContext = TestSharpeRanking();
 
