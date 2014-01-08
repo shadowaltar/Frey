@@ -7,3 +7,9 @@ http://mui.codeplex.com/
 
 2001-2010 m1 forex data
 http://www.dailyfx.com/forex_forum/free-strategy-trader-historical-data/220967-free-strategy-trader-historical-data.html
+
+more sites for data
+http://quant.stackexchange.com/questions/141/what-data-sources-are-available-online
+
+pair trading / cointegration
+http://gekkoquant.com/2013/01/21/statistical-arbitrage-trading-a-cointegrated-pair/

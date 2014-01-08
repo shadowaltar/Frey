@@ -3,6 +3,7 @@ using Automata.Entities;
 using Automata.Mechanisms;
 using System;
 using System.Collections.Generic;
+using Automata.Quantitatives.Indicators;
 
 namespace Automata.Strategies
 {
@@ -12,6 +13,9 @@ namespace Automata.Strategies
 
         public abstract bool IsTimeToStop { get; protected set; }
         public ITradingScope TradingScope { get; set; }
+
+        private readonly List<Indicator> indicators = new List<Indicator>();
+        public List<Indicator> Indicators { get { return indicators; } }
 
         public virtual void Initialize()
         {

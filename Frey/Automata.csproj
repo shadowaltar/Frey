@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
     <Compile Include="Core\MiscDownloader.cs" />
     <Compile Include="Core\Objects.cs" />
     <Compile Include="Core\Context.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Core\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Core\Extensions\MultithreadingExtensions.cs" />
     <Compile Include="Core\YahooPriceDownloader.cs" />
+    <Compile Include="Entities\AppliedPrice.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\Cash.cs" />
     <Compile Include="Entities\Currency.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Entities\Security.cs" />
     <Compile Include="Entities\Price.cs" />
     <Compile Include="Entities\Equity.cs" />
+    <Compile Include="Entities\TimeValue.cs" />
     <Compile Include="Mechanisms\Order.cs" />
     <Compile Include="Mechanisms\OrderType.cs" />
     <Compile Include="Mechanisms\Portfolio.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quantitatives\Indicators\Indicator.cs" />
+    <Compile Include="Quantitatives\Indicators\IndicatorMaths.cs" />
     <Compile Include="Quantitatives\Indicators\MACD.cs" />
     <Compile Include="Strategies\ForexMACDCrossingStrategy.cs" />
     <Compile Include="Strategies\PairTradingStrategy.cs" />
