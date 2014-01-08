@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
 using Automata.Entities;
 using Automata.Mechanisms;
+using Automata.Quantitatives.Indicators;
 
 namespace Automata.Strategies
 {
@@ -13,20 +16,27 @@ namespace Automata.Strategies
 
         public Dictionary<Security, List<Price>> PriceHistory { get; private set; }
 
-        private DateTime currentTimestamp = DateTime.MinValue;
-        private DateTime expectedNextTimestamp = DateTime.MinValue;
+        private MACD macd;
+
+        public override void Initialize()
+        {
+            macd = Indicators[0] as MACD;
+            if (macd == null)
+                throw new InvalidStrategyBehaviorException();
+        }
+
+        private HashSet<Price> lastPrices = new HashSet<Price>();
 
         public override List<Order> GenerateOrders(HashSet<Price> prices, Portfolio portfolio, DateTime orderTime)
         {
             if (prices.IsNullOrEmpty())
                 return null;
-            if (currentTimestamp == DateTime.MinValue)
-                currentTimestamp = prices.First().Time;
 
-            var expectedNextTimestamp = currentTimestamp + TradingScope.TickDuration;
+
             foreach (var price in prices)
             {
-
+                macd.Compute(price);
+                macd.HistogramValues.LastOrDefault();
             }
             return null;
         }
