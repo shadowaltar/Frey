@@ -7,12 +7,12 @@ namespace Automata.Core
     {
         public static string Now
         {
-            get { return DateTime.Now.ToString("yyyyMMdd HH:mm:ss"); }
+            get { return DateTime.Now.ToString("yyyyMMdd HHmmss"); }
         }
 
         public static string BracketNow
         {
-            get { return "[" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "]"; }
+            get { return "[" + DateTime.Now.ToString("yyyyMMdd HHmmss") + "]"; }
         }
 
         public static void WriteTimedLine(string value)
@@ -27,12 +27,12 @@ namespace Automata.Core
 
         public static string Print(this DateTime time)
         {
-            return time.ToString("yyyy-MM-dd HH:mm:ss");
+            return time.ToString("yyyyMMdd HHmmss");
         }
 
         public static string PrintBracket(this DateTime time)
         {
-            return "[" + time.ToString("yyyyMMdd HH:mm:ss") + "]";
+            return "[" + time.ToString("yyyyMMdd HHmmss") + "]";
         }
     }
 

@@ -15,17 +15,22 @@ namespace Automata.Core
         {
             References = objects.Get<IReferenceUniverse>();
             References.Initialize();
+
+            if (!Directory.Exists(StaticDataFileDirectory))
+                Directory.CreateDirectory(StaticDataFileDirectory);
+            if (!Directory.Exists(LocalTempFileDirectory))
+                Directory.CreateDirectory(LocalTempFileDirectory);
         }
 
         public static string StaticDataFileDirectory { get { return "../../../../StaticDataFiles"; } }
+        public static string LocalTempFileDirectory { get { return "../../../../TempFiles"; } }
 
         public static IReferenceUniverse References { get; private set; }
         public const double DoubleTolerance = 1E-8;
 
         public static void DownloadYahooPriceFiles()
         {
-            var reader = new CsvFileReader();
-            var rows = reader.Read(Path.Combine(StaticDataFileDirectory, "Meta_ExchangeTradables.csv"), true, '|');
+            var rows = CsvFileAccess.Read(Path.Combine(StaticDataFileDirectory, "Meta_ExchangeTradables.csv"), true, '|');
             foreach (var code in rows.Select(r => r[1]))
             {
                 var exchange = code.Split(':')[0];
@@ -36,17 +41,15 @@ namespace Automata.Core
 
         public static IEnumerable<Country> ReadCountriesFromDataFile()
         {
-            var reader = new CsvFileReader();
             var filePath = Path.Combine(StaticDataFileDirectory, "Meta_Countries.csv");
-            var data = reader.Read(filePath, true, '|');
+            var data = CsvFileAccess.Read(filePath, true, '|');
             return data.Select(x => new Country { Id = x[0].ToInt(), Code = x[1], Name = x[2] });
         }
 
         public static IEnumerable<Exchange> ReadExchangesFromDataFile()
         {
-            var reader = new CsvFileReader();
             var filePath = Path.Combine(StaticDataFileDirectory, "Meta_Exchanges.csv");
-            var data = reader.Read(filePath, true, '|');
+            var data = CsvFileAccess.Read(filePath, true, '|');
             return data.Select(x => new Exchange
             {
                 Id = x[0].ToInt(),
@@ -59,9 +62,8 @@ namespace Automata.Core
 
         public static IEnumerable<Security> ReadCurrenciesFromDataFile()
         {
-            var reader = new CsvFileReader();
             var filePath = Path.Combine(StaticDataFileDirectory, "Meta_Currency.csv");
-            var data = reader.Read(filePath, true, '|');
+            var data = CsvFileAccess.Read(filePath, true, '|');
             foreach (var x in data)
             {
                 switch (x[1])
@@ -84,9 +86,8 @@ namespace Automata.Core
         }
         public static IEnumerable<Security> ReadSecuritiesFromDataFile()
         {
-            var reader = new CsvFileReader();
             var filePath = Path.Combine(StaticDataFileDirectory, "Meta_ExchangeTradables.csv");
-            var data = reader.Read(filePath, true, '|');
+            var data = CsvFileAccess.Read(filePath, true, '|');
 
             foreach (var x in data)
             {
@@ -128,12 +129,11 @@ namespace Automata.Core
             }
         }
 
-        public static IEnumerable<Price> ReadPricesFromDataFile(Security security, TimeSpan duration, DataPriceSourceType sourceType = DataPriceSourceType.Unknown)
+        public static IEnumerable<Price> ReadPricesFromDataFile(Security security, TimeSpan duration, PriceSourceType sourceType = PriceSourceType.Unknown)
         {
-            var reader = new CsvFileReader();
             var fileName = security.Code.Replace(":", "_") + ".csv";
             var filePath = Path.Combine(StaticDataFileDirectory, fileName);
-            var data = reader.Read(filePath, true);
+            var data = CsvFileAccess.Read(filePath, true);
             return Convert(data, security, duration, sourceType);
         }
 
@@ -142,11 +142,11 @@ namespace Automata.Core
 
         //}
 
-        private static IEnumerable<Price> Convert(IEnumerable<string[]> data, Security security, TimeSpan duration, DataPriceSourceType priceSourceType = DataPriceSourceType.Unknown)
+        private static IEnumerable<Price> Convert(IEnumerable<string[]> data, Security security, TimeSpan duration, PriceSourceType priceSourceType = PriceSourceType.Unknown)
         {
             switch (priceSourceType)
             {
-                case DataPriceSourceType.YahooHistorical:
+                case PriceSourceType.YahooHistorical:
                     foreach (var datum in data)
                     {
                         yield return new Price
@@ -165,7 +165,7 @@ namespace Automata.Core
                         };
                     }
                     break;
-                case DataPriceSourceType.DailyFXHistorical:
+                case PriceSourceType.DailyFXHistorical:
                     foreach (var x in data)
                     {
                         yield return new Price

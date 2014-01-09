@@ -301,6 +301,20 @@ namespace Automata.Core.Extensions
         }
 
         /// <summary>
+        /// Concatenate strings while separating them by the specified <paramref name="delimiter"/>.
+        /// </summary>
+        /// <param name="strings"></param>
+        /// <param name="delimiter"></param>
+        /// <returns></returns>
+        public static string Concat(this IEnumerable<string> strings, string delimiter = ",")
+        {
+            strings.ThrowIfNull();
+
+            var result = strings.Aggregate((current, str) => current + str + delimiter);
+            return result.Substring(0, result.Length - delimiter.Length);
+        }
+
+        /// <summary>
         /// Convert a string to a SecureString.
         /// </summary>
         /// <param name="value"></param>

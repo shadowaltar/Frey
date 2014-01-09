@@ -1,6 +1,6 @@
 ﻿namespace Automata.Mechanisms
 {
-    public enum DataPriceSourceType
+    public enum PriceSourceType
     {
         Unknown,
         InteractiveBrokersRealTime,

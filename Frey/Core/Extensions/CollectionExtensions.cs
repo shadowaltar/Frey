@@ -192,7 +192,12 @@ namespace Automata.Core.Extensions
         /// <returns></returns>
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> list)
         {
-            return list == null || !list.Any();
+            return list == null || list.IsEmpty();
+        }
+
+        public static bool IsEmpty<T>(this IEnumerable<T> list)
+        {
+            return !list.Any();
         }
 
         /// <summary>

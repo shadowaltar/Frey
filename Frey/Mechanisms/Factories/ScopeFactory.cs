@@ -27,7 +27,7 @@ namespace Automata.Mechanisms.Factories
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
             scope.TickDuration = TimeSpan.FromDays(1);
-            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
+            scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
         }
@@ -51,7 +51,7 @@ namespace Automata.Mechanisms.Factories
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
             scope.TickDuration = TimeSpan.FromDays(1);
-            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
+            scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
         }
@@ -74,7 +74,7 @@ namespace Automata.Mechanisms.Factories
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
             scope.TickDuration = TimeSpan.FromDays(1);
-            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
+            scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
         }
@@ -99,14 +99,14 @@ namespace Automata.Mechanisms.Factories
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
             scope.TickDuration = TimeSpan.FromDays(1);
-            scope.DataPriceSourceType = DataPriceSourceType.YahooHistorical;
+            scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
         }
 
-        public static ITradingScope DailyForex(int yearsAgo, string symbol)
+        public static ITradingScope DailyForex(int monthsAgo, string symbol)
         {
-            if (yearsAgo <= 0)
+            if (monthsAgo <= 0)
             {
                 throw new ArgumentException();
             }
@@ -115,9 +115,10 @@ namespace Automata.Mechanisms.Factories
             scope.Securities.Add(fx);
             scope.LeverageMultiplier = 50;
             scope.End = new DateTime(2010, 6, 1).Date;
-            scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.TickDuration = TimeSpan.FromDays(1);
-            scope.DataPriceSourceType = DataPriceSourceType.DailyFXHistorical;
+            scope.Start = scope.End.AddMonths(-monthsAgo);
+            scope.TickDuration = TimeSpan.FromMinutes(1);
+            scope.PriceSourceType = PriceSourceType.DailyFXHistorical;
+            scope.DefaultIndicatorPriceType = PriceType.Close;
 
             return scope;
         }

@@ -11,6 +11,6 @@ namespace Automata.Mechanisms
         TimeSpan TickDuration { get; set; }
         List<Security> Securities { get; set; }
         double LeverageMultiplier { get; set; }
-        DataPriceSourceType DataPriceSourceType { get; }
+        PriceSourceType PriceSourceType { get; }
     }
 }

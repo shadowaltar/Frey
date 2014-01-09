@@ -2,7 +2,7 @@
 
 namespace Automata.Core.Extensions
 {
-    public static class DateExtensions
+    public static class TimeExtensions
     {
         public static bool IsBusinessDay(this DateTime date)
         {
@@ -102,6 +102,21 @@ namespace Automata.Core.Extensions
         public static DateTime AddWeeks(this DateTime date, int weeks)
         {
             return date.AddDays(weeks * 7);
+        }
+
+        public static TimeSpan Multiply(this TimeSpan time, int by)
+        {
+            return new TimeSpan(time.Ticks * by);
+        }
+
+        public static TimeSpan Multiply(this TimeSpan time, double by)
+        {
+            return new TimeSpan((time.ToDouble() * by).ToLong());
+        }
+
+        public static double Divide(this TimeSpan time, TimeSpan by)
+        {
+            return time.Ticks.ToDouble() / by.Ticks.ToDouble();
         }
     }
 }

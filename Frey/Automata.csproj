@@ -76,18 +76,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Exceptions\InvalidTickDurationException.cs" />
     <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
     <Compile Include="Core\MiscDownloader.cs" />
     <Compile Include="Core\Objects.cs" />
     <Compile Include="Core\Context.cs" />
-    <Compile Include="Core\CsvFileReader.cs" />
+    <Compile Include="Core\CsvFileAccess.cs" />
     <Compile Include="Core\DataAccess.cs" />
     <Compile Include="Core\Exceptions\InvalidOrderBehaviorException.cs" />
     <Compile Include="Core\Exceptions\InvalidShortSellException.cs" />
     <Compile Include="Core\Exceptions\InvalidStrategyBehaviorException.cs" />
     <Compile Include="Core\Exceptions\StaticDataReferenceException.cs" />
     <Compile Include="Core\Exceptions\SecurityReferenceException.cs" />
-    <Compile Include="Core\Extensions\DateExtensions.cs" />
+    <Compile Include="Core\Extensions\TimeExtensions.cs" />
     <Compile Include="Core\NasdaqDownloader.cs" />
     <Compile Include="Core\ReportTime.cs" />
     <Compile Include="Core\Utilities.cs" />
@@ -119,7 +120,7 @@
     <Compile Include="Mechanisms\TimeScale.cs" />
     <Compile Include="Mechanisms\Trade.cs" />
     <Compile Include="Mechanisms\BackTester.cs" />
-    <Compile Include="Mechanisms\DataPriceSourceType.cs" />
+    <Compile Include="Mechanisms\PriceSourceType.cs" />
     <Compile Include="Mechanisms\DataSource.cs" />
     <Compile Include="Mechanisms\DataStatus.cs" />
     <Compile Include="Mechanisms\Factories\ScopeFactory.cs" />

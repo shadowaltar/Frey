@@ -23,7 +23,8 @@ namespace Automata.Mechanisms
         public List<Exchange> Exchanges { get; set; }
         public List<Security> Securities { get; set; }
         public double LeverageMultiplier { get; set; }
-        public DataPriceSourceType DataPriceSourceType { get; set; }
+        public PriceSourceType PriceSourceType { get; set; }
         public double MarginRatio { get { return LeverageMultiplier.ApproxEqualTo(0) ? double.NaN : 1 / LeverageMultiplier; } }
+        public PriceType DefaultIndicatorPriceType { get; set; }
     }
 }

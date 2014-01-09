@@ -66,6 +66,12 @@ namespace Automata.Core.Extensions
             return Math.Abs(value - anotherValue) < doubleTolerance;
         }
 
+        public static bool IsIntApprox(this double value)
+        {
+            var diff = value.ToInt() - value;
+            return Math.Abs(diff) < doubleTolerance;
+        }
+
         /// <summary>
         /// Parse a given object into DateTime. If the object is of type DateTime it will
         /// be casted directly, else the object will be parsed into a string and then parsed

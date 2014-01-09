@@ -4,6 +4,23 @@ namespace Automata.Entities
 {
     public class Price
     {
+        public Price()
+        {
+        }
+
+        public Price(Price price)
+        {
+            Security = price.Security;
+            Time = price.Time;
+            Duration = price.Duration;
+            Open = price.Open;
+            High = price.High;
+            Low = price.Low;
+            Close = price.Close;
+            AdjustedClose = price.AdjustedClose;
+            Volume = price.Volume;
+        }
+
         public Security Security { get; set; }
         public DateTime Time { get; set; }
         public TimeSpan Duration { get; set; }

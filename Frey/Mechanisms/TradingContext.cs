@@ -1,5 +1,8 @@
 ﻿using Automata.Core;
+using Automata.Core.Extensions;
 using Automata.Entities;
+using Automata.Mechanisms.Utils;
+using Automata.Quantitatives.Indicators;
 using Automata.Strategies;
 using System;
 using System.Collections.Generic;
@@ -161,65 +164,66 @@ namespace Automata.Mechanisms
             }
         }
 
-
-
         protected virtual void Trade()
         {
-            while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
+            BeforeTrading();
+            using (var writer = CsvFileAccess.GetWriter(Path.Combine(Context.LocalTempFileDirectory, "Test.csv")))
             {
-                // dequeue one day only
-                var prices = RetrievePrices();
-
-                if (prices == null)
+                while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
                 {
-                    continue;
-                }
+                    // dequeue one day only
+                    var prices = RetrievePrices();
 
-                // use the timestamp of the price data to be the timestamp of order
-                var orderTime = prices.First().Time;
-                // generate entries and exits
-                List<Order> orders;
-                if (!Strategy.CheckIfStopTrading(prices, Portfolio, orderTime, out orders))
-                {
-                    orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
-                }
+                    if (prices == null)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
 
-                if (orders.Any())
-                {
-                    CheckCrossTrades(orders);
+                    // use the timestamp of the price data to be the timestamp of order
+                    var orderTime = prices.First().Time;
+                    // generate entries and exits
+                    List<Order> orders;
+                    if (!Strategy.CheckIfStopTrading(prices, Portfolio, orderTime, out orders))
+                    {
+                        orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
 
-                    var exitOrders = orders.Where(o => o.IsClosing).ToList();
-                    var trades = ClosePositions(exitOrders, Portfolio, prices);
-                    SaveOrdersToHistory(exitOrders);
-                    ComputePortfolio(trades);
+                        var macd = (MACD)Strategy.Indicators[0];
+                        foreach (var price in prices)
+                        {
+                            var macdHist = macd.HistogramValues.LastOrDefault();
+                            var macdSig = macd.SignalValues.LastOrDefault();
+                            var macdBody = macd.MACDValues.LastOrDefault();
+                            if (macdHist != null && macdSig != null && macdBody != null)
+                                writer.WriteItemsLine(price.Security.Code, macdHist.Time.Print(), price.ValueOf(macd.PriceType), macdHist.Value.ToString("#0.0000000"),
+                                    macdSig.Value.ToString("#0.0000000"),
+                                    macdBody.Value.ToString("#0.0000000"));
+                        }
+                    }
 
-                    var entryOrders = orders.Where(o => !o.IsClosing).ToList();
-                    var positions = ExecuteOrders(entryOrders, prices);
-                    SaveOrdersToHistory(entryOrders);
-                    ComputePortfolio(positions);
+                    if (!orders.IsNullOrEmpty())
+                    {
+                        CheckCrossTrades(orders);
+
+                        var exitOrders = orders.Where(o => o.IsClosing).ToList();
+                        var trades = ClosePositions(exitOrders, Portfolio, prices);
+                        SaveOrdersToHistory(exitOrders);
+                        ComputePortfolio(trades);
+
+                        var entryOrders = orders.Where(o => !o.IsClosing).ToList();
+                        var positions = ExecuteOrders(entryOrders, prices);
+                        SaveOrdersToHistory(entryOrders);
+                        ComputePortfolio(positions);
+                    }
                 }
             }
-            TradeHistory.TrimExcess();
 
-            // reporting
-            Console.WriteLine();
-            var equity = InitEquity;
-            var reportFileName = ("Result_" + Utilities.Now + ".csv").Replace(":", string.Empty);
-            using (var sw = new StreamWriter(new FileStream(reportFileName, FileMode.CreateNew)))
-            {
-                foreach (var trade in TradeHistory)
-                {
-                    Console.WriteLine(trade);
-                    sw.WriteLine(trade.PrintCSVFriendly(equity));
-                    equity += trade.Profit;
-                }
-            }
-            Utilities.WriteTimedLine("Stopped trading.");
-            Utilities.WriteTimedLine("Period From {0} To {1}", TradingScope.Start, TradingScope.End);
-            Utilities.WriteTimedLine("Equity: " + Portfolio.CashPosition.Value);
-            Utilities.WriteTimedLine("Return: " + (Portfolio.CashPosition.Value / InitEquity - 1));
-            Process.Start(reportFileName);
+            AfterTrading();
         }
+
+        protected virtual void BeforeTrading() { }
+
+        protected virtual void AfterTrading() { }
 
         private void ComputePortfolio(IEnumerable<Trade> trades)
         {

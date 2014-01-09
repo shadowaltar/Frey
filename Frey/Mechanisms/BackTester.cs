@@ -1,4 +1,6 @@
-﻿using Automata.Core;
+﻿using System.Diagnostics;
+using System.IO;
+using Automata.Core;
 using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
 using Automata.Entities;
@@ -125,6 +127,35 @@ namespace Automata.Mechanisms
                 return null;
             }
             return prices;
+        }
+
+        protected override void BeforeTrading()
+        {
+            Utilities.WriteTimedLine("BackTester Trading Starts.");
+        }
+
+        protected override void AfterTrading()
+        {
+            TradeHistory.TrimExcess();
+
+            // reporting
+            Console.WriteLine();
+            var equity = InitEquity;
+            var reportFileName = ("Result_" + Utilities.Now + ".csv").Replace(":", string.Empty);
+            using (var sw = new StreamWriter(new FileStream(reportFileName, FileMode.CreateNew)))
+            {
+                foreach (var trade in TradeHistory)
+                {
+                    Console.WriteLine(trade);
+                    sw.WriteLine(trade.PrintCSVFriendly(equity));
+                    equity += trade.Profit;
+                }
+            }
+            Utilities.WriteTimedLine("Stopped trading.");
+            Utilities.WriteTimedLine("Period From {0} To {1}", TradingScope.Start, TradingScope.End);
+            Utilities.WriteTimedLine("Equity: " + Portfolio.CashPosition.Value);
+            Utilities.WriteTimedLine("Return: " + (Portfolio.CashPosition.Value / InitEquity - 1));
+            Process.Start(reportFileName);
         }
     }
 }
