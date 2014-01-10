@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using Automata.Core;
 using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
@@ -155,7 +154,7 @@ namespace Automata.Mechanisms
             Utilities.WriteTimedLine("Period From {0} To {1}", TradingScope.Start, TradingScope.End);
             Utilities.WriteTimedLine("Equity: " + Portfolio.CashPosition.Value);
             Utilities.WriteTimedLine("Return: " + (Portfolio.CashPosition.Value / InitEquity - 1));
-            Process.Start(reportFileName);
+       //     Process.Start(reportFileName);
         }
     }
 }

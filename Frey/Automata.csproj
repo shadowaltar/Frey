@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Core\Exceptions\InvalidTickDurationException.cs" />
     <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
+    <Compile Include="Mechanisms\Utils\PriceExtensions.cs" />
     <Compile Include="Core\MiscDownloader.cs" />
     <Compile Include="Core\Objects.cs" />
     <Compile Include="Core\Context.cs" />
@@ -129,12 +130,12 @@
     <Compile Include="Mechanisms\ReferenceUniverse.cs" />
     <Compile Include="Mechanisms\TestScope.cs" />
     <Compile Include="Mechanisms\TradingContext.cs" />
-    <Compile Include="Mechanisms\Utils\TradingLogicUtililites.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quantitatives\Indicators\Indicator.cs" />
     <Compile Include="Quantitatives\Indicators\IndicatorMaths.cs" />
     <Compile Include="Quantitatives\Indicators\MACD.cs" />
+    <Compile Include="Quantitatives\Indicators\StochasticOscillator.cs" />
     <Compile Include="Strategies\ForexMACDCrossingStrategy.cs" />
     <Compile Include="Strategies\PairTradingStrategy.cs" />
     <Compile Include="Strategies\SharpeRankingStrategy.cs" />

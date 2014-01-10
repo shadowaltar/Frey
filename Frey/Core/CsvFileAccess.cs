@@ -21,6 +21,9 @@ namespace Automata.Core
 
         public static CsvFileAccess GetWriter(string filePath)
         {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
             return new CsvFileAccess
             {
                 writer = new StreamWriter(new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
@@ -31,7 +34,9 @@ namespace Automata.Core
         {
             if (writer != null && !fields.IsNullOrEmpty())
             {
-                writer.WriteLine(fields.Select(f => f.ToString()).Concat("|"));
+                var line = fields.Select(f => f.ToString())
+                    .Aggregate((current, field) => current + "|" + field);
+                writer.WriteLine(line);
             }
         }
 
@@ -50,6 +55,7 @@ namespace Automata.Core
         {
             if (writer != null)
             {
+                writer.Flush();
                 writer.Close();
                 writer.Dispose();
             }

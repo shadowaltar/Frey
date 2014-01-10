@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace Automata.Core
 {
@@ -7,12 +6,12 @@ namespace Automata.Core
     {
         public static string Now
         {
-            get { return DateTime.Now.ToString("yyyyMMdd HHmmss"); }
+            get { return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); }
         }
 
         public static string BracketNow
         {
-            get { return "[" + DateTime.Now.ToString("yyyyMMdd HHmmss") + "]"; }
+            get { return "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "]"; }
         }
 
         public static void WriteTimedLine(string value)
@@ -27,28 +26,17 @@ namespace Automata.Core
 
         public static string Print(this DateTime time)
         {
-            return time.ToString("yyyyMMdd HHmmss");
+            return time.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static string PrintBracket(this DateTime time)
         {
-            return "[" + time.ToString("yyyyMMdd HHmmss") + "]";
+            return "[" + time.ToString("yyyy-MM-dd HH:mm:ss") + "]";
         }
-    }
 
-    public static class IndexGenerator
-    {
-        private static readonly object lockSlim = new object();
-
-        private static int id;
-
-        public static int NextId()
+        public static string PrintPrecise(this double value)
         {
-            lock (lockSlim)
-            {
-                Interlocked.Increment(ref id);
-                return id;
-            }
+            return value.ToString("0.00000000");
         }
     }
 }

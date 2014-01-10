@@ -6,7 +6,6 @@ using Automata.Quantitatives.Indicators;
 using Automata.Strategies;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -188,16 +187,24 @@ namespace Automata.Mechanisms
                     {
                         orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
 
-                        var macd = (MACD)Strategy.Indicators[0];
+                        //var macd = (MACD)Strategy.Indicators[0];
+                        //foreach (var price in prices)
+                        //{
+                        //    var macdHist = macd.HistogramValues.LastOrDefault();
+                        //    var macdSig = macd.SignalValues.LastOrDefault();
+                        //    var macdBody = macd.MACDValues.LastOrDefault();
+                        //    if (macdHist != null && macdSig != null && macdBody != null)
+                        //        writer.WriteItemsLine(price.Security.Code, macdHist.Time.Print(), price.ValueOf(macd.PriceType), macdHist.Value.ToString("#0.0000000"),
+                        //            macdSig.Value.PrintPrecise(),
+                        //            macdBody.Value.PrintPrecise());
+                        //}
+                        var sto = (StochasticOscillator)Strategy.Indicators[1];
                         foreach (var price in prices)
                         {
-                            var macdHist = macd.HistogramValues.LastOrDefault();
-                            var macdSig = macd.SignalValues.LastOrDefault();
-                            var macdBody = macd.MACDValues.LastOrDefault();
-                            if (macdHist != null && macdSig != null && macdBody != null)
-                                writer.WriteItemsLine(price.Security.Code, macdHist.Time.Print(), price.ValueOf(macd.PriceType), macdHist.Value.ToString("#0.0000000"),
-                                    macdSig.Value.ToString("#0.0000000"),
-                                    macdBody.Value.ToString("#0.0000000"));
+                            var k = sto.KValues.LastOrDefault();
+                            var d = sto.DValues.LastOrDefault();
+                            if (k != null && d != null)
+                                writer.WriteItemsLine(price.Security.Code, k.Time.Print(), price.ValueOf(sto.PriceType), k.Value.PrintPrecise(), d.Value.PrintPrecise());
                         }
                     }
 

@@ -20,6 +20,7 @@ namespace Automata.Strategies
         public Dictionary<Security, List<Price>> PriceHistory { get; private set; }
 
         private MACD macd;
+        private StochasticOscillator sto;
 
         private int tickCounter = 0;
         private DateTime lastPriceTime = DateTime.MinValue;
@@ -28,6 +29,9 @@ namespace Automata.Strategies
         {
             macd = Indicators[0] as MACD;
             if (macd == null)
+                throw new InvalidStrategyBehaviorException();
+            sto = Indicators[1] as StochasticOscillator;
+            if (sto == null)
                 throw new InvalidStrategyBehaviorException();
         }
 
@@ -42,19 +46,12 @@ namespace Automata.Strategies
 
             foreach (var price in prices)
             {
-                macd.Compute(price);
+                macd.ComputeNext(price);
+                sto.ComputeNext(price);
+                
 
                 if (tickCounter < 50)
                     continue;
-
-                var macdHist = macd.HistogramValues.LastOrDefault();
-                var macdSig = macd.SignalValues.LastOrDefault();
-                var macdBody = macd.MACDValues.LastOrDefault();
-
-                Console.WriteLine("MACD values: HIST:{0},SIG:{1},MACD:{2}", 
-                    macdHist.Value.ToString("#0.########"),
-                    macdSig.Value.ToString("#0.########"),
-                    macdBody.Value.ToString("#0.########"));
             }
 
             lastPriceTime = orderTime;

@@ -71,6 +71,7 @@ namespace Automata
                 Strategy = new ForexMACDCrossingStrategy(),
             };
             tester.Strategy.Indicators.Add(new MACD());
+            tester.Strategy.Indicators.Add(new StochasticOscillator());
             tester.AddCash(10000, Currency.USD, currencyScope.Start);
             return tester;
         }

@@ -1,5 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,16 +13,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Automata.Dashboard
+namespace Automata.Dashboard.Content
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for SettingsAppearance.xaml
     /// </summary>
-    public partial class MainWindow : ModernWindow
+    public partial class SettingsAppearance : UserControl
     {
-        public MainWindow()
+        public SettingsAppearance()
         {
             InitializeComponent();
+
+            // create and assign the appearance view model
+            this.DataContext = new SettingsAppearanceViewModel();
         }
     }
 }

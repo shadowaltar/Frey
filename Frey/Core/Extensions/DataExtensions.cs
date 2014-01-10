@@ -8,7 +8,7 @@ namespace Automata.Core.Extensions
 {
     public static class DataExtensions
     {
-        private static double doubleTolerance = Context.DoubleTolerance;
+        private const double DoubleTolerance = Context.DoubleTolerance;
 
         /// <summary>
         /// Parse a given object into integer.
@@ -63,13 +63,13 @@ namespace Automata.Core.Extensions
 
         public static bool ApproxEqualTo(this double value, double anotherValue)
         {
-            return Math.Abs(value - anotherValue) < doubleTolerance;
+            return Math.Abs(value - anotherValue) < DoubleTolerance;
         }
 
         public static bool IsIntApprox(this double value)
         {
             var diff = value.ToInt() - value;
-            return Math.Abs(diff) < doubleTolerance;
+            return Math.Abs(diff) < DoubleTolerance;
         }
 
         /// <summary>

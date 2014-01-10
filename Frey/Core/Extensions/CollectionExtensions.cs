@@ -222,6 +222,27 @@ namespace Automata.Core.Extensions
         }
 
         /// <summary>
+        /// Add a new item to the end of the list, or replace the last item if <paramref name="isAddingNew"/>
+        /// is false.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="values"></param>
+        /// <param name="value"></param>
+        /// <param name="isAddingNew"></param>
+        public static void AddOrReplaceLast<T>(this IList<T> values, T value, bool isAddingNew = true)
+        {
+            if (!isAddingNew && values.Count != 0)
+                values[values.Count - 1] = value;
+            else
+                values.Add(value);
+        }
+
+        public static void ReplaceLast<T>(this IList<T> values, T value)
+        {
+            values[values.Count - 1] = value;
+        }
+
+        /// <summary>
         /// Advanced version of <see cref="Enumerable.Distinct{TSource}(IEnumerable{TSource},IEqualityComparer{TSource})"/> which
         /// could specify a key selector instead of the <see cref="IEqualityComparer{TSource}"/>.
         /// </summary>
