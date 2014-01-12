@@ -16,13 +16,13 @@ namespace Automata
             Context.Initialize(Objects.Instance);
             //DownloadFxFiles();
             // sharpe ratio ranking:
-            // var tradingContext = TestSharpeRanking();
+            var tradingContext = TestSharpeRanking();
 
             // pair trading:
             //var tradingContext = TestPairTrading();
 
             // eurusd macd crossing
-            var tradingContext = TestForexMACDCrossing();
+            //var tradingContext = TestForexMACDCrossing();
 
             tradingContext.Start();
             Thread.Sleep(600000);
@@ -33,11 +33,12 @@ namespace Automata
         {
             var sharpeScope = ScopeFactory.DailyAllUnitedStatesStocks(10);
             sharpeScope.Securities.RemoveAll(s => s.Code == "NASDAQ:GOOG");
+            sharpeScope.Securities.RemoveAll(s => s.Code == "NASDAQ:AAPL");
             var sharpeTester = new BackTester(sharpeScope)
             {
-                Strategy = new SharpeRankingStrategy(20, 3)
+                Strategy = new SharpeRankingStrategy(25, 3)
             };
-            sharpeTester.AddCash(100000, Currency.USD, sharpeScope.Start);
+            sharpeTester.AddCash(1000000, Currency.USD, sharpeScope.Start);
             return sharpeTester;
         }
 
@@ -68,7 +69,7 @@ namespace Automata
             var currencyScope = ScopeFactory.DailyForex(2, "EURUSD");
             var tester = new BackTester(currencyScope)
             {
-                Strategy = new ForexMACDCrossingStrategy(),
+                Strategy = new ForexStochasticOscillatorStrategy(),
             };
             tester.Strategy.Indicators.Add(new MACD());
             tester.Strategy.Indicators.Add(new StochasticOscillator());

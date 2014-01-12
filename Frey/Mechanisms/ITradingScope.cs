@@ -8,7 +8,8 @@ namespace Automata.Mechanisms
     {
         DateTime Start { get; set; }
         DateTime End { get; set; }
-        TimeSpan TickDuration { get; set; }
+        TimeSpan SourcePriceDuration { get; set; }
+        TimeSpan TargetPriceDuration { get; set; }
         List<Security> Securities { get; set; }
         double LeverageMultiplier { get; set; }
         PriceSourceType PriceSourceType { get; }

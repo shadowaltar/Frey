@@ -26,7 +26,8 @@ namespace Automata.Mechanisms.Factories
 
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.SourcePriceDuration = TimeSpan.FromDays(1);
+            scope.TargetPriceDuration = scope.SourcePriceDuration;
             scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
@@ -50,7 +51,8 @@ namespace Automata.Mechanisms.Factories
 
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.SourcePriceDuration = TimeSpan.FromDays(1);
+            scope.TargetPriceDuration = scope.SourcePriceDuration;
             scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
@@ -73,7 +75,8 @@ namespace Automata.Mechanisms.Factories
 
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.SourcePriceDuration = TimeSpan.FromDays(1);
+            scope.TargetPriceDuration = scope.SourcePriceDuration;
             scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
@@ -98,7 +101,8 @@ namespace Automata.Mechanisms.Factories
 
             scope.End = new DateTime(2013, 12, 31).Date;
             scope.Start = scope.End.AddYears(-yearsAgo);
-            scope.TickDuration = TimeSpan.FromDays(1);
+            scope.SourcePriceDuration = TimeSpan.FromDays(1);
+            scope.TargetPriceDuration = scope.SourcePriceDuration;
             scope.PriceSourceType = PriceSourceType.YahooHistorical;
 
             return scope;
@@ -116,7 +120,8 @@ namespace Automata.Mechanisms.Factories
             scope.LeverageMultiplier = 50;
             scope.End = new DateTime(2010, 6, 1).Date;
             scope.Start = scope.End.AddMonths(-monthsAgo);
-            scope.TickDuration = TimeSpan.FromMinutes(1);
+            scope.SourcePriceDuration = TimeSpan.FromMinutes(1);
+            scope.TargetPriceDuration = TimeSpan.FromMinutes(5);
             scope.PriceSourceType = PriceSourceType.DailyFXHistorical;
             scope.DefaultIndicatorPriceType = PriceType.Close;
 

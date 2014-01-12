@@ -20,10 +20,16 @@ namespace Automata.Core
                 Directory.CreateDirectory(StaticDataFileDirectory);
             if (!Directory.Exists(LocalTempFileDirectory))
                 Directory.CreateDirectory(LocalTempFileDirectory);
+
+            fiveMinutes = TimeSpan.FromMinutes(5);
+            oneMinutes = TimeSpan.FromMinutes(1);
         }
 
         public static string StaticDataFileDirectory { get { return "../../../../StaticDataFiles"; } }
         public static string LocalTempFileDirectory { get { return "../../../../TempFiles"; } }
+
+        private static TimeSpan fiveMinutes;
+        private static TimeSpan oneMinutes;
 
         public static IReferenceUniverse References { get; private set; }
         public const double DoubleTolerance = 1E-8;
@@ -137,11 +143,6 @@ namespace Automata.Core
             return Convert(data, security, duration, sourceType);
         }
 
-        //public static IEnumerable<Price> ReadForexPriceFromDataFile(string symbol)
-        //{
-
-        //}
-
         private static IEnumerable<Price> Convert(IEnumerable<string[]> data, Security security, TimeSpan duration, PriceSourceType priceSourceType = PriceSourceType.Unknown)
         {
             switch (priceSourceType)
@@ -182,6 +183,47 @@ namespace Automata.Core
                         };
                     }
                     break;
+            }
+        }
+
+        public static IEnumerable<Price> PreprocessPrices(IEnumerable<Price> prices, TimeSpan newDuration, DateTime start, DateTime end)
+        {
+            var cache = new List<Price>();
+            Price lastPrice = null;
+            foreach (var price in prices)
+            {
+                if (price.Time > end)
+                    break;
+                if (price.Time < start)
+                    continue;
+
+                if (price.Duration >= newDuration)
+                    yield return price;
+
+                if (price.Duration < newDuration)
+                {
+                    //Price missingPrice = null;
+                    //if (lastPrice != null)
+                    //{
+                    //    var missingCount = (price.Time - lastPrice.Time).Divide(price.Duration);
+                    //    if (price.Time - lastPrice.Time != price.Duration)
+                    //    {
+                    //        missingPrice = new Price(lastPrice);
+                    //        missingPrice.Time = missingPrice.Time + price.Duration;
+                    //    }
+                    //}
+                    //if (missingPrice != null)
+                    //    cache.Add(missingPrice);
+                    //lastPrice = price;
+
+                    cache.Add(price);
+                    if (newDuration.Divide(price.Duration).ApproxEqualTo(cache.Count))
+                    {
+                        var newPrice = Price.Combine(cache, newDuration);
+                        cache.Clear();
+                        yield return newPrice;
+                    }
+                }
             }
         }
     }

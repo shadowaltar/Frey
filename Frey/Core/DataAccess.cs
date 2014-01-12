@@ -14,6 +14,8 @@ namespace Automata.Core
         {
         }
 
+        public bool IsEnded { get; protected set; }
+
         public abstract HashSet<Price> GetNextTimeslotPrices();
 
         public abstract void Initialize(ITradingScope tradingScope);
@@ -36,24 +38,27 @@ namespace Automata.Core
         public override void Initialize(ITradingScope tradingScope)
         {
             var securities = tradingScope.Securities;
-            Preprocessor = new DataProcessor(tradingScope.TickDuration);
+            Preprocessor = new DataProcessor(tradingScope.TargetPriceDuration);
 
             allHistoricalPrices.Clear();
 
             var prices = new HashSet<Price>();
             foreach (var security in securities)
             {
-                var dynamicPrices = Context.ReadPricesFromDataFile(security, tradingScope.TickDuration, tradingScope.PriceSourceType);
-                Price lastPrice = null;
-                foreach (var price in dynamicPrices)
-                {
-                    if (price.Time >= tradingScope.Start && price.Time <= tradingScope.End)
-                    {
-                        Preprocessor.CheckTimeGap(price, lastPrice);
-                        prices.Add(price);
-                        lastPrice = price;
-                    }
-                }
+                var dynamicPrices = Context.ReadPricesFromDataFile(security, tradingScope.SourcePriceDuration, tradingScope.PriceSourceType);
+                // Price lastPrice = null;
+                var combinedPrices = Context.PreprocessPrices(dynamicPrices, tradingScope.TargetPriceDuration,
+                    tradingScope.Start, tradingScope.End);
+                prices.AddRange(combinedPrices);
+                //foreach (var price in combinedPrices)
+                //{
+                //    if (price.Time >= tradingScope.Start && price.Time <= tradingScope.End)
+                //    {
+                //        Preprocessor.CheckTimeGap(price, lastPrice);
+                //        prices.Add(price);
+                //        lastPrice = price;
+                //    }
+                //}
             }
 
             var orderedPrices = prices.OrderBy(p => p.Time).ThenBy(p => p.Security.Code);
@@ -61,6 +66,7 @@ namespace Automata.Core
             {
                 allHistoricalPrices.Enqueue(group.ToHashSet());
             }
+            IsEnded = true;
         }
     }
 

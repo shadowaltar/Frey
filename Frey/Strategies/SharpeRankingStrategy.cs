@@ -132,12 +132,12 @@ namespace Automata.Strategies
 
         private double ComputeStopLoss(Price lastPrice)
         {
-            return lastPrice.Close * .80; // stoploss is when drawdown = 10%
+            return lastPrice.Close * .75; // stoploss is when drawdown = 25%
         }
 
         private static double ComputeQuantity(Portfolio portfolio, Price referencePrice)
         {
-            var a = portfolio.CashPosition.Value * .15 / referencePrice.Close;
+            var a = portfolio.CashPosition.Value * .3 / referencePrice.Close;
             if (a < 100)
                 return 100;
             var b = a % 100;

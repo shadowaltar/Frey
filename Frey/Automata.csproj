@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DailyFXPriceFileAccess.cs" />
     <Compile Include="Core\Exceptions\InvalidTickDurationException.cs" />
     <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
     <Compile Include="Mechanisms\Utils\PriceExtensions.cs" />
@@ -136,7 +137,7 @@
     <Compile Include="Quantitatives\Indicators\IndicatorMaths.cs" />
     <Compile Include="Quantitatives\Indicators\MACD.cs" />
     <Compile Include="Quantitatives\Indicators\StochasticOscillator.cs" />
-    <Compile Include="Strategies\ForexMACDCrossingStrategy.cs" />
+    <Compile Include="Strategies\ForexStochasticOscillatorStrategy.cs" />
     <Compile Include="Strategies\PairTradingStrategy.cs" />
     <Compile Include="Strategies\SharpeRankingStrategy.cs" />
     <Compile Include="Strategies\Strategy.cs" />

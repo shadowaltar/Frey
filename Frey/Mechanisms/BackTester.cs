@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using Automata.Core;
 using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
@@ -100,7 +101,7 @@ namespace Automata.Mechanisms
         {
             foreach (var order in orders)
             {
-                if (orders.Any(o=>o.Side!=order.Side && o.Security==order.Security))
+                if (orders.Any(o => o.Side != order.Side && o.Security == order.Security))
                 {
                     throw new InvalidStrategyBehaviorException();
                 }
@@ -116,6 +117,11 @@ namespace Automata.Mechanisms
         {
             PriceData.Enqueue(prices);
             Task.Factory.StartNew(() => SavePricesToHistory(prices));
+        }
+
+        protected override void OnDataStatusChanged(DataStatus status)
+        {
+            DataStatus = status;
         }
 
         protected override HashSet<Price> RetrievePrices()
@@ -154,7 +160,7 @@ namespace Automata.Mechanisms
             Utilities.WriteTimedLine("Period From {0} To {1}", TradingScope.Start, TradingScope.End);
             Utilities.WriteTimedLine("Equity: " + Portfolio.CashPosition.Value);
             Utilities.WriteTimedLine("Return: " + (Portfolio.CashPosition.Value / InitEquity - 1));
-       //     Process.Start(reportFileName);
+            Process.Start(reportFileName);
         }
     }
 }

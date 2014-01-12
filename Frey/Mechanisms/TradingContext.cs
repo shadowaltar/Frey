@@ -79,6 +79,7 @@ namespace Automata.Mechanisms
         public DataSource DataSource { get; set; }
         public Strategy Strategy { get; set; }
         public ITradingScope TradingScope { get; set; }
+        public DataStatus DataStatus { get; set; }
 
         private CancellationTokenSource cancellation;
 
@@ -173,11 +174,11 @@ namespace Automata.Mechanisms
                     // dequeue one day only
                     var prices = RetrievePrices();
 
+                    if (prices == null && DataStatus == DataStatus.ReachTimeEnd)
+                        break;
+
                     if (prices == null)
-                    {
-                        Thread.Sleep(1);
                         continue;
-                    }
 
                     // use the timestamp of the price data to be the timestamp of order
                     var orderTime = prices.First().Time;
@@ -198,14 +199,14 @@ namespace Automata.Mechanisms
                         //            macdSig.Value.PrintPrecise(),
                         //            macdBody.Value.PrintPrecise());
                         //}
-                        var sto = (StochasticOscillator)Strategy.Indicators[1];
-                        foreach (var price in prices)
-                        {
-                            var k = sto.KValues.LastOrDefault();
-                            var d = sto.DValues.LastOrDefault();
-                            if (k != null && d != null)
-                                writer.WriteItemsLine(price.Security.Code, k.Time.Print(), price.ValueOf(sto.PriceType), k.Value.PrintPrecise(), d.Value.PrintPrecise());
-                        }
+                        //var sto = (StochasticOscillator)Strategy.Indicators[1];
+                        //foreach (var price in prices)
+                        //{
+                        //    var k = sto.KValues.LastOrDefault();
+                        //    var d = sto.DValues.LastOrDefault();
+                        //    if (k != null && d != null)
+                        //        writer.WriteItemsLine(price.Security.Code, k.Time.Print(), price.ValueOf(sto.PriceType), k.Value.PrintPrecise(), d.Value.PrintPrecise());
+                        //}
                     }
 
                     if (!orders.IsNullOrEmpty())
@@ -300,6 +301,8 @@ namespace Automata.Mechanisms
 
         protected abstract void OnNewPriceData(HashSet<Price> prices);
 
+        protected abstract void OnDataStatusChanged(DataStatus status);
+
         #region lifecycle methods
 
         public void Start()
@@ -328,11 +331,13 @@ namespace Automata.Mechanisms
         private void SubscribeDataSource()
         {
             DataSource.NotifyNewPriceData += OnNewPriceData;
+            DataSource.DataStatusChanged += OnDataStatusChanged;
         }
 
         private void UnsubscribeDataSource()
         {
             DataSource.NotifyNewPriceData -= OnNewPriceData;
+            DataSource.DataStatusChanged -= OnDataStatusChanged;
         }
 
         #endregion

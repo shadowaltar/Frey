@@ -17,7 +17,8 @@ namespace Automata.Mechanisms
 
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-        public TimeSpan TickDuration { get; set; }
+        public TimeSpan SourcePriceDuration { get; set; }
+        public TimeSpan TargetPriceDuration { get; set; }
 
         public List<Country> Countries { get; set; }
         public List<Exchange> Exchanges { get; set; }

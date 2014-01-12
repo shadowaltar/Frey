@@ -23,6 +23,7 @@ namespace Automata.Mechanisms
         private bool isSendingData;
         private bool isReceivingData;
         private DataStatus currentDataStatus = DataStatus.Initializing;
+        private DataStatus lastDataStatus = DataStatus.Initializing;
 
         public ITradingScope TradingScope { get; set; }
 
@@ -86,6 +87,13 @@ namespace Automata.Mechanisms
                     {
                         awaitingPrices.Enqueue(items);
                     }
+                    else if (access.IsEnded)
+                    {
+                        currentDataStatus = DataStatus.ReachTimeEnd;
+                        InvokeDataStatusChanged();
+                        isSendingData = false;
+                        break;
+                    }
                 }
 
                 HashSet<Price> prices = null;
@@ -116,6 +124,10 @@ namespace Automata.Mechanisms
 
         private void InvokeDataStatusChanged()
         {
+            if (lastDataStatus == currentDataStatus)
+                return;
+
+            lastDataStatus = currentDataStatus;
             if (DataStatusChanged != null)
                 DataStatusChanged(currentDataStatus);
         }

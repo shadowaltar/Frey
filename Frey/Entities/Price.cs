@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Automata.Entities
 {
@@ -30,6 +33,43 @@ namespace Automata.Entities
         public double Close { get; set; }
         public double AdjustedClose { get; set; }
         public double Volume { get; set; }
+
+        public static double HighestHigh(IEnumerable<Price> prices)
+        {
+            return prices.Max(p => p.High);
+        }
+
+        public static double LowestLow(IEnumerable<Price> prices)
+        {
+            return prices.Min(p => p.Low);
+        }
+
+        public static Price Combine(IEnumerable<Price> prices, TimeSpan newDuration)
+        {
+            Price result = null;
+            var close = 0d;
+            var adjClose = 0d;
+            foreach (var price in prices)
+            {
+                if (result == null)
+                    result = new Price(price) { Duration = newDuration, Volume = 0 };
+
+                if (result.High < price.High)
+                    result.High = price.High;
+                if (result.Low > price.Low)
+                    result.Low = price.Low;
+
+                result.Volume += price.Volume;
+                close = price.Close;
+                adjClose = price.AdjustedClose;
+            }
+            if (result != null)
+            {
+                result.Close = close;
+                result.AdjustedClose = adjClose;
+            }
+            return result;
+        }
 
         public override string ToString()
         {

@@ -13,7 +13,7 @@ using Automata.Quantitatives.Indicators;
 
 namespace Automata.Strategies
 {
-    public class ForexMACDCrossingStrategy : Strategy
+    public class ForexStochasticOscillatorStrategy : Strategy
     {
         public override bool IsTimeToStop { get; protected set; }
 
@@ -43,19 +43,39 @@ namespace Automata.Strategies
                 return null;
 
             tickCounter++;
-
+            
+            var orders = new List<Order>();
             foreach (var price in prices)
             {
                 macd.ComputeNext(price);
                 sto.ComputeNext(price);
-                
 
-                if (tickCounter < 50)
+                // don't trade when near market open
+                if (NearMarketOpen(price.Time))
                     continue;
+
+                // close all positions near the market closing
+                if (NearMarketClose(price.Time))
+                {
+                    foreach (var position in portfolio)
+                    {
+                        Order.CreateToClose(position, orderTime);
+                    }
+                }
             }
 
             lastPriceTime = orderTime;
             return null;
+        }
+
+        private bool NearMarketClose(DateTime time)
+        {
+            return time.DayOfWeek == DayOfWeek.Saturday && time.Hour > 14;
+        }
+
+        private bool NearMarketOpen(DateTime time)
+        {
+            return time.DayOfWeek == DayOfWeek.Monday && time.Hour < 16;
         }
     }
 }
