@@ -16,13 +16,13 @@ namespace Automata
             Context.Initialize(Objects.Instance);
             //DownloadFxFiles();
             // sharpe ratio ranking:
-            var tradingContext = TestSharpeRanking();
+            //var tradingContext = TestSharpeRanking();
 
             // pair trading:
             //var tradingContext = TestPairTrading();
 
             // eurusd macd crossing
-            //var tradingContext = TestForexMACDCrossing();
+            var tradingContext = TestForexMACDCrossing();
 
             tradingContext.Start();
             Thread.Sleep(600000);

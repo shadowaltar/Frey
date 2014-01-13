@@ -38,5 +38,17 @@ namespace Automata.Core
         {
             return value.ToString("0.00000000");
         }
+
+        public static bool IsAmericaSummerTime(this DateTime time)
+        {
+            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            return tzi.IsDaylightSavingTime(time);
+        }
+
+        public static bool IsUnitedKingdomSummerTime(this DateTime time)
+        {
+            var tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            return tzi.IsDaylightSavingTime(time);
+        }
     }
 }

@@ -79,6 +79,10 @@
     <Compile Include="Core\DailyFXPriceFileAccess.cs" />
     <Compile Include="Core\Exceptions\InvalidTickDurationException.cs" />
     <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
+    <Compile Include="Core\HistoricalStaticDataFileAccess.cs" />
+    <Compile Include="Entities\City.cs" />
+    <Compile Include="Mechanisms\DailyTradingSession.cs" />
+    <Compile Include="Mechanisms\MarketType.cs" />
     <Compile Include="Mechanisms\Utils\PriceExtensions.cs" />
     <Compile Include="Core\MiscDownloader.cs" />
     <Compile Include="Core\Objects.cs" />

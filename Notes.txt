@@ -1,0 +1,8 @@
+US NFP (Non-farm Payroll)
+USA; Reported monthly, 1st Friday of the month, 8:30 EST.
+
+US Jobless Claims Report (Initial & Continuing)
+USA; Reported weekly, Thursday, 8:30 EST.
+
+US CPI
+http://www.bls.gov/schedule/news_release/cpi.htm

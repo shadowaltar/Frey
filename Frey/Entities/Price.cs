@@ -44,7 +44,7 @@ namespace Automata.Entities
             return prices.Min(p => p.Low);
         }
 
-        public static Price Combine(IEnumerable<Price> prices, TimeSpan newDuration)
+        public static Price Combine(IEnumerable<Price> prices, DateTime startTime, TimeSpan newDuration)
         {
             Price result = null;
             var close = 0d;
@@ -52,8 +52,14 @@ namespace Automata.Entities
             foreach (var price in prices)
             {
                 if (result == null)
-                    result = new Price(price) { Duration = newDuration, Volume = 0 };
-
+                {
+                    result = new Price(price)
+                    {
+                        Time = startTime,
+                        Duration = newDuration,
+                        Volume = 0
+                    };
+                }
                 if (result.High < price.High)
                     result.High = price.High;
                 if (result.Low > price.Low)

@@ -14,6 +14,8 @@ namespace Automata.Mechanisms
 {
     public class BackTester : TradingContext
     {
+        private CsvFileAccess portfolioDataWriter;
+
         public BackTester(ITradingScope testScope)
         {
             TradingScope = testScope;
@@ -137,13 +139,19 @@ namespace Automata.Mechanisms
         protected override void BeforeTrading()
         {
             Utilities.WriteTimedLine("BackTester Trading Starts.");
+            portfolioDataWriter = CsvFileAccess.GetWriter(Path.Combine(Context.LocalTempFileDirectory, "Test.csv"));
+
         }
 
         protected override void AfterTrading()
         {
             TradeHistory.TrimExcess();
 
-            // reporting
+            // reporting #1
+            if (portfolioDataWriter != null)
+                portfolioDataWriter.Dispose();
+
+            // reporting #2, for trade records.
             Console.WriteLine();
             var equity = InitEquity;
             var reportFileName = ("Result_" + Utilities.Now + ".csv").Replace(":", string.Empty);

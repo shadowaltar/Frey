@@ -20,16 +20,10 @@ namespace Automata.Core
                 Directory.CreateDirectory(StaticDataFileDirectory);
             if (!Directory.Exists(LocalTempFileDirectory))
                 Directory.CreateDirectory(LocalTempFileDirectory);
-
-            fiveMinutes = TimeSpan.FromMinutes(5);
-            oneMinutes = TimeSpan.FromMinutes(1);
         }
 
         public static string StaticDataFileDirectory { get { return "../../../../StaticDataFiles"; } }
         public static string LocalTempFileDirectory { get { return "../../../../TempFiles"; } }
-
-        private static TimeSpan fiveMinutes;
-        private static TimeSpan oneMinutes;
 
         public static IReferenceUniverse References { get; private set; }
         public const double DoubleTolerance = 1E-8;
@@ -90,6 +84,7 @@ namespace Automata.Core
                 }
             }
         }
+
         public static IEnumerable<Security> ReadSecuritiesFromDataFile()
         {
             var filePath = Path.Combine(StaticDataFileDirectory, "Meta_ExchangeTradables.csv");
@@ -186,10 +181,23 @@ namespace Automata.Core
             }
         }
 
-        public static IEnumerable<Price> PreprocessPrices(IEnumerable<Price> prices, TimeSpan newDuration, DateTime start, DateTime end)
+        /// <summary>
+        /// Preprocess the raw data
+        /// </summary>
+        /// <param name="prices"></param>
+        /// <param name="newDuration"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public static IEnumerable<Price> PreprocessPrices(IEnumerable<Price> prices, TimeSpan newDuration,
+            DateTime start, DateTime end)
         {
             var cache = new List<Price>();
-            Price lastPrice = null;
+
+            var startTime = DateTime.MinValue;
+            var endTime = DateTime.MinValue;
+
+            var forwardLookingCache = new List<Price>();
             foreach (var price in prices)
             {
                 if (price.Time > end)
@@ -198,31 +206,35 @@ namespace Automata.Core
                     continue;
 
                 if (price.Duration >= newDuration)
-                    yield return price;
-
-                if (price.Duration < newDuration)
                 {
-                    //Price missingPrice = null;
-                    //if (lastPrice != null)
-                    //{
-                    //    var missingCount = (price.Time - lastPrice.Time).Divide(price.Duration);
-                    //    if (price.Time - lastPrice.Time != price.Duration)
-                    //    {
-                    //        missingPrice = new Price(lastPrice);
-                    //        missingPrice.Time = missingPrice.Time + price.Duration;
-                    //    }
-                    //}
-                    //if (missingPrice != null)
-                    //    cache.Add(missingPrice);
-                    //lastPrice = price;
-
-                    cache.Add(price);
-                    if (newDuration.Divide(price.Duration).ApproxEqualTo(cache.Count))
+                    yield return price;
+                }
+                else
+                {
+                    if (startTime == DateTime.MinValue)
                     {
-                        var newPrice = Price.Combine(cache, newDuration);
-                        cache.Clear();
-                        yield return newPrice;
+                        startTime = price.Time;
+                        endTime = startTime + newDuration;
+                        // todo, tackle trading session open/close during weekend.
+                        // always stop at NY Time 4pm Fri, and start at Sydney Time 9am Mon.
                     }
+                    if (price.Time >= startTime && price.Time < endTime)
+                    {
+                        cache.Add(price);
+                        continue;
+                    }
+                    if (price.Time >= endTime)
+                    {
+                        forwardLookingCache.Add(price);
+                    }
+                    var newPrice = Price.Combine(cache, startTime, newDuration);
+                    startTime = endTime;
+                    endTime = startTime + newDuration;
+                    yield return newPrice;
+                    cache.Clear();
+
+                    cache.AddRange(forwardLookingCache);
+                    forwardLookingCache.Clear();
                 }
             }
         }

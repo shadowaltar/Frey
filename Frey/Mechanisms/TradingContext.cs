@@ -167,7 +167,6 @@ namespace Automata.Mechanisms
         protected virtual void Trade()
         {
             BeforeTrading();
-            using (var writer = CsvFileAccess.GetWriter(Path.Combine(Context.LocalTempFileDirectory, "Test.csv")))
             {
                 while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
                 {
