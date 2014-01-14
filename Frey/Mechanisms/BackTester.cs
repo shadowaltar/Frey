@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Automata.Quantitatives.Indicators;
 
 namespace Automata.Mechanisms
 {
@@ -140,7 +141,40 @@ namespace Automata.Mechanisms
         {
             Utilities.WriteTimedLine("BackTester Trading Starts.");
             portfolioDataWriter = CsvFileAccess.GetWriter(Path.Combine(Context.LocalTempFileDirectory, "Test.csv"));
+        }
 
+        protected override void AfterNewPrices(HashSet<Price> prices)
+        {
+            foreach (var price in prices.OrderBy(p => p.Security.Code))
+            {
+                portfolioDataWriter.WriteItemsLine(price.Time.Print(),
+                    price.Duration, price.Open.PrintForexPrecise(),
+                    price.High.PrintForexPrecise(), price.Low.PrintForexPrecise(),
+                    price.Close.PrintForexPrecise(), price.Volume, price.AdjustedClose);
+            }
+        }
+
+        protected override void AfterIndicatorsComputed(List<Indicator> indicators)
+        {
+            //var macd = (MACD)Strategy.Indicators[0];
+            //foreach (var price in prices)
+            //{
+            //    var macdHist = macd.HistogramValues.LastOrDefault();
+            //    var macdSig = macd.SignalValues.LastOrDefault();
+            //    var macdBody = macd.MACDValues.LastOrDefault();
+            //    if (macdHist != null && macdSig != null && macdBody != null)
+            //        writer.WriteItemsLine(price.Security.Code, macdHist.Time.Print(), price.ValueOf(macd.PriceType), macdHist.Value.ToString("#0.0000000"),
+            //            macdSig.Value.PrintPrecise(),
+            //            macdBody.Value.PrintPrecise());
+            //}
+            //var sto = (StochasticOscillator)Strategy.Indicators[1];
+            //foreach (var price in prices)
+            //{
+            //    var k = sto.KValues.LastOrDefault();
+            //    var d = sto.DValues.LastOrDefault();
+            //    if (k != null && d != null)
+            //        writer.WriteItemsLine(price.Security.Code, k.Time.Print(), price.ValueOf(sto.PriceType), k.Value.PrintPrecise(), d.Value.PrintPrecise());
+            //}
         }
 
         protected override void AfterTrading()

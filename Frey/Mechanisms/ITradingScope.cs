@@ -13,5 +13,6 @@ namespace Automata.Mechanisms
         List<Security> Securities { get; set; }
         double LeverageMultiplier { get; set; }
         PriceSourceType PriceSourceType { get; }
+        TimeZoneType PriceTimeZoneType { get; set; }
     }
 }

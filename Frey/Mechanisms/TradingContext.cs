@@ -167,61 +167,48 @@ namespace Automata.Mechanisms
         protected virtual void Trade()
         {
             BeforeTrading();
+            while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
             {
-                while (!Strategy.IsTimeToStop && !cancellation.Token.IsCancellationRequested)
+                // dequeue one day only
+                var prices = RetrievePrices();
+
+                if (prices == null && DataStatus == DataStatus.ReachTimeEnd)
+                    break;
+
+                if (prices == null)
+                    continue;
+
+                AfterNewPrices(prices);
+
+                // use the timestamp of the price data to be the timestamp of order
+                var orderTime = prices.First().Time;
+                // generate entries and exits
+                List<Order> orders;
+                if (!Strategy.CheckIfStopTrading(prices, Portfolio, orderTime, out orders))
                 {
-                    // dequeue one day only
-                    var prices = RetrievePrices();
+                    orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
 
-                    if (prices == null && DataStatus == DataStatus.ReachTimeEnd)
-                        break;
+                    AfterIndicatorsComputed(Strategy.Indicators);
+                    AfterOrdersGenerated(orders);
+                }
 
-                    if (prices == null)
-                        continue;
+                if (!orders.IsNullOrEmpty())
+                {
+                    CheckCrossTrades(orders);
 
-                    // use the timestamp of the price data to be the timestamp of order
-                    var orderTime = prices.First().Time;
-                    // generate entries and exits
-                    List<Order> orders;
-                    if (!Strategy.CheckIfStopTrading(prices, Portfolio, orderTime, out orders))
-                    {
-                        orders = Strategy.GenerateOrders(prices, Portfolio, orderTime);
+                    var exitOrders = orders.Where(o => o.IsClosing).ToList();
+                    var trades = ClosePositions(exitOrders, Portfolio, prices);
+                    SaveOrdersToHistory(exitOrders);
+                    ComputePortfolio(trades);
 
-                        //var macd = (MACD)Strategy.Indicators[0];
-                        //foreach (var price in prices)
-                        //{
-                        //    var macdHist = macd.HistogramValues.LastOrDefault();
-                        //    var macdSig = macd.SignalValues.LastOrDefault();
-                        //    var macdBody = macd.MACDValues.LastOrDefault();
-                        //    if (macdHist != null && macdSig != null && macdBody != null)
-                        //        writer.WriteItemsLine(price.Security.Code, macdHist.Time.Print(), price.ValueOf(macd.PriceType), macdHist.Value.ToString("#0.0000000"),
-                        //            macdSig.Value.PrintPrecise(),
-                        //            macdBody.Value.PrintPrecise());
-                        //}
-                        //var sto = (StochasticOscillator)Strategy.Indicators[1];
-                        //foreach (var price in prices)
-                        //{
-                        //    var k = sto.KValues.LastOrDefault();
-                        //    var d = sto.DValues.LastOrDefault();
-                        //    if (k != null && d != null)
-                        //        writer.WriteItemsLine(price.Security.Code, k.Time.Print(), price.ValueOf(sto.PriceType), k.Value.PrintPrecise(), d.Value.PrintPrecise());
-                        //}
-                    }
+                    AfterPositionsClosed(trades);
 
-                    if (!orders.IsNullOrEmpty())
-                    {
-                        CheckCrossTrades(orders);
+                    var entryOrders = orders.Where(o => !o.IsClosing).ToList();
+                    var positions = ExecuteOrders(entryOrders, prices);
+                    SaveOrdersToHistory(entryOrders);
+                    ComputePortfolio(positions);
 
-                        var exitOrders = orders.Where(o => o.IsClosing).ToList();
-                        var trades = ClosePositions(exitOrders, Portfolio, prices);
-                        SaveOrdersToHistory(exitOrders);
-                        ComputePortfolio(trades);
-
-                        var entryOrders = orders.Where(o => !o.IsClosing).ToList();
-                        var positions = ExecuteOrders(entryOrders, prices);
-                        SaveOrdersToHistory(entryOrders);
-                        ComputePortfolio(positions);
-                    }
+                    AfterPositionsOpened(positions);
                 }
             }
 
@@ -229,6 +216,16 @@ namespace Automata.Mechanisms
         }
 
         protected virtual void BeforeTrading() { }
+
+        protected virtual void AfterNewPrices(HashSet<Price> prices) { }
+
+        protected virtual void AfterIndicatorsComputed(List<Indicator> indicators) { }
+
+        protected virtual void AfterOrdersGenerated(List<Order> orders) { }
+
+        protected virtual void AfterPositionsClosed(List<Trade> trades) { }
+
+        protected virtual void AfterPositionsOpened(List<Position> positions) { }
 
         protected virtual void AfterTrading() { }
 

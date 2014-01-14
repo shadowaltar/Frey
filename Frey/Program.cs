@@ -66,7 +66,7 @@ namespace Automata
 
         private static TradingContext TestForexMACDCrossing()
         {
-            var currencyScope = ScopeFactory.DailyForex(2, "EURUSD");
+            var currencyScope = ScopeFactory.M30ForexFromStaticDailyFXPrice(2, "EURUSD");
             var tester = new BackTester(currencyScope)
             {
                 Strategy = new ForexStochasticOscillatorStrategy(),

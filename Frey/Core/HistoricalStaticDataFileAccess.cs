@@ -30,8 +30,8 @@ namespace Automata.Core
             var prices = new HashSet<Price>();
             foreach (var security in securities)
             {
-                var dynamicPrices = Context.ReadPricesFromDataFile(security, tradingScope.SourcePriceDuration, tradingScope.PriceSourceType);
-                // Price lastPrice = null;
+                var dynamicPrices = Context.ReadPricesFromDataFile(security, tradingScope.SourcePriceDuration,
+                    tradingScope.PriceSourceType, tradingScope.PriceTimeZoneType);
                 var combinedPrices = Context.PreprocessPrices(dynamicPrices, tradingScope.TargetPriceDuration,
                     tradingScope.Start, tradingScope.End);
                 prices.AddRange(combinedPrices);

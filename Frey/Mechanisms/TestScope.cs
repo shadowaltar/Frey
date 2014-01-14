@@ -25,6 +25,7 @@ namespace Automata.Mechanisms
         public List<Security> Securities { get; set; }
         public double LeverageMultiplier { get; set; }
         public PriceSourceType PriceSourceType { get; set; }
+        public TimeZoneType PriceTimeZoneType { get; set; }
         public double MarginRatio { get { return LeverageMultiplier.ApproxEqualTo(0) ? double.NaN : 1 / LeverageMultiplier; } }
         public PriceType DefaultIndicatorPriceType { get; set; }
     }

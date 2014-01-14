@@ -130,22 +130,27 @@ namespace Automata.Core
             }
         }
 
-        public static IEnumerable<Price> ReadPricesFromDataFile(Security security, TimeSpan duration, PriceSourceType sourceType = PriceSourceType.Unknown)
+        public static IEnumerable<Price> ReadPricesFromDataFile(Security security, TimeSpan duration,
+            PriceSourceType sourceType = PriceSourceType.Unknown,
+            TimeZoneType priceTimeZoneType = TimeZoneType.UTC)
         {
             var fileName = security.Code.Replace(":", "_") + ".csv";
             var filePath = Path.Combine(StaticDataFileDirectory, fileName);
             var data = CsvFileAccess.Read(filePath, true);
-            return Convert(data, security, duration, sourceType);
+            return Convert(data, security, duration, sourceType, priceTimeZoneType);
         }
 
-        private static IEnumerable<Price> Convert(IEnumerable<string[]> data, Security security, TimeSpan duration, PriceSourceType priceSourceType = PriceSourceType.Unknown)
+        private static IEnumerable<Price> Convert(IEnumerable<string[]> data, Security security,
+            TimeSpan duration,
+            PriceSourceType priceSourceType = PriceSourceType.Unknown,
+            TimeZoneType priceTimeZoneType = TimeZoneType.UTC)
         {
             switch (priceSourceType)
             {
                 case PriceSourceType.YahooHistorical:
                     foreach (var datum in data)
                     {
-                        yield return new Price
+                        var price = new Price
                         {
                             Time = datum[0].ToDateTime("yyyy-MM-dd"),
                             Duration = duration,
@@ -159,12 +164,15 @@ namespace Automata.Core
 
                             Security = security,
                         };
+                        if (priceTimeZoneType == TimeZoneType.AmericaTime)
+                            price.Time = price.Time.AmericaToUTC0();
+                        yield return price;
                     }
                     break;
                 case PriceSourceType.DailyFXHistorical:
                     foreach (var x in data)
                     {
-                        yield return new Price
+                        var price = new Price
                         {
                             Time = (x[0] + x[1]).ToDateTime("M/d/yyyyHH:mm:ss"),
                             Duration = duration,
@@ -176,6 +184,9 @@ namespace Automata.Core
 
                             Security = security,
                         };
+                        if (priceTimeZoneType == TimeZoneType.AmericaTime)
+                            price.Time = price.Time.AmericaToUTC0();
+                        yield return price;
                     }
                     break;
             }
@@ -218,6 +229,12 @@ namespace Automata.Core
                         // todo, tackle trading session open/close during weekend.
                         // always stop at NY Time 4pm Fri, and start at Sydney Time 9am Mon.
                     }
+
+                    if (!price.Time.IsForexMarketTradingSession())
+                    {
+                        
+                    }
+
                     if (price.Time >= startTime && price.Time < endTime)
                     {
                         cache.Add(price);

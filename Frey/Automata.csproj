@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Calendar.cs" />
     <Compile Include="Core\DailyFXPriceFileAccess.cs" />
     <Compile Include="Core\Exceptions\InvalidTickDurationException.cs" />
     <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Entities\City.cs" />
     <Compile Include="Mechanisms\DailyTradingSession.cs" />
     <Compile Include="Mechanisms\MarketType.cs" />
+    <Compile Include="Mechanisms\TimeZoneType.cs" />
     <Compile Include="Mechanisms\Utils\PriceExtensions.cs" />
     <Compile Include="Core\MiscDownloader.cs" />
     <Compile Include="Core\Objects.cs" />
@@ -105,7 +107,7 @@
     <Compile Include="Core\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Core\Extensions\MultithreadingExtensions.cs" />
     <Compile Include="Core\YahooPriceDownloader.cs" />
-    <Compile Include="Entities\AppliedPrice.cs" />
+    <Compile Include="Entities\PriceType.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\Cash.cs" />
     <Compile Include="Entities\Currency.cs" />

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Automata.Core;
+using Automata.Core.Extensions;
 using NUnit.Framework;
 
 namespace Automata.Tests
@@ -24,8 +26,27 @@ namespace Automata.Tests
         }
 
         [Test]
-        public void TestIsUnitedKingdomSummerTime()
+        public void TestEasternTimeToUTC()
         {
+            // EST
+            var time = "2013-11-22 14:00:10";
+            var dt = DateTime.ParseExact(time, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            var newDt = dt.AmericaToUTC0();
+            Assert.True(newDt.Hour == 19);
+
+            // EDT
+            time = "2013-5-1 14:00:10";
+            dt = DateTime.ParseExact(time, "yyyy-M-d HH:mm:ss", CultureInfo.InvariantCulture);
+            newDt = dt.AmericaToUTC0();
+            Assert.True(newDt.Hour == 18);
+        }
+
+        [Test]
+        public void TestIsForexMarketTradingSession()
+        {
+            var time = "2014-01-17 16:59:59"; // NY session end
+            var dt = time.ToDateTime("yyyy-M-d HH:mm:ss").AmericaToUTC0();
+            Assert.True(dt.IsForexMarketTradingSession());
         }
     }
 }

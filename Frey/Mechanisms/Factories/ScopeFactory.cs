@@ -108,7 +108,7 @@ namespace Automata.Mechanisms.Factories
             return scope;
         }
 
-        public static ITradingScope DailyForex(int monthsAgo, string symbol)
+        public static ITradingScope M30ForexFromStaticDailyFXPrice(int monthsAgo, string symbol)
         {
             if (monthsAgo <= 0)
             {
@@ -124,6 +124,7 @@ namespace Automata.Mechanisms.Factories
             scope.TargetPriceDuration = TimeSpan.FromMinutes(30);
             scope.PriceSourceType = PriceSourceType.DailyFXHistorical;
             scope.DefaultIndicatorPriceType = PriceType.Close;
+            scope.PriceTimeZoneType = TimeZoneType.AmericaTime;
 
             return scope;
         }
