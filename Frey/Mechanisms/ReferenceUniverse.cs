@@ -135,7 +135,7 @@ namespace Automata.Mechanisms
             {
                 CountryCacheLock.EnterWriteLock();
                 Countries.Clear();
-                foreach (var country in Context.ReadCountriesFromDataFile())
+                foreach (var country in StaticFileDataAccess.ReadCountriesFromDataFile())
                 {
                     Countries[country.Code] = country;
                 }
@@ -152,7 +152,7 @@ namespace Automata.Mechanisms
             {
                 ExchangeCacheLock.EnterWriteLock();
                 Exchanges.Clear();
-                foreach (var exchange in Context.ReadExchangesFromDataFile())
+                foreach (var exchange in StaticFileDataAccess.ReadExchangesFromDataFile())
                 {
                     Exchanges[exchange.Code] = exchange;
                 }
@@ -169,11 +169,11 @@ namespace Automata.Mechanisms
              {
                 SecurityCacheLock.EnterWriteLock();
                 Securities.Clear();
-                foreach (var security in Context.ReadSecuritiesFromDataFile())
+                foreach (var security in StaticFileDataAccess.ReadSecuritiesFromDataFile())
                 {
                     Securities[security.Code] = security;
                 }
-                foreach (var security in Context.ReadCurrenciesFromDataFile())
+                foreach (var security in StaticFileDataAccess.ReadCurrenciesFromDataFile())
                 {
                     Securities[security.Code] = security;
                 }

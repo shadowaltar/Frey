@@ -34,6 +34,16 @@ namespace Automata.Core
             return time.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
+        public static string PrintDate(this DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd");
+        }
+
+        public static string PrintTime(this DateTime time)
+        {
+            return time.ToString("HH:mm:ss");
+        }
+
         public static string PrintBracket(this DateTime time)
         {
             return "[" + time.ToString("yyyy-MM-dd HH:mm:ss") + "]";
@@ -66,10 +76,11 @@ namespace Automata.Core
 
         /// <summary>
         /// Test if the given input time is within the trading session of forex market.
+        /// This ignores the few Australia hours on Monday which are before Japan hours.
         /// </summary>
         /// <param name="time">Must be a UTC-0 time.</param>
         /// <returns></returns>
-        public static bool IsForexMarketTradingSession(this DateTime time)
+        public static bool IsInForexMarketTradingSession(this DateTime time)
         {
             var asJapan = TimeZoneInfo.ConvertTimeFromUtc(time, JapanTimeZone);
             if (asJapan.DayOfWeek == DayOfWeek.Monday)

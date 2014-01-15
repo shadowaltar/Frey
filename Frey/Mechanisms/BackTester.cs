@@ -21,7 +21,7 @@ namespace Automata.Mechanisms
         {
             TradingScope = testScope;
             PriceData = new ConcurrentQueue<HashSet<Price>>();
-            DataSource = new DataSource(new HistoricalStaticDataFileAccess());
+            DataSource = new DataSource(new StaticFileDataAccess());
         }
 
         public ConcurrentQueue<HashSet<Price>> PriceData { get; protected set; }

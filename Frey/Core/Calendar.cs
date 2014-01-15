@@ -6,12 +6,12 @@ namespace Automata.Core
 {
     public class Calendar
     {
-        private readonly Dictionary<int, List<Period>> tradingSessions = new Dictionary<int, List<Period>>();
+        private readonly Dictionary<int, List<TimeRange>> tradingSessions = new Dictionary<int, List<TimeRange>>();
         public static Calendar ForexCalendar { get; set; }
 
     //    private ReaderWriterLockSlim initLock = new ReaderWriterLockSlim();
 
-        public Dictionary<int,List<Period>> TradingSessions
+        public Dictionary<int,List<TimeRange>> TradingSessions
         {
             get { return tradingSessions; }
         }
@@ -28,11 +28,5 @@ namespace Automata.Core
                 ForexCalendar = new Calendar();
             }
         }
-    }
-
-    public class Period
-    {
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using Automata.Core;
 using Automata.Core.Extensions;
 using Automata.Entities;
-using Automata.Mechanisms.Utils;
 using Automata.Quantitatives.Indicators;
 using Automata.Strategies;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

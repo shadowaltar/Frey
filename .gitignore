@@ -1,5 +1,3 @@
-/Automata.v11.suo
-
 /Frey/bin
 /Frey/obj
 
@@ -7,10 +5,11 @@
 
 /_Resharper.Automata
 
-/Frey/Automata.csproj.user
-
 /Automata.Dashboard/obj
 /Automata.Dashboard/bin
 
 /Automata.Tests/obj
 /Automata.Tests/bin
+
+*.user
+*.suo

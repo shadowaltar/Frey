@@ -77,10 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Calendar.cs" />
-    <Compile Include="Core\DailyFXPriceFileAccess.cs" />
     <Compile Include="Core\Exceptions\InvalidTickDurationException.cs" />
     <Compile Include="Core\Exceptions\IndicatorArgumentException.cs" />
-    <Compile Include="Core\HistoricalStaticDataFileAccess.cs" />
+    <Compile Include="Core\StaticFileDataAccess.cs" />
+    <Compile Include="Core\TimeRange.cs" />
     <Compile Include="Entities\City.cs" />
     <Compile Include="Mechanisms\DailyTradingSession.cs" />
     <Compile Include="Mechanisms\MarketType.cs" />
