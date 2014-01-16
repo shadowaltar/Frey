@@ -75,27 +75,27 @@ namespace Automata.Quantitatives.Indicators
             {
                 prices.RemoveAt(0);
             }
-            prices.AddOrReplaceLast(new TimeValue(price.Time, value), isAddNew);
+            prices.AddOrReplaceLast(new TimeValue(price.Start, value), isAddNew);
 
             var lastValue = fastEmaValues.LastOrDefault();
             var fastEma = IndicatorMaths.CalculateEMA(value, fastPeriodFactor,
                 lastValue == null ? value : lastValue.Value);
-            fastEmaValues.AddOrReplaceLast(new TimeValue(price.Time, fastEma), isAddNew);
+            fastEmaValues.AddOrReplaceLast(new TimeValue(price.Start, fastEma), isAddNew);
 
             lastValue = slowEmaValues.LastOrDefault();
             var slowEma = IndicatorMaths.CalculateEMA(value, slowPeriodFactor,
                 lastValue == null ? value : lastValue.Value);
-            slowEmaValues.AddOrReplaceLast(new TimeValue(price.Time, slowEma), isAddNew);
+            slowEmaValues.AddOrReplaceLast(new TimeValue(price.Start, slowEma), isAddNew);
 
             var macd = fastEma - slowEma;
-            MACDValues.AddOrReplaceLast(new TimeValue(price.Time, macd), isAddNew);
+            MACDValues.AddOrReplaceLast(new TimeValue(price.Start, macd), isAddNew);
 
             lastValue = SignalValues.LastOrDefault();
             var macdEma = IndicatorMaths.CalculateEMA(macd, signalPeriodFactor,
                 lastValue == null ? 0d : lastValue.Value);
-            SignalValues.AddOrReplaceLast(new TimeValue(price.Time, macdEma), isAddNew);
+            SignalValues.AddOrReplaceLast(new TimeValue(price.Start, macdEma), isAddNew);
 
-            HistogramValues.AddOrReplaceLast(new TimeValue(price.Time, macd - macdEma), isAddNew);
+            HistogramValues.AddOrReplaceLast(new TimeValue(price.Start, macd - macdEma), isAddNew);
         }
     }
 }

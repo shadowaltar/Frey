@@ -99,7 +99,7 @@ namespace Automata.Mechanisms
             try
             {
                 PriceHistoryDataLock.EnterWriteLock();
-                foreach (var price in prices.OrderBy(p => p.Time).ThenBy(p => p.Security.Code))
+                foreach (var price in prices.OrderBy(p => p.Start).ThenBy(p => p.Security.Code))
                 {
                     priceHistory.Add(price);
                 }
@@ -179,7 +179,7 @@ namespace Automata.Mechanisms
                 AfterNewPrices(prices);
 
                 // use the timestamp of the price data to be the timestamp of order
-                var orderTime = prices.First().Time;
+                var orderTime = prices.First().Start;
                 // generate entries and exits
                 List<Order> orders;
                 if (!Strategy.CheckIfStopTrading(prices, Portfolio, orderTime, out orders))

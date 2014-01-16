@@ -51,11 +51,11 @@ namespace Automata.Strategies
                 sto.ComputeNext(price);
 
                 // don't trade when near market open
-                if (NearMarketOpen(price.Time))
+                if (NearMarketOpen(price.Start))
                     continue;
 
                 // close all positions near the market closing
-                if (NearMarketClose(price.Time))
+                if (NearMarketClose(price.Start))
                 {
                     foreach (var position in portfolio)
                     {

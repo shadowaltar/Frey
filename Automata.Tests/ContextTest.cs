@@ -57,7 +57,7 @@ namespace Automata.Tests
             var time = "2014-01-17 16:59:59"; // NY session end
             var dt = time.ToDateTime("yyyy-M-d HH:mm:ss").AmericaToUTC0();
             var mock = new Mock<Forex>();
-            StaticFileDataAccess.FindTradingSession(dt, mock.Object);
+            StaticFileDataAccess.GetTradingSessionTimeRange(dt, mock.Object);
             Assert.True(dt.IsInForexMarketTradingSession());
         }
     }

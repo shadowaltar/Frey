@@ -40,7 +40,7 @@ namespace Automata.Core
                     {
                         var price = new Price
                         {
-                            Time = datum[0].ToDateTime("yyyy-MM-dd"),
+                            Start = datum[0].ToDateTime("yyyy-MM-dd"),
                             Duration = duration,
 
                             Open = datum[1].ToDouble(),
@@ -53,7 +53,7 @@ namespace Automata.Core
                             Security = security,
                         };
                         if (priceTimeZoneType == TimeZoneType.AmericaTime)
-                            price.Time = price.Time.AmericaToUTC0();
+                            price.Start = price.Start.AmericaToUTC0();
                         yield return price;
                     }
                     break;
@@ -62,7 +62,7 @@ namespace Automata.Core
                     {
                         var price = new Price
                         {
-                            Time = (x[0] + x[1]).ToDateTime("M/d/yyyyHH:mm:ss"),
+                            Start = (x[0] + x[1]).ToDateTime("M/d/yyyyHH:mm:ss"),
                             Duration = duration,
 
                             Open = x[2].ToDouble(),
@@ -73,7 +73,7 @@ namespace Automata.Core
                             Security = security,
                         };
                         if (priceTimeZoneType == TimeZoneType.AmericaTime)
-                            price.Time = price.Time.AmericaToUTC0();
+                            price.Start = price.Start.AmericaToUTC0();
                         yield return price;
                     }
                     break;

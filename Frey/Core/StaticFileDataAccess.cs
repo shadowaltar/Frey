@@ -39,8 +39,8 @@ namespace Automata.Core
                 prices.AddRange(combinedPrices);
             }
 
-            var orderedPrices = prices.OrderBy(p => p.Time).ThenBy(p => p.Security.Code);
-            foreach (var group in orderedPrices.GroupBy(p => p.Time).OrderBy(g => g.Key))
+            var orderedPrices = prices.OrderBy(p => p.Start).ThenBy(p => p.Security.Code);
+            foreach (var group in orderedPrices.GroupBy(p => p.Start).OrderBy(g => g.Key))
             {
                 allHistoricalPrices.Enqueue(group.ToHashSet());
             }
@@ -174,36 +174,42 @@ namespace Automata.Core
         {
             var cache = new List<Price>();
             Price firstPrice = null;
+            Price combinedResult = null;
             TimeRange sessionRange = null;
             TimeRange nextSessionRange = null;
             TimeRange tickTimeRange = null;
             TimeRange nextTickTimeRange = null;
 
-            var shouldCombine = false;
-
             foreach (var price in prices)
             {
-                if (price.Time > scopeEnd)
+                if (price.Start > scopeEnd)
                     break;
-                if (price.Time < scopeStart)
+                if (price.Start < scopeStart)
                     continue;
 
                 if (firstPrice == null)
                 {
                     firstPrice = price;
-                    sessionRange = FindTradingSession(price.Time, price.Security);
-                    nextSessionRange = FindTradingSession(price.Time.AddWeeks(1), price.Security);
+                    sessionRange = GetTradingSessionTimeRange(price.Start, price.Security);
+                    nextSessionRange = GetTradingSessionTimeRange(price.Start.AddWeeks(1), price.Security);
                 }
 
                 // if between two trading sessions (nontrading hours), skip the price
-                if (!sessionRange.Contains(price.Time) && !nextSessionRange.Contains(price.Time))
+                if (!sessionRange.Contains(price.Start) && !nextSessionRange.Contains(price.Start))
                     continue;
 
                 // if already in next trading session, shift the sessions to the next
-                if (nextSessionRange.Contains(price.Time))
+                if (nextSessionRange.Contains(price.Start))
                 {
                     sessionRange = nextSessionRange;
-                    nextSessionRange = FindTradingSession(sessionRange.Start.AddWeeks(1));
+                    nextSessionRange = GetForexTradingSessionTimeRange(sessionRange.Start.AddWeeks(1));
+                    if (!cache.IsEmpty() && tickTimeRange != null) // finish the leftovers in the cache when the session is shifted to next week
+                    {
+                        yield return Price.Combine(cache, tickTimeRange.Start, newDuration);
+                        cache.Clear();
+                        tickTimeRange = FindTickTimeRange(price.Start, sessionRange.Start, newDuration);
+                        nextTickTimeRange = GetNextTickTimeRange(tickTimeRange, newDuration, sessionRange, nextSessionRange);
+                    }
                 }
 
                 // todo, refactor the '=' condition first.
@@ -215,61 +221,91 @@ namespace Automata.Core
                 {
                     if (tickTimeRange == null)
                     {
-                        tickTimeRange = FindTickTimeRange(price.Time, sessionRange.Start, newDuration);
-                        nextTickTimeRange = tickTimeRange.Add(newDuration);
+                        tickTimeRange = FindTickTimeRange(price.Start, sessionRange.Start, newDuration);
+                        nextTickTimeRange = GetNextTickTimeRange(tickTimeRange, newDuration,
+                            sessionRange, nextSessionRange);
                     }
 
-                    // if already in next tick duration, shift the durations to the next
-                    // and then we should combine the gathered ticks.
-                    if (nextTickTimeRange.Contains(price.Time))
-                    {
-                        shouldCombine = true;
-                    }
-
-                    // gather the prices into current timeslot.
-                    if (!shouldCombine)
-                    {
+                    if (tickTimeRange.Contains(price.End))
                         cache.Add(price);
+
+                    // if price's end is on or in next tick duration, need to combine
+                    if (price.End < tickTimeRange.End)
                         continue;
-                    }
 
                     // combine then return the result
-                    yield return Price.Combine(cache, tickTimeRange.Start, newDuration);
+                    // 1st case is simply combining the prices for the current tick time range
+                    // 2nd case is if current tick time range receives no prices, use the last yielded result
+                    combinedResult = !cache.IsEmpty()
+                        ? Price.Combine(cache, tickTimeRange.Start, newDuration)
+                        : new Price(combinedResult) { Start = tickTimeRange.Start };
+                    yield return combinedResult;
 
                     // clean up
                     cache.Clear();
-                    shouldCombine = false;
 
                     tickTimeRange = nextTickTimeRange;
                     // already guaranteed the price time will fall into the sessionRange in above logic.
                     nextTickTimeRange = GetNextTickTimeRange(tickTimeRange, newDuration,
                         sessionRange, nextSessionRange);
-
-                    cache.Add(price);
                 }
             }
         }
 
-        public static TimeRange FindTradingSession(DateTime anyDateTime, Security security)
+        public static TimeRange GetTradingSessionTimeRange(DateTime input, Security security)
         {
             if (security is Forex)
             {
-                int offset = anyDateTime.DayOfWeek - DayOfWeek.Monday;
+                int offset = input.DayOfWeek - DayOfWeek.Monday;
 
-                var nearestLastMonday = anyDateTime.AddDays(-offset);
-                if (nearestLastMonday > anyDateTime) // when 'time' is closer to the weekend, need find one week earlier date
+                var nearestLastMonday = input.AddDays(-offset);
+                if (nearestLastMonday > input) // when 'time' is closer to the weekend, need find one week earlier date
                 {
                     nearestLastMonday = nearestLastMonday.AddDays(-7);
                 }
-                return FindTradingSession(nearestLastMonday.Date);
+                return GetForexTradingSessionTimeRange(nearestLastMonday.Date);
             }
+            // todo: the trading session is a whole day; need to refine to exact daytime according to each exchange
             if (security is ExchangeTradable)
             {
+                DateTime start;
+                DateTime end;
+                // if input is in the weekend, return next monday.
+                if (input.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    start = input.Date.AddDays(2); // start of monday
+                    end = input.Date.AddDays(3); // start of tuesday
+                    return new TimeRange(start, end);
+                }
+                if (input.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    start = input.Date.AddDays(1); // start of monday
+                    end = input.Date.AddDays(2); // start of tuesday
+                    return new TimeRange(start, end);
+                }
+                // or else, return the day of the input datetime.
+                return new TimeRange(input.Date, input.Date.AddDays(1));
             }
             throw new NotImplementedException();
         }
 
-        public static TimeRange FindTradingSession(DateTime sessionStart)
+        public static DateTime GetNextTradingSessionStart(TimeRange currentSession, Security security)
+        {
+            if (security is Forex)
+            {
+                return currentSession.AddWeeks(1).Start;
+            }
+            if (security is ExchangeTradable)
+            {
+                var start = currentSession.Start;
+                if (currentSession.Start.DayOfWeek == DayOfWeek.Friday)
+                    return new DateTime(start.Ticks).AddDays(3);
+                return start.AddDays(1);
+            }
+            throw new NotImplementedException();
+        }
+
+        public static TimeRange GetForexTradingSessionTimeRange(DateTime sessionStart)
         {
             var start = sessionStart;
             // UTC+0 9pm is EST (GMT-5) 4pm.

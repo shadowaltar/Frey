@@ -6,6 +6,18 @@
         public string Code { get; set; }
         public string Name { get; set; }
 
+        #region Special Countries
+
+        private static readonly Country GlobalCountry = new Country
+        {
+            Code = "GLOBAL",
+            Id = -1,
+            Name = "Global"
+        };
+        public static Country Global { get { return GlobalCountry; } }
+
+        #endregion
+
         protected bool Equals(Country other)
         {
             return string.Equals(Code, other.Code);

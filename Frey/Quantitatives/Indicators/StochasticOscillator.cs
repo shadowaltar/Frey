@@ -76,10 +76,10 @@ namespace Automata.Quantitatives.Indicators
             fastKValues.AddOrReplaceLast(k, isAddNew);
 
             var slowK = fastKValues.TailAverage(SlowingPeriods);
-            slowKValues.AddOrReplaceLast(new TimeValue(price.Time, slowK), isAddNew);
+            slowKValues.AddOrReplaceLast(new TimeValue(price.Start, slowK), isAddNew);
 
             var slowD = slowKValues.TailAverage(DPeriods);
-            slowDValues.AddOrReplaceLast(new TimeValue(price.Time, slowD), isAddNew);
+            slowDValues.AddOrReplaceLast(new TimeValue(price.Start, slowD), isAddNew);
         }
     }
 }

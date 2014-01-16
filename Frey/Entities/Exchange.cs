@@ -9,8 +9,19 @@
 
         public Country Country { get; set; }
 
-        private static readonly Exchange otc = new Exchange { Code = "OTC", Id = -1, Name = "Over The Counter", Mic = "N/A" };
-        public static Exchange OTC { get { return otc; } }
+        #region Special Exchanges
+
+        private static readonly Exchange ForexExchange = new Exchange
+        {
+            Code = "FOREX GLOBAL",
+            Country = Country.Global,
+            Id = -1,
+            Mic = string.Empty,
+            Name = "Forex Exchange"
+        };
+        public static Exchange Forex { get { return ForexExchange; } }
+
+        #endregion
 
         protected bool Equals(Exchange other)
         {
@@ -22,7 +33,7 @@
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Exchange)obj);
+            return Equals((Exchange) obj);
         }
 
         public override int GetHashCode()

@@ -36,7 +36,7 @@ namespace Automata.Core
             if (last == null)
                 return null;
 
-            var elapsed = current.Time - last.Time;
+            var elapsed = current.Start - last.Start;
 
             if (elapsed == tickDuration)
             {
@@ -61,7 +61,7 @@ namespace Automata.Core
             for (int i = 1; i <= factor.ToInt(); i++)
             {
                 var p = new Price(current);
-                p.Time = p.Time + tickDuration.Multiply(i);
+                p.Start = p.Start + tickDuration.Multiply(i);
                 results.Add(p);
             }
 

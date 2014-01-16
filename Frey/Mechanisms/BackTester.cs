@@ -58,7 +58,7 @@ namespace Automata.Mechanisms
                 {
                     Position = position,
                     ExitOrder = order,
-                    ExecutionTime = price.Time,
+                    ExecutionTime = price.Start,
                     ActuralExitPrice = order.Price,
                     Return = order.Price - position.ActualEntryPrice
                 };
@@ -93,7 +93,7 @@ namespace Automata.Mechanisms
                     continue;
                 }
 
-                var position = new Position(order, order.Price, order.Quantity, price.Time);
+                var position = new Position(order, order.Price, order.Quantity, price.Start);
                 results.Add(position);
                 Console.WriteLine(Utilities.BracketNow + " New Position: " + position);
             }
@@ -147,7 +147,7 @@ namespace Automata.Mechanisms
         {
             foreach (var price in prices.OrderBy(p => p.Security.Code))
             {
-                portfolioDataWriter.WriteItemsLine(price.Time.Print(),
+                portfolioDataWriter.WriteItemsLine(price.Start.Print(),
                     price.Duration, price.Open.PrintForexPrecise(),
                     price.High.PrintForexPrecise(), price.Low.PrintForexPrecise(),
                     price.Close.PrintForexPrecise(), price.Volume, price.AdjustedClose);

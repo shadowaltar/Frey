@@ -26,7 +26,7 @@ namespace Automata.Strategies
         public virtual bool CheckIfStopTrading(IEnumerable<Price> prices, Portfolio portfolio, DateTime orderTime, out List<Order> exitOrders)
         {
             // check if meets stop trading criteria
-            if (prices.Any(p => p.Time == TradingScope.End))
+            if (prices.Any(p => p.Start == TradingScope.End))
             {
                 IsTimeToStop = true;
                 // generate 'all close' orders

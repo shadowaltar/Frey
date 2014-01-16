@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using Automata.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +14,7 @@ namespace Automata.Entities
         public Price(Price price)
         {
             Security = price.Security;
-            Time = price.Time;
+            Start = price.Start;
             Duration = price.Duration;
             Open = price.Open;
             High = price.High;
@@ -25,7 +25,8 @@ namespace Automata.Entities
         }
 
         public Security Security { get; set; }
-        public DateTime Time { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get { return Start + Duration; } }
         public TimeSpan Duration { get; set; }
         public double Open { get; set; }
         public double High { get; set; }
@@ -55,7 +56,7 @@ namespace Automata.Entities
                 {
                     result = new Price(price)
                     {
-                        Time = startTime,
+                        Start = startTime,
                         Duration = newDuration,
                         Volume = 0
                     };
@@ -79,7 +80,7 @@ namespace Automata.Entities
 
         public override string ToString()
         {
-            return string.Format("[{0}] {1}, {2}", Time, Security, Close);
+            return string.Format("{0} {1}, {2}", Start.PrintBracket(), Security, Close);
         }
     }
 }

@@ -121,7 +121,7 @@ namespace Automata.Mechanisms.Factories
             scope.End = new DateTime(2010, 6, 1).Date;
             scope.Start = scope.End.AddMonths(-monthsAgo);
             scope.SourcePriceDuration = TimeSpan.FromMinutes(1);
-            scope.TargetPriceDuration = TimeSpan.FromMinutes(30);
+            scope.TargetPriceDuration = TimeSpan.FromMinutes(5);
             scope.PriceSourceType = PriceSourceType.DailyFXHistorical;
             scope.DefaultIndicatorPriceType = PriceType.Close;
             scope.PriceTimeZoneType = TimeZoneType.AmericaTime;
