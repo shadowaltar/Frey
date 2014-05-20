@@ -6,3 +6,13 @@ USA; Reported weekly, Thursday, 8:30 EST.
 
 US CPI
 http://www.bls.gov/schedule/news_release/cpi.htm
+
+**Trades the value: buy undervalued, sell overvalued
+How: find out (CurrentAsset-TotalDebt)/Shares <> StockPrice
+Improve: price should stay under/overvalued for a period of time (say 2M), or even bouncing back for (2M).
+Bad: usually research analysts are doing a bad job in forecasting.
+
+**Band Trading: buy at band bottom sell at band top
+How1: 1.Donchian channel: High(xDays) and Low(xDays); 2.Bollinger Band; 3.ATR
+How2: Entry: 1.countertrend: enter when touches; 2.retracement: wait after retracing back into channel, after band touch/penetration
+Problem: 1.Turn around before touching the other band; 2.Band penetration 3.Band breakdown
