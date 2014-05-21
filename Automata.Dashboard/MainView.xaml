@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             mc:Ignorable="d" Width="200" Height="200"
-             d:DesignHeight="300" d:DesignWidth="300">
+             mc:Ignorable="d" Width="337" Height="198">
     <Grid>
-        <Button Margin="10,10,0,0" x:Name="Go" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" Width="108">GO</Button>
+        <Button Margin="10,10,0,0" x:Name="CalculateWithChangingStockPrice" Height="40"
+                VerticalAlignment="Top" HorizontalAlignment="Left" Width="232">Calculate (Change Stock Price)</Button>
+        <Button Margin="10,55,0,0" x:Name="CalculateWithChangingVolatility" Height="40"
+        	VerticalAlignment="Top" HorizontalAlignment="Left" Width="232" Content="Calculate (Change Volatility)"/>
     </Grid>
 </controls:MetroWindow>
