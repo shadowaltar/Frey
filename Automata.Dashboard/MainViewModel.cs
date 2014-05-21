@@ -15,12 +15,18 @@ namespace Automata.Dashboard
         {
             Volatility = 5.292302 / 100;
             Iterations = 500000;
+            RiskFreeRate = 0.0364927 / 100;
+            RemainingSteps = 250; // = 1year
         }
 
-        private readonly Dictionary<double, double> resultChangingS0 = new Dictionary<double, double>();
+        private readonly Dictionary<double, double> resultChangingUnderlying = new Dictionary<double, double>();
         private readonly Dictionary<double, double> resultChangingVol = new Dictionary<double, double>();
+        private readonly Dictionary<double, double> resultChangingTime = new Dictionary<double, double>();
+        private readonly Dictionary<double, double> resultChangingRate = new Dictionary<double, double>();
 
-        private double riskFreeRate = 0.005809777;
+
+        private double riskFreeRate;
+        public double RiskFreeRate { get { return riskFreeRate; } set { SetNotify(ref riskFreeRate, value); } }
 
         private double volatility;
         public double Volatility { get { return volatility; } set { SetNotify(ref volatility, value); } }
@@ -28,10 +34,20 @@ namespace Automata.Dashboard
         private long iterations;
         public long Iterations { get { return iterations; } set { SetNotify(ref iterations, value); } }
 
+        private int remainingSteps;
+        public int RemainingSteps { get { return remainingSteps; } set { SetNotify(ref remainingSteps, value); } }
+
+        public void CalculateAll()
+        {
+            CalculateWithChangingInterestRate();
+            CalculateWithChangingStockPrice();
+            CalculateWithChangingTime();
+            CalculateWithChangingVolatility();
+        }
+
         public void CalculateWithChangingStockPrice()
         {
-            var steps = 250;
-            var tenor = 1d;
+            var tenor = RemainingSteps * 0.004;
             var priceVol = Volatility;
             var strike = 100d;
 
@@ -39,55 +55,48 @@ namespace Automata.Dashboard
             var barrier = 90d;
             var floor = 90d;
 
-            var deltaS = 0.1;
-
             var trunkCount = 8;
 
             var startingS0 = 80;
-            var endingS0 = 130;
+            var endingS0 = 136;
 
             double timeUsed;
             using (var rt = ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Delta & Gamma)."))
             {
-                for (int s0 = startingS0; s0 <= endingS0; s0++)
+                for (double s = startingS0; s <= endingS0; s += 0.5)
                 {
-                    var s0s = new List<double> { s0, s0 + deltaS, s0 + 2 * deltaS };
-
-                    using (ReportTime.StartWithMessage("{0} -------- stock " + s0))
+                    using (ReportTime.StartWithMessage("{0} -------- stock " + s))
                     {
-                        foreach (var s in s0s)
+                        var trunks = new double[trunkCount];
+                        var iteration = Iterations / trunkCount;
+
+                        double s1 = s;
+                        Parallel.For(0, trunkCount, j =>
                         {
-                            var trunks = new double[trunkCount];
-                            var iteration = Iterations / trunkCount;
-
-                            Parallel.For(0, trunkCount, j =>
+                            var mc = new MonteCarloGenerator();
+                            var result = 0d;
+                            for (int i = 0; i < iteration; i++)
                             {
-                                var mc = new MonteCarloGenerator();
-                                var result = 0d;
-                                for (int i = 0; i < iteration; i++)
-                                {
-                                    result += CalculateTwinWinCollar(s, strike, capStrike, barrier, floor,
-                                        riskFreeRate, priceVol, tenor, steps, mc);
-                                }
-                                trunks[j] = result / iteration;
-                            });
+                                result += CalculateTwinWinCollar(s1, strike, capStrike, barrier, floor,
+                                    riskFreeRate, priceVol, tenor, RemainingSteps, mc);
+                            }
+                            trunks[j] = result / iteration;
+                        });
 
-                            resultChangingS0[s] = trunks.Average();
-                        }
+                        resultChangingUnderlying[s] = trunks.Average();
                     }
                 }
 
                 timeUsed = rt.Elapsed;
             }
 
-            Report("ChangeStockPrice", resultChangingS0, timeUsed);
+            Report("ChangeStockPrice", resultChangingUnderlying, timeUsed);
         }
 
         public void CalculateWithChangingVolatility()
         {
             var s0 = 100d;
-            var steps = 250;
-            var tenor = 1d;
+            var tenor = RemainingSteps * 0.004;
 
             var strike = 100d;
 
@@ -124,7 +133,7 @@ namespace Automata.Dashboard
                             for (int i = 0; i < iteration; i++)
                             {
                                 result += CalculateTwinWinCollar(s0, strike, capStrike, barrier, floor,
-                                    riskFreeRate, vol1, tenor, steps, mc);
+                                    riskFreeRate, vol1, tenor, RemainingSteps, mc);
                             }
                             trunks[j] = result / iteration;
                         });
@@ -136,6 +145,105 @@ namespace Automata.Dashboard
             }
 
             Report("ChangeVolatility", resultChangingVol, timeUsed);
+        }
+
+        public void CalculateWithChangingTime()
+        {
+            var s0 = 100d;
+            var steps = RemainingSteps;
+            //   var tenor = 1d;
+
+            var strike = 100d;
+
+            var capStrike = 130d;
+            var barrier = 90d;
+            var floor = 90d;
+
+            var trunkCount = 8;
+
+            double timeUsed;
+            using (var rt = ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Theta)."))
+            {
+                for (double ttm = RemainingSteps * 0.004; ttm > 0.0001; ttm -= 0.02)
+                {
+                    using (ReportTime.StartWithMessage("{0} -------- ttm " + ttm))
+                    {
+                        var trunks = new double[trunkCount];
+                        var iteration = Iterations / trunkCount;
+
+                        double ttm1 = ttm;
+                        int steps1 = steps;
+                        Parallel.For(0, trunkCount, j =>
+                        {
+                            var mc = new MonteCarloGenerator();
+                            var result = 0d;
+                            for (int i = 0; i < iteration; i++)
+                            {
+                                result += CalculateTwinWinCollar(s0, strike, capStrike, barrier, floor,
+                                    riskFreeRate, Volatility, ttm1, steps1, mc);
+                            }
+                            trunks[j] = result / iteration;
+                        });
+
+                        resultChangingTime[ttm] = trunks.Average();
+                        steps -= 5;
+                    }
+                }
+                timeUsed = rt.Elapsed;
+            }
+
+            Report("ChangeTime", resultChangingTime, timeUsed);
+        }
+
+        public void CalculateWithChangingInterestRate()
+        {
+            var s0 = 100d;
+            var steps = RemainingSteps;
+            var tenor = RemainingSteps * 0.004;
+
+            var strike = 100d;
+
+            var capStrike = 130d;
+            var barrier = 90d;
+            var floor = 90d;
+
+            var trunkCount = 8;
+
+            var rates = new List<double> { 0.0364927 / 100 };
+            for (double rate = 0.01 / 100; rate < 5d / 100; rate += 0.08/100)
+            {
+                rates.Add(rate);
+            }
+            double timeUsed;
+            using (var rt = ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Theta)."))
+            {
+                foreach (var rate in rates.OrderBy(r => r))
+                {
+                    using (ReportTime.StartWithMessage("{0} -------- rate " + rate))
+                    {
+                        var trunks = new double[trunkCount];
+                        var iteration = Iterations / trunkCount;
+                        
+                        double rate1 = rate;
+                        Parallel.For(0, trunkCount, j =>
+                        {
+                            var mc = new MonteCarloGenerator();
+                            var result = 0d;
+                            for (int i = 0; i < iteration; i++)
+                            {
+                                result += CalculateTwinWinCollar(s0, strike, capStrike, barrier, floor,
+                                    rate1, Volatility, tenor, steps, mc);
+                            }
+                            trunks[j] = result / iteration;
+                        });
+
+                        resultChangingRate[rate] = trunks.Average();
+                    }
+                }
+                timeUsed = rt.Elapsed;
+            }
+
+            Report("ChangeRate", resultChangingRate, timeUsed);
         }
 
         internal double CalculateTwinWinCollar(double s0,
@@ -179,7 +287,7 @@ namespace Automata.Dashboard
         private static void Report(string fileNameHead, Dictionary<double, double> data, double timeUsed)
         {
             var formattedResults = data.OrderBy(rv => rv.Key)
-                .Select(rv => rv.Key + "," + rv.Value + Environment.NewLine);
+                .Select(rv => rv.Key + "," + rv.Value);
 
             File.WriteAllLines(fileNameHead + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv"
                 , formattedResults);
