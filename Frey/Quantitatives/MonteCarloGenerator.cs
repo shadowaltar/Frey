@@ -5,7 +5,7 @@ namespace Automata.Quantitatives
 {
     public class MonteCarloGenerator
     {
-        private static readonly Normal StandardNormal = new Normal();
+        private readonly Normal StandardNormal = new Normal();
 
         public double NextStandardNormalRandom()
         {
