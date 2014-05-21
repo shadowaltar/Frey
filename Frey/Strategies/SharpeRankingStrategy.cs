@@ -11,11 +11,13 @@ using System.Linq;
 namespace Automata.Strategies
 {
     /// <summary>
-    /// Find highest ranking equities, hold and sell after 4 weeks or if hit stoploss (holiday excluded).
+    /// Long highest ranking stocks, hold and sell after 4 weeks or if hit stoploss (holiday excluded).
     /// Ranking criteria: (from high to low)
     ///     rank = geometric average daily return (4W) / standard deviation of the daily returns (4W).
     /// Stoploss criteria: (assuming init prices is p0)
     ///     sl = 0.85*p0.
+    /// Portfolio size: 3
+    /// Size of each position: 30% of portfolio or 1 lot (100 shares)
     /// </summary>
     public class SharpeRankingStrategy : Strategy
     {
@@ -26,18 +28,14 @@ namespace Automata.Strategies
             PortfolioSize = portfolioSize;
         }
 
+        private int counter;
+
         public override bool IsTimeToStop { get; protected set; }
 
         public Dictionary<Security, List<Price>> PriceHistory { get; private set; }
 
-        private int counter;
-
         public int Period { get; set; }
         public int PortfolioSize { get; set; }
-
-        public override void Initialize()
-        {
-        }
 
         public override List<Order> GenerateOrders(HashSet<Price> prices, Portfolio portfolio, DateTime orderTime)
         {
@@ -79,13 +77,12 @@ namespace Automata.Strategies
                 var newOrders = new List<Order>();
                 foreach (var rank in ranks.OrderByDescending(r => r.RankValue).Take(PortfolioSize))
                 {
-                    if (rank.SharpeRatio > 0)
+                    if (rank.RankValue > 0)
                     {
                         var security = rank.Security;
                         var lastPrice = PriceHistory[security].Last();
                         var q = ComputeQuantity(portfolio, lastPrice);
-                        newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, ComputeStopLoss(lastPrice),
-                            orderTime));
+                        newOrders.Add(new Order(security, Side.Long, lastPrice.Close, q, ComputeStopLoss(lastPrice), orderTime));
                     }
                 }
                 orders.AddRange(newOrders);
@@ -130,9 +127,9 @@ namespace Automata.Strategies
             return orders;
         }
 
-        private double ComputeStopLoss(Price lastPrice)
+        private static double ComputeStopLoss(Price lastPrice)
         {
-            return lastPrice.Close * .75; // stoploss is when drawdown = 25%
+            return lastPrice.Close * .85;
         }
 
         private static double ComputeQuantity(Portfolio portfolio, Price referencePrice)
@@ -149,10 +146,10 @@ namespace Automata.Strategies
             if (prices.IsNullOrEmpty())
                 return null;
             if (prices.Count == 1)
-                return new Rank(security) { Return = 0, Sigma = 0 };
+                return new Rank(security);
 
-            var startingPrice = prices.First().Close;
-            var holdingPeriodReturn = (prices.Last().Close - startingPrice) / startingPrice;
+            var startingPrice = prices[0].Close;
+            var holdingPeriodReturn = (prices[prices.Count - 1].Close - startingPrice) / startingPrice;
             var returns = new List<double>();
 
             for (var i = 1; i < prices.Count; i++)
@@ -160,13 +157,10 @@ namespace Automata.Strategies
                 var prevClose = prices[i - 1].Close;
                 returns.Add((prices[i].Close - prevClose) / prevClose + 1);
             }
-            var s = new Rank(security)
+            var s = new Rank(security) // rank by Sharpe Ratio
             {
-                Return = holdingPeriodReturn,
-                Sigma = returns.StandardDeviation()
+                RankValue = holdingPeriodReturn / returns.StandardDeviation()
             };
-            s.SharpeRatio = s.Return / s.Sigma;
-            s.RankValue = s.Return;
             return s;
         }
 
@@ -178,12 +172,6 @@ namespace Automata.Strategies
             }
 
             public Security Security { get; private set; }
-
-            public double Return { get; set; }
-            public double Sigma { get; set; }
-
-            public double SharpeRatio { get; set; }
-
             public double RankValue { get; set; }
         }
     }

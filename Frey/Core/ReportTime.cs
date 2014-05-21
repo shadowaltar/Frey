@@ -32,6 +32,8 @@ namespace Automata.Core
             sw.Start();
         }
 
+        public double Elapsed { get { return sw.Elapsed.TotalMilliseconds; } }
+
         public void Dispose()
         {
             sw.Stop();

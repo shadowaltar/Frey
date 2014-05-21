@@ -1,26 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Automata.Core;
 using Automata.Quantitatives;
 
 namespace Automata.Dashboard
 {
-    public class MainViewModel : IMainViewModel
+    public class MainViewModel : ViewModelBase, IMainViewModel
     {
+        public MainViewModel()
+        {
+            Volatility = 5.292302 / 100;
+            Iterations = 500000;
+        }
+
         private readonly Dictionary<double, double> resultChangingS0 = new Dictionary<double, double>();
         private readonly Dictionary<double, double> resultChangingVol = new Dictionary<double, double>();
 
-        private int totalIterations = 500000;
-
         private double riskFreeRate = 0.005809777;
+
+        private double volatility;
+        public double Volatility { get { return volatility; } set { SetNotify(ref volatility, value); } }
+
+        private long iterations;
+        public long Iterations { get { return iterations; } set { SetNotify(ref iterations, value); } }
 
         public void CalculateWithChangingStockPrice()
         {
             var steps = 250;
             var tenor = 1d;
-            var priceVol = 0.0551084226;
+            var priceVol = Volatility;
             var strike = 100d;
 
             var capStrike = 130d;
@@ -33,7 +45,9 @@ namespace Automata.Dashboard
 
             var startingS0 = 80;
             var endingS0 = 130;
-            using (ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Delta & Gamma)."))
+
+            double timeUsed;
+            using (var rt = ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Delta & Gamma)."))
             {
                 for (int s0 = startingS0; s0 <= endingS0; s0++)
                 {
@@ -44,7 +58,7 @@ namespace Automata.Dashboard
                         foreach (var s in s0s)
                         {
                             var trunks = new double[trunkCount];
-                            var iteration = totalIterations / trunkCount;
+                            var iteration = Iterations / trunkCount;
 
                             Parallel.For(0, trunkCount, j =>
                             {
@@ -62,11 +76,11 @@ namespace Automata.Dashboard
                         }
                     }
                 }
+
+                timeUsed = rt.Elapsed;
             }
-            foreach (var resultValue in resultChangingS0.OrderBy(rv => rv.Key))
-            {
-                Console.WriteLine(resultValue.Key + " : " + resultValue.Value);
-            }
+
+            Report("ChangeStockPrice", resultChangingS0, timeUsed);
         }
 
         public void CalculateWithChangingVolatility()
@@ -84,19 +98,23 @@ namespace Automata.Dashboard
             var trunkCount = 8;
 
             var vols = new List<double> { 0.03,
+                    3.388672/100, 3.388672/100+0.01,
                     0.04,
-                    0.0422225, 0.0522225,
-                    0.0551084226, 0.0651084226,
-                    0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.3, 0.31, 0.32, 0.33, 0.34, 0.35
+                    5.29230181692926/100, 5.29230181692926/100+0.01,
+                    0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19,
+                    19.288638/100, 19.288638/100+0.01,
+                    0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.3, 0.31, 0.32, 0.33, 0.34, 0.35
                 };
-            using (ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Vega)."))
+
+            double timeUsed;
+            using (var rt = ReportTime.StartWithMessage("TOTAL TIME ELAPSED {0} (Vega)."))
             {
                 foreach (var vol in vols)
                 {
                     using (ReportTime.StartWithMessage("{0} -------- vol " + vol))
                     {
                         var trunks = new double[trunkCount];
-                        var iteration = totalIterations / trunkCount;
+                        var iteration = Iterations / trunkCount;
 
                         double vol1 = vol;
                         Parallel.For(0, trunkCount, j =>
@@ -114,14 +132,13 @@ namespace Automata.Dashboard
                         resultChangingVol[vol] = trunks.Average();
                     }
                 }
+                timeUsed = rt.Elapsed;
             }
-            foreach (var resultValue in resultChangingVol.OrderBy(rv => rv.Key))
-            {
-                Console.WriteLine(resultValue.Key + " : " + resultValue.Value);
-            }
+
+            Report("ChangeVolatility", resultChangingVol, timeUsed);
         }
 
-        public double CalculateTwinWinCollar(double s0,
+        internal double CalculateTwinWinCollar(double s0,
             double strike, double capStrike, double knockOutBarrier,
             double knockedOutFloor,
             double rf,
@@ -157,6 +174,17 @@ namespace Automata.Dashboard
 
             return (price1 + price2) / 2
                 * Math.Exp(-rf * tenor);
+        }
+
+        private static void Report(string fileNameHead, Dictionary<double, double> data, double timeUsed)
+        {
+            var formattedResults = data.OrderBy(rv => rv.Key)
+                .Select(rv => rv.Key + "," + rv.Value + Environment.NewLine);
+
+            File.WriteAllLines(fileNameHead + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv"
+                , formattedResults);
+
+            MessageBox.Show("DONE! Time used: " + timeUsed);
         }
 
         //public double CalculateCall(double s0, double strike, double riskFreeRate,
