@@ -1,15 +1,16 @@
-﻿using Automata.Core;
-using Automata.Core.Extensions;
-using Automata.Entities;
-using Automata.Quantitatives.Indicators;
-using Automata.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Automata.Core;
+using Automata.Core.Extensions;
+using Automata.Entities;
+using Automata.Mechanisms;
+using Automata.Quantitatives.Indicators;
+using Automata.Strategies;
 
-namespace Automata.Mechanisms
+namespace Automata.Trading
 {
     public abstract class TradingContext
     {
@@ -250,6 +251,23 @@ namespace Automata.Mechanisms
             }
         }
 
+        protected abstract double CheckMarginRequirement();
+
+        protected abstract void ComputeRisks(IEnumerable<Position> newPositions);
+
+        protected abstract List<Trade> ClosePositions(IEnumerable<Order> orders,
+            List<Position> existingPositions, HashSet<Price> prices);
+
+        protected abstract List<Position> ExecuteOrders(List<Order> orders, HashSet<Price> prices);
+
+        protected abstract void CheckCrossTrades(List<Order> orders);
+
+        protected abstract HashSet<Price> RetrievePrices();
+
+        protected abstract void OnNewPriceData(HashSet<Price> prices);
+
+        protected abstract void OnDataStatusChanged(DataStatus status);
+
         public virtual void AddCash(double quantity, Currency currency, DateTime contributeTime)
         {
             if (Portfolio.CashPosition == null)
@@ -279,23 +297,6 @@ namespace Automata.Mechanisms
                 Portfolio.States.Add(new PortfolioState(0, -quantity, withdrawTime, PortfolioAction.WithdrawCash));
             }
         }
-
-        protected abstract double CheckMarginRequirement();
-
-        protected abstract void ComputeRisks(IEnumerable<Position> newPositions);
-
-        protected abstract List<Trade> ClosePositions(IEnumerable<Order> orders,
-            List<Position> existingPositions, HashSet<Price> prices);
-
-        protected abstract List<Position> ExecuteOrders(List<Order> orders, HashSet<Price> prices);
-
-        protected abstract void CheckCrossTrades(List<Order> orders);
-
-        protected abstract HashSet<Price> RetrievePrices();
-
-        protected abstract void OnNewPriceData(HashSet<Price> prices);
-
-        protected abstract void OnDataStatusChanged(DataStatus status);
 
         #region lifecycle methods
 

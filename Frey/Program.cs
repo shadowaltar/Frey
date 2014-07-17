@@ -6,6 +6,7 @@ using Automata.Mechanisms.Factories;
 using Automata.Quantitatives.Indicators;
 using Automata.Strategies;
 using System.Threading;
+using Automata.Trading;
 
 namespace Automata
 {
@@ -34,7 +35,7 @@ namespace Automata
             var sharpeScope = ScopeFactory.DailyAllUnitedStatesStocks(10);
             sharpeScope.Securities.RemoveAll(s => s.Code == "NASDAQ:GOOG");
             sharpeScope.Securities.RemoveAll(s => s.Code == "NASDAQ:AAPL");
-            var sharpeTester = new BackTester(sharpeScope)
+            var sharpeTester = new BackTesterVersionOne(sharpeScope)
             {
                 Strategy = new SharpeRankingStrategy(25, 3)
             };
@@ -45,7 +46,7 @@ namespace Automata
         private static TradingContext TestPairTrading()
         {
             var pairScope = ScopeFactory.DailyPairStocks(10, "NYSE:EWC", "NYSE:EWA");
-            var tester = new BackTester(pairScope)
+            var tester = new BackTesterVersionOne(pairScope)
             {
                 Strategy = new PairTradingStrategy()
             };
@@ -67,7 +68,7 @@ namespace Automata
         private static TradingContext TestForexMACDCrossing()
         {
             var currencyScope = ScopeFactory.M30ForexFromStaticDailyFXPrice(2, "EURUSD");
-            var tester = new BackTester(currencyScope)
+            var tester = new BackTesterVersionOne(currencyScope)
             {
                 Strategy = new ForexStochasticOscillatorStrategy(),
             };

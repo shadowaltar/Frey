@@ -1,23 +1,24 @@
-﻿using System.Diagnostics;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Automata.Core;
 using Automata.Core.Exceptions;
 using Automata.Core.Extensions;
 using Automata.Entities;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Automata.Mechanisms;
 using Automata.Quantitatives.Indicators;
 
-namespace Automata.Mechanisms
+namespace Automata.Trading
 {
-    public class BackTester : TradingContext
+    public class BackTesterVersionOne : TradingContext
     {
         private CsvFileAccess portfolioDataWriter;
 
-        public BackTester(ITradingScope testScope)
+        public BackTesterVersionOne(ITradingScope testScope)
         {
             TradingScope = testScope;
             PriceData = new ConcurrentQueue<HashSet<Price>>();
