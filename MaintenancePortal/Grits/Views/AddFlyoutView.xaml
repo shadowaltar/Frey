@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="Maintenance.Grits.Views.AddFlyoutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="400"
+             Width="400">
+    <UserControl.Resources>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource DropdownTextStyle}" />
+        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}" />
+        <Style TargetType="controls:ToggleSwitch" BasedOn="{StaticResource ToggleSwitchTextStyle}" />
+        <Style TargetType="Button" BasedOn="{StaticResource AccentedSquareButtonStyle}" />
+    </UserControl.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.Resources>
+                <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="{x:Type TextBlock}" />
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0">GRITS Mode</TextBlock>
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="2" x:Name="GritsModes">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Grid.Row="1" Grid.Column="0">Fund</TextBlock>
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="2" x:Name="Funds">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <controls:ToggleSwitch Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                   SwitchForeground="{StaticResource IdealForegroundColorBrush}"
+                                   Foreground="{StaticResource IdealForegroundColorBrush}"
+                                   OffLabel="Add Fund Only" OnLabel="Add Fund and Benchmark" 
+                                   Style="{StaticResource ToggleSwitchTextStyle}"
+                                   IsChecked="{Binding AddBenchmark}"
+                                   x:Name="AlsoAddBenchmark" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                       Visibility="{Binding ElementName=AlsoAddBenchmark, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Benchmark</TextBlock>
+            <ComboBox Grid.Row="3" Grid.Column="1" Margin="2" x:Name="Benchmarks"
+                      Visibility="{Binding ElementName=AlsoAddBenchmark, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <controls:ToggleSwitch Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                   SwitchForeground="{StaticResource IdealForegroundColorBrush}"
+                                   Foreground="{StaticResource IdealForegroundColorBrush}"
+                                   Visibility="{Binding ElementName=AlsoAddBenchmark, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   OffLabel="Benchmark is loaded in the morning"
+                                   OnLabel="Benchmark is loaded at night" 
+                                   Style="{StaticResource ToggleSwitchTextStyle}"
+                                   IsChecked="{Binding IsBenchmarkLoadedAtNight}" />
+        </Grid>
+        <StackPanel Grid.Row="1">
+            <UniformGrid Rows="1">
+                <Button Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}"
+                        x:Name="Save">Save</Button>
+                <Button Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}"
+                        x:Name="CleanAll">Clean All</Button>
+            </UniformGrid>
+            <TextBlock Margin="10,10,10,0" TextWrapping="WrapWithOverflow"
+                       Style="{StaticResource SmallTextStyle}">
+                When you select a fund, its benchmark will be loaded accordingly.
+                You can add the fund and benchmark together or only the fund.
+            </TextBlock>
+            <TextBlock Margin="10,10,10,0" TextWrapping="WrapWithOverflow"
+                       Style="{StaticResource SmallTextStyle}">
+                You cannot save if either the fund or the benchmark already exists, or no mode is selected.
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>

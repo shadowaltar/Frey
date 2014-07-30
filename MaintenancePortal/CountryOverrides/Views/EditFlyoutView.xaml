@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Maintenance.CountryOverrides.Views.EditFlyoutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="500" d:DesignWidth="400"
+             Width="400">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource DropdownTextStyle}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxStyle}" />
+            <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}" />
+            <Style TargetType="Button" BasedOn="{StaticResource AccentedSquareButtonStyle}" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0">Override Type</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="OverrideType" />
+            <TextBlock Grid.Row="1" Grid.Column="0">Tradable Entity Id</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="Id"/>
+            <TextBlock Grid.Row="2" Grid.Column="0">Name</TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="Name" TextWrapping="WrapWithOverflow"/>
+            <TextBlock Grid.Row="3" Grid.Column="0">Full Name</TextBlock>
+            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="FullName" TextWrapping="WrapWithOverflow"/>
+            <TextBlock Grid.Row="4" Grid.Column="0">Original Country</TextBlock>
+            <TextBlock Grid.Row="4" Grid.Column="1" x:Name="OriginalCountry" />
+            <TextBlock Grid.Row="5" Grid.Column="0">New Country</TextBlock>
+            <ComboBox Grid.Row="5" Grid.Column="1" x:Name="Countries"
+                      ItemTemplate="{StaticResource CodeNameItemDataTemplate}" />
+            <TextBlock Grid.Row="6" Grid.Column="0">CUSIP</TextBlock>
+            <TextBlock Grid.Row="6" Grid.Column="1" x:Name="Cusip"/>
+            <TextBlock Grid.Row="7" Grid.Column="0">SEDOL</TextBlock>
+            <TextBlock Grid.Row="7" Grid.Column="1" x:Name="Sedol"/>
+            <TextBlock Grid.Row="8" Grid.Column="0" Visibility="{Binding Path=ShowBelongsTo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Belongs to</TextBlock>
+            <!-- the two dropdowns are shown at the same cell of grid -->
+            <ComboBox Grid.Row="8" Grid.Column="1"
+                      x:Name="PortfolioManagers"
+                      Visibility="{Binding Path=ShowBelongsToPortfolioManager, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      ItemTemplate="{StaticResource NameItemDataTemplate}">
+            </ComboBox>
+            <ComboBox Grid.Row="8" Grid.Column="1" x:Name="Portfolios"
+                      Visibility="{Binding Path=ShowBelongsToPortfolio, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      ItemTemplate="{StaticResource CodeNameItemDataTemplate}">
+            </ComboBox>
+        </Grid>
+        <UniformGrid Rows="1" Grid.Row="1">
+            <Button Margin="10" x:Name="Save">Save</Button>
+            <Button Margin="10" x:Name="UndoAll">Undo All</Button>
+        </UniformGrid>
+    </Grid>
+</UserControl>
