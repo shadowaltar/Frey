@@ -13,3 +13,5 @@
 
 *.user
 *.suo
+
+_ReSharper*
