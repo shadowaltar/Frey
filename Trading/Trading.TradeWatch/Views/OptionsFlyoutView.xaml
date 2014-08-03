@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Trading.TradeWatch.Views.OptionsFlyoutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="400"
+             Width="400">
+    <UserControl.Resources>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource DropdownTextStyle}" />
+        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}" />
+        <Style TargetType="Button" BasedOn="{StaticResource AccentedSquareButtonStyle}" />
+    </UserControl.Resources>
+    <StackPanel Margin="20">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Database Environment</TextBlock>
+            <ComboBox Grid.Column="1" x:Name="Environments" />
+        </Grid>
+        <Button Margin="10" x:Name="Apply">Apply</Button>
+    </StackPanel>
+</UserControl>

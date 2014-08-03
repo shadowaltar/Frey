@@ -15,3 +15,9 @@
 *.suo
 
 _ReSharper*
+/Trading/Trading.Portal/bin/x86/Debug
+/Trading/Trading.Portal/obj/x86/Debug
+/Trading/Trading.SecurityResearch/bin/x86/Debug
+/Trading/Trading.SecurityResearch/obj/x86/Debug
+/Trading/Trading.TradeWatch/bin/x86/Debug
+/Trading/Trading.TradeWatch/obj/x86/Debug

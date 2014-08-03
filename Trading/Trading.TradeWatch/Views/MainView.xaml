@@ -1,0 +1,110 @@
+﻿<controls:MetroWindow
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:cal="http://www.caliburnproject.org"
+                      xmlns:ig="http://schemas.infragistics.com/xaml" x:Class="Trading.TradeWatch.Views.MainView"
+                      cal:Message.Attach="[Event KeyDown] = [Action HandleShortcutKeys($eventArgs)]" 
+                      ShowWindowCommandsOnTop="False"
+                      Icon="../icon.ico"
+                      ShowIconOnTitleBar="False" ShowTitleText="False"
+                      Height="600" Width="1050" GlowBrush="{StaticResource HighlightBrush}"
+    Style="{StaticResource CleanWindowStyleKey}">
+    <controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DropdownTextStyle}" />
+        </ResourceDictionary>
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.WindowCommands>
+        <controls:WindowCommands>
+            <Button cal:Message.Attach="About" Content="About" />
+        </controls:WindowCommands>
+    </controls:MetroWindow.WindowCommands>
+
+    <Grid Margin="60,5,60,60">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelTitleStyle}" x:Name="DisplayName"
+                   Content="Trade Watch (XXX)" Height="54"/>
+        <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal" Height="40" Margin="0,12" Width="404">
+            <!--Edit-->
+            <ComboBox x:Name="SecuritySearches" Width="200"/>
+            <Button x:Name="ToggleEditPortfolio"
+                    Width="40" Height="40" Margin="5,0,5,0" Style="{StaticResource MetroCircleButtonStyle}"
+                    ToolTip="Edit Portfolio Information (Ctrl+E)">
+                <Rectangle Width="16" Height="16">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <!--Filter-->
+            <Button x:Name="ToggleFilter"
+                        Width="40" Height="40" Margin="5,0,5,0" Style="{StaticResource MetroCircleButtonStyle}"
+                        ToolTip="Filter (Ctrl+F)">
+                <Rectangle Width="16" Height="16">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_filter}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <!--Refresh-->
+            <Button x:Name="Load"
+                    Width="40" Height="40" Margin="5,0,5,0" Style="{StaticResource MetroCircleButtonStyle}"
+                    ToolTip="Refresh (Ctrl+R)">
+                <Rectangle Width="16" Height="16">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_refresh}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <!--More Options-->
+            <Button x:Name="About"
+                        Width="40" Height="40" Margin="5,0,5,0" Style="{StaticResource MetroCircleButtonStyle}"
+                        ToolTip="More Options (Ctrl+O)">
+                <Rectangle Width="4" Height="16">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_more_vertical}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+        </StackPanel>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,5,10" Style="{StaticResource SessionTitleStyle}" 
+                   Text="Securities" Height="34"/>
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Width="auto" LastChildFill="True">
+
+            <ig:XamDataChart Margin="0"  VerticalAlignment="Stretch" x:Name="DataChart"
+                             Visibility="{Binding IsSecurityLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             PlotAreaBackground="Transparent">
+                <ig:XamDataChart.Axes>
+                    <ig:CategoryXAxis x:Name="commonCategoryXAxis" ItemsSource="{Binding Prices}" Label="{}{Date:MM-dd}"/>
+                    <ig:NumericYAxis x:Name="commonNumericYAxis"/>
+                </ig:XamDataChart.Axes>
+
+                <ig:XamDataChart.Series>
+                    <ig:FinancialPriceSeries
+                        DisplayType="Candlestick" 
+                        ItemsSource="{Binding Prices}"
+                        OpenMemberPath="Open"
+                        CloseMemberPath="Close"
+                        HighMemberPath="High"
+                        LowMemberPath="Low"
+                        VolumeMemberPath="Volume"
+                        XAxis="{Binding ElementName=commonCategoryXAxis}"
+                        YAxis="{Binding ElementName=commonNumericYAxis}" 
+                        TrendLineType="None" >
+                    </ig:FinancialPriceSeries>
+                </ig:XamDataChart.Series>
+            </ig:XamDataChart>
+
+        </DockPanel>
+    </Grid>
+</controls:MetroWindow>
+
