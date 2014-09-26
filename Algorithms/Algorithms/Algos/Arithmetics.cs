@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Algorithms.Collections;
 
 namespace Algorithms.Algos
 {
@@ -114,6 +115,113 @@ namespace Algorithms.Algos
             for (int i = 1; i <= x; i++)
                 sum += 1.0 / i;
             return sum;
+        }
+
+        /// <summary>
+        /// Evaluate an arithmetic expression using Dijkstra's two-stack algorithm.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public static double Evaluate(this string expression)
+        {
+            return new ArithmeticExpressionEvaluator(expression).Eval();
+        }
+
+        internal class ArithmeticExpressionEvaluator
+        {
+            private readonly string expression;
+            private readonly ArrayStack<string> operands = new ArrayStack<string>();
+            private readonly ArrayStack<double> values = new ArrayStack<double>();
+
+            private string tempVal;
+
+            internal ArithmeticExpressionEvaluator(string expression)
+            {
+                this.expression = expression;
+            }
+
+            internal double Eval()
+            {
+                tempVal = "";
+                operands.Clear();
+                values.Clear();
+                for (int i = 0; i < expression.Length; i++)
+                {
+                    var ch = expression[i];
+                    if (ch == 's')
+                    {
+                        try
+                        {
+                            var op = expression.Substring(i, 4);
+                            if (op == "sqrt")
+                            {
+                                operands.Push("sqrt");
+                                i += 3;
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
+
+                    switch (ch)
+                    {
+                        case ' ':
+                            break;
+                        case '(':
+                            ParseValue();
+                            break;
+                        case '+':
+                        case '-':
+                        case '*':
+                        case '/':
+                            ParseValue();
+                            operands.Push(ch.ToString());
+                            break;
+                        case ')':
+                            ParseValue();
+                            Compute();
+                            break;
+                        default:
+                            tempVal += ch;
+                            break;
+                    }
+                }
+                return values.Pop();
+            }
+
+            private void ParseValue()
+            {
+                values.Push(double.Parse(tempVal));
+                tempVal = "";
+            }
+
+            private void Compute()
+            {
+                var operand = operands.Pop();
+                var value = values.Pop();
+                switch (operand)
+                {
+                    case "+":
+                        value += values.Pop();
+                        break;
+                    case "-":
+                        value -= values.Pop();
+                        break;
+                    case "*":
+                        value *= values.Pop();
+                        break;
+                    case "/":
+                        value /= values.Pop();
+                        break;
+                    case "sqrt":
+                        value = value.SquareRoot();
+                        break;
+                }
+                values.Push(value);
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Windows;
-using Algorithms.Algos;
+﻿using Algorithms.Collections;
+using System;
 
 namespace Algorithms
 {
@@ -8,15 +7,22 @@ namespace Algorithms
     {
         public static double Test(double p, double q)
         {
-            var inputs = new[] { 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8 };
-            var outputs = inputs.Scramble();
 
-            var result = "";
-            foreach (var l in outputs)
-            {
-                result += (l + ",");
-            }
-            MessageBox.Show(result);
+            var list = new LinkedList<string>();
+
+            list.Add("a");
+            list.Add("b");
+            list.Add("c");
+            list.Add("d");
+            list.Add("e");
+            list.Add("f");
+            list.Add("g");
+
+            list.Remove("b");
+
+            list.Insert(1,"b");
+            list.RemoveAt(5);
+            list.RemoveAt(1);
 
             return 0;
         }

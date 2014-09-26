@@ -4,10 +4,15 @@
         Title="MainWindow"
         Width="525"
         Height="350">
-    <Canvas x:Name="Canvas">
-        <Button Canvas.Left="432"
-                Canvas.Top="10"
-                Width="75"
-                Content="Line" Click="Button_Click" />
-    </Canvas>
+    <Border BorderBrush="Brown" BorderThickness="1">
+        <Grid>
+            <Button
+                    Click="Test_Click"
+                    Content="Test" Margin="10,0,0,10" HorizontalAlignment="Left" Width="47" Height="30" VerticalAlignment="Bottom" />
+            <Button
+                    Click="Clear_Click"
+                    Content="Clear" Margin="0,0,10,10" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="47" />
+            <Canvas x:Name="Canvas" />
+        </Grid>
+    </Border>
 </Window>

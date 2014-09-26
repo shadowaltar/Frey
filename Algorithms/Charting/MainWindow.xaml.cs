@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Algorithms.Randoms;
 
 namespace Charting
 {
@@ -19,19 +20,32 @@ namespace Charting
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly Charter charter;
+
         public MainWindow()
         {
             InitializeComponent();
+            charter = new Charter(Canvas);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Test_Click(object sender, RoutedEventArgs e)
         {
-            var w = Canvas.ActualWidth;
-            var h = Canvas.ActualHeight;
+            charter.CanvasWidth = 400;
+            charter.CanvasHeight = 400;
 
-            Charter.LineStroke=new SolidColorBrush(Colors.Red);
-            Canvas.DrawLine(0, 25, 50, 50);
-            Canvas.DrawRectangle(120, 25, 50, 100);
+            int n = 200;
+            for (int i = 0; i < n; i++)
+            {
+                double x = ThreadSafeRandom.Next(0, 400);
+                double y = x/400.0*300;
+                double rh = 300 - y;
+                charter.DrawLine(x, 300, x, rh);
+            }
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            charter.Clear();
         }
     }
 }

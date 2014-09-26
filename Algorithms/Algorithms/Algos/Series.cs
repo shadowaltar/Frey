@@ -1,9 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithms.Algos
 {
     public class Series
     {
+        public static int[] Sequence(int length)
+        {
+            var result = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = i;
+            }
+            return result;
+        }
+
+        public static IEnumerable<int> Sequence(int min, int max)
+        {
+            for (int i = min; i <= max; i++)
+            {
+                yield return i;
+            }
+        }
+
+        public static IEnumerable<int> RandomSequence(int min, int max)
+        {
+            var sequence = Sequence(min, max);
+            return sequence.ToArray().Scramble();
+        }
+
         public static long[] GetFibonacciNumbers(int count)
         {
             return Fibonacci.Get(count);

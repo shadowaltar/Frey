@@ -35,5 +35,38 @@
             }
             return s;
         }
+
+        public static bool IsPalindrome(string s)
+        {
+            int n = s.Length;
+            for (int i = 0; i < n / 2; i++)
+            {
+                if (s[i] != s[n - 1 - i])
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool IsSorted(string s)
+        {
+            for (int i = 1; i < s.Length; i++)
+            {
+                if (s[i - 1].CompareTo(s[i]) > 0)
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool IsCircularRotationOf(string a, string b)
+        {
+            for (int i = 0; i < b.Length; i++)
+            {
+                if (b[i] == a[0] && (a == b.Substring(i) + b.Substring(0, i)))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

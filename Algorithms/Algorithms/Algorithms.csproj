@@ -74,8 +74,17 @@
     </ApplicationDefinition>
     <Compile Include="Algos\Distributions.cs" />
     <Compile Include="Algos\Filterings.cs" />
+    <Compile Include="Algos\Games.cs" />
     <Compile Include="Algos\Sortings.cs" />
+    <Compile Include="Collections\Bag.cs" />
+    <Compile Include="Collections\LinkedList.cs" />
+    <Compile Include="Collections\Queue.cs" />
+    <Compile Include="Collections\Stack.cs" />
+    <Compile Include="Utils\Date.cs" />
+    <Compile Include="Randoms\ThreadSafeRandom.cs" />
     <Compile Include="Tests.cs" />
+    <Compile Include="Utils\Accumulator.cs" />
+    <Compile Include="Utils\Counter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -117,6 +126,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Algorithms.Algos
@@ -11,7 +10,15 @@ namespace Algorithms.Algos
             return numbers.OrderBy(n => n).ToArray();
         }
 
-        public static IEnumerable<int> Scramble(this int[] numbers)
+        /// <summary>
+        /// Scramble the sequence of given set of numbers.
+        /// Pick random number i from 0 to n-1, save numbers[i] to results[0], put numbers.last() into numbers[i];
+        /// pick random number i from 0 to n-2, save numbers[i] to results[1], put numbers.last() into numbers[i];
+        /// ...
+        /// </summary>
+        /// <param name="numbers"></param>
+        /// <returns></returns>
+        public static int[] Scramble(this int[] numbers)
         {
             var r = new Random();
             var results = new int[numbers.Length];
@@ -30,7 +37,7 @@ namespace Algorithms.Algos
             return results;
         }
 
-        public static IEnumerable<double> Scramble(this double[] numbers)
+        public static double[] Scramble(this double[] numbers)
         {
             var r = new Random();
             var results = new double[numbers.Length];
@@ -47,6 +54,18 @@ namespace Algorithms.Algos
                     break;
             }
             return results;
+        }
+
+        public static void Shuffle(this int[] numbers)
+        {
+            int n = numbers.Length;
+            for (int i = 0; i < n; i++)
+            {
+                int r = i + Randoms.ThreadSafeRandom.Next(0, n - i);
+                var t = numbers[i];
+                numbers[i] = numbers[r];
+                numbers[r] = t;
+            }
         }
     }
 }
