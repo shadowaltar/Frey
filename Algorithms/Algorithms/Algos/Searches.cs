@@ -2,6 +2,12 @@
 {
     public class Searches
     {
+        /// <summary>
+        /// O(LogN) search algorithm.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="sortedArray"></param>
+        /// <returns></returns>
         public static int BinarySearch(int key, int[] sortedArray)
         {
             return BinarySearch(key, sortedArray, 0, sortedArray.Length - 1);

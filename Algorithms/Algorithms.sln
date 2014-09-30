@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms", "Algorithms\Al
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Charting", "Charting\Charting.csproj", "{B7BF55D7-8D72-4144-87CF-AE3CA2F6D2AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms.Tests", "Algorithms.Tests\Algorithms.Tests.csproj", "{F10FE144-2744-4A30-B409-CF080A46F5DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{B7BF55D7-8D72-4144-87CF-AE3CA2F6D2AB}.Debug|Any CPU.Build.0 = Debug|x86
 		{B7BF55D7-8D72-4144-87CF-AE3CA2F6D2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7BF55D7-8D72-4144-87CF-AE3CA2F6D2AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Debug|Any CPU.Build.0 = Debug|x86
+		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

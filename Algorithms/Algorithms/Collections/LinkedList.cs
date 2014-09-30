@@ -23,7 +23,7 @@ namespace Algorithms.Collections
             return GetEnumerator();
         }
 
-        public void Add(T item)
+        public virtual void Add(T item)
         {
 
             if (firstNode == null)
@@ -75,6 +75,14 @@ namespace Algorithms.Collections
                     if (node.Previous != null)
                     {
                         node.Previous.Next = node.Next;
+                    }
+                    if (node == firstNode)
+                    {
+                        firstNode = firstNode.Next;
+                    }
+                    else if (node == lastNode)
+                    {
+                        lastNode = lastNode.Previous;
                     }
                     count--;
                     return true;

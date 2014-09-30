@@ -1,23 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace Algorithms.Collections
+﻿namespace Algorithms.Collections
 {
     public class Queue<T> : LinkedList<T>, IQueue<T>
     {
         public void Enqueue(T item)
         {
-            throw new System.NotImplementedException();
+            Add(item);
         }
 
         public T Dequeue()
         {
-            throw new System.NotImplementedException();
+            if (!IsEmpty())
+            {
+                var item = firstNode.Item;
+                RemoveAt(0);
+                return item;
+            }
+            return default(T);
         }
 
         public bool IsEmpty()
         {
-            throw new System.NotImplementedException();
+            return Count() == 0;
         }
 
         public new int Count()

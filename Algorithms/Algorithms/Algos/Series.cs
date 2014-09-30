@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Algorithms.Algos
 {
-    public class Series
+    public static class Series
     {
         public static int[] Sequence(int length)
         {
@@ -28,6 +28,17 @@ namespace Algorithms.Algos
         {
             var sequence = Sequence(min, max);
             return sequence.ToArray().Scramble();
+        }
+
+        public static T[] GetColumn<T>(this T[][] array, int columnIndex)
+        {
+            var n = array.Length;
+            var results = new T[n];
+            for (int i = 0; i < n; i++)
+            {
+                results[i] = array[i][columnIndex];
+            }
+            return results;
         }
 
         public static long[] GetFibonacciNumbers(int count)

@@ -5,9 +5,29 @@ namespace Algorithms.Algos
 {
     public static class Sortings
     {
-        public static int[] Sort(int[] numbers)
+        public static int[] BubbleSort(int[] input)
         {
-            return numbers.OrderBy(n => n).ToArray();
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// O(NlogN) sorting algorithm.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static int[] MergeSort(int[] input)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// O(NlogN) sorting algorithm.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static int[] QuickSort(int[] input)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
