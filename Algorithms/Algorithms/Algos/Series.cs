@@ -1,9 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithms.Algos
 {
-    public class Series
+    public static class Series
     {
+        public static int[] Sequence(int length)
+        {
+            var result = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = i;
+            }
+            return result;
+        }
+
+        public static IEnumerable<int> Sequence(int min, int max)
+        {
+            for (int i = min; i <= max; i++)
+            {
+                yield return i;
+            }
+        }
+
+        public static IEnumerable<int> RandomSequence(int min, int max)
+        {
+            var sequence = Sequence(min, max);
+            return sequence.ToArray().Scramble();
+        }
+
+        public static T[] GetColumn<T>(this T[][] array, int columnIndex)
+        {
+            var n = array.Length;
+            var results = new T[n];
+            for (int i = 0; i < n; i++)
+            {
+                results[i] = array[i][columnIndex];
+            }
+            return results;
+        }
+
         public static long[] GetFibonacciNumbers(int count)
         {
             return Fibonacci.Get(count);

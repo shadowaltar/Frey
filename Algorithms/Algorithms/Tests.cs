@@ -1,6 +1,6 @@
-﻿using System;
-using System.Windows;
+﻿using System.Collections.Generic;
 using Algorithms.Algos;
+using Algorithms.Apps.TexasHoldem;
 
 namespace Algorithms
 {
@@ -8,15 +8,7 @@ namespace Algorithms
     {
         public static double Test(double p, double q)
         {
-            var inputs = new[] { 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8 };
-            var outputs = inputs.Scramble();
-
-            var result = "";
-            foreach (var l in outputs)
-            {
-                result += (l + ",");
-            }
-            MessageBox.Show(result);
+            GameTest.Start();
 
             return 0;
         }
