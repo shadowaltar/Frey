@@ -1,6 +1,6 @@
-﻿using Algorithms.Collections;
-using System;
-using Algorithms.Exercises;
+﻿using System.Collections.Generic;
+using Algorithms.Algos;
+using Algorithms.Apps.TexasHoldem;
 
 namespace Algorithms
 {
@@ -8,7 +8,8 @@ namespace Algorithms
     {
         public static double Test(double p, double q)
         {
-            FindMinima.Test1DArray(FindMinima.Find1DArrayOneLocalMinimum);
+            GameTest.Start();
+
             return 0;
         }
     }

@@ -76,6 +76,15 @@
     <Compile Include="Algos\Filterings.cs" />
     <Compile Include="Algos\Games.cs" />
     <Compile Include="Algos\Sortings.cs" />
+    <Compile Include="Apps\TexasHoldem\Card.cs" />
+    <Compile Include="Apps\TexasHoldem\CardCombinationResult.cs" />
+    <Compile Include="Apps\TexasHoldem\Deck.cs" />
+    <Compile Include="Apps\TexasHoldem\Game.cs" />
+    <Compile Include="Apps\TexasHoldem\GameTest.cs" />
+    <Compile Include="Apps\TexasHoldem\Player.cs" />
+    <Compile Include="Apps\TexasHoldem\CardCombinationHelper.cs" />
+    <Compile Include="Apps\TexasHoldem\Ranks.cs" />
+    <Compile Include="Apps\TexasHoldem\Suits.cs" />
     <Compile Include="Collections\Bag.cs" />
     <Compile Include="Collections\LinkedList.cs" />
     <Compile Include="Collections\Queue.cs" />
@@ -94,6 +103,7 @@
     <Compile Include="Utils\Accumulator.cs" />
     <Compile Include="Utils\Counter.cs" />
     <Compile Include="Exercises\Exercises.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

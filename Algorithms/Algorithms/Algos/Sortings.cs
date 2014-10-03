@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Algorithms.Algos
 {
@@ -25,9 +25,53 @@ namespace Algorithms.Algos
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static int[] QuickSort(int[] input)
+        public static List<T> QuickSort<T>(List<T> input)
+            where T : IComparable<T>
         {
-            throw new NotImplementedException();
+            if (input.Count == 1)
+                return input;
+
+            input = input.Scramble();
+            InternalQuickSort(input, 0, input.Count - 1);
+            return input;
+        }
+
+        private static void InternalQuickSort<T>(List<T> inputs, int low, int high)
+            where T : IComparable<T>
+        {
+            if (high <= low)
+                return;
+            int j = QuickSortPartition(inputs, low, high);
+            InternalQuickSort(inputs, low, j - 1);
+            InternalQuickSort(inputs, j + 1, high);
+        }
+
+        private static int QuickSortPartition<T>(List<T> inputs, int low, int high)
+            where T : IComparable<T>
+        {
+            int i = low, j = high + 1;
+            var v = inputs[low];
+            while (true)
+            {
+                while (LessThan(inputs[++i], v)) if (i == high) break;
+                while (LessThan(v, inputs[--j])) if (j == low) break;
+                if (i >= j) break;
+                Exchange(inputs, i, j);
+            }
+            Exchange(inputs, low, j);
+            return j;
+        }
+
+        private static void Exchange<T>(List<T> inputs, int i, int j) where T : IComparable<T>
+        {
+            var t = inputs[i];
+            inputs[i] = inputs[j];
+            inputs[j] = t;
+        }
+
+        private static bool LessThan<T>(T a, T b) where T : IComparable<T>
+        {
+            return a.CompareTo(b) < 0;
         }
 
         /// <summary>
@@ -38,10 +82,10 @@ namespace Algorithms.Algos
         /// </summary>
         /// <param name="numbers"></param>
         /// <returns></returns>
-        public static int[] Scramble(this int[] numbers)
+        public static T[] Scramble<T>(this T[] numbers)
         {
             var r = new Random();
-            var results = new int[numbers.Length];
+            var results = new T[numbers.Length];
             var count = numbers.Length;
             var j = 0;
             while (true)
@@ -57,19 +101,17 @@ namespace Algorithms.Algos
             return results;
         }
 
-        public static double[] Scramble(this double[] numbers)
+        public static List<T> Scramble<T>(this List<T> numbers)
         {
             var r = new Random();
-            var results = new double[numbers.Length];
-            var count = numbers.Length;
-            var j = 0;
+            var results = new List<T>();
+            var count = numbers.Count;
             while (true)
             {
                 var i = r.Next(0, count);
-                results[j] = numbers[i];
+                results.Add(numbers[i]);
                 numbers[i] = numbers[count - 1];
                 count--;
-                j++;
                 if (count == 0)
                     break;
             }
