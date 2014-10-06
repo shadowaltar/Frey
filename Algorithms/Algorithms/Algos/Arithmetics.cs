@@ -44,6 +44,13 @@ namespace Algorithms.Algos
             return Math.Pow(b, power);
         }
 
+        public static int Exp2(this int power)
+        {
+            if (power < 32)
+                return 1 << power;
+            throw new OverflowException();
+        }
+
         public static BigInteger Factorial(this int x)
         {
             if (x < 0) throw new ArithmeticException();
