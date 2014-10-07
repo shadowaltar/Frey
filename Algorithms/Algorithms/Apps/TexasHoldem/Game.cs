@@ -9,8 +9,13 @@ namespace Algorithms.Apps.TexasHoldem
         public Game()
         {
             Players = new List<Player>();
+            CurrentRoundPlayers = new List<Player>();
+
             Flop = new Deck();
             CardsOnTheTable = new Deck();
+
+            RaiseRule = RaiseRule.OneRaise;
+            SmallBlindPosition = 0;
 
             MinimumBet = 10;
         }
@@ -25,10 +30,18 @@ namespace Algorithms.Apps.TexasHoldem
         public int BetRound { get; set; }
 
         public List<Player> Players { get; private set; }
+        public List<Player> CurrentRoundPlayers { get; private set; }
 
+        public int SmallBlindPosition { get; private set; }
+        public int FirstPlayerPosition { get; private set; }
         public int PlayerCount { get { return Players.Count; } }
         public int FoldedPlayerCount { get { return Players.Count(p => p.IsFolded); } }
         public int ActivePlayerCount { get { return Players.Count - FoldedPlayerCount; } }
+
+        public RaiseRule RaiseRule { get; protected set; }
+
+        public Player FirstPlayer { get { return Players[FirstPlayerPosition]; } }
+        public Player LastPlayer { get { return Players[(FirstPlayerPosition - 1 + PlayerCount) % PlayerCount]; } }
 
         /// <summary>
         /// All initial cards.
@@ -127,22 +140,34 @@ namespace Algorithms.Apps.TexasHoldem
 
         public void BetOrFold()
         {
-            foreach (var player in Players)
+            var round = 1;
+            var current = FirstPlayer;
+            var previous = LastPlayer;
+            do
             {
-                // simple naive bet (all players place min bet)
-                player.Think();
-                if (player.CardPower == CardPower.Weak)
+                var action = current.Bet(round, 0);
+                if (action != BetAction.Fold)
                 {
-                    player.Fold();
+                    previous = current;
+                    current = current.NextPlayer;
                 }
-                else if (player.CardPower == CardPower.Ok)
+                else // when this user folds
                 {
-                    BetOnTheTable += player.Bet();
+                    previous.NextPlayer = current.NextPlayer;
+                    if (current == FirstPlayer)
+                        LastPlayer.NextPlayer = current.NextPlayer;
                 }
-                else if (player.CardPower == CardPower.Strong)
+            } while (current != FirstPlayer);
+
+            if (FirstPlayer.CurrentRoundBetCount != LastPlayer.CurrentRoundBet)
+            {
+                // 2nd bet round.
+                round = 2;
+                do
                 {
-                    BetOnTheTable += player.Bet(BetAction.Raise);
-                }
+                    current.Bet(round, 0);
+                    current = current.NextPlayer;
+                } while (current != FirstPlayer);
             }
         }
 
@@ -151,8 +176,8 @@ namespace Algorithms.Apps.TexasHoldem
             Player bestPlayer = null;
             foreach (var player in Players.Where(p => !p.IsFolded))
             {
-                if (bestPlayer == null || !bestPlayer.BestPokerHand.StrongerThan(player.BestPokerHand))
-                    bestPlayer = player;
+                //if (bestPlayer == null || !bestPlayer.BestPokerHand.StrongerThan(player.BestPokerHand))
+                //    bestPlayer = player;
             }
         }
 
@@ -165,6 +190,11 @@ namespace Algorithms.Apps.TexasHoldem
             Players[smallBlindPosition].NextPlayer.IsSmallBlind = true;
             Players[bigBlindPosition].IsBigBlind = false;
             Players[bigBlindPosition].NextPlayer.IsBigBlind = true;
+        }
+
+        public void Payout()
+        {
+
         }
     }
 }

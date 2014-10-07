@@ -38,6 +38,42 @@ namespace Algorithms.Apps.TexasHoldem
             return 0;
         }
 
+        /// <summary>
+        /// Try to find out possible 5-card combinations from a hand with 5/6/7 cards.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
+        public static Hand Find(Hand hand)
+        {
+            if (hand.Count < 5)
+                return null;
+
+            // step 1, order by rank, find straight
+            var rawStraight = hand.OrderBy(HandSortType.ByRanks).ToList();
+            var previousCard = rawStraight[0];
+            var possibleStraight = false;
+            var possibleStraightCount = 0;
+            var possibleStraightHighRank = Ranks.Any;
+            for (int i = 1; i < rawStraight.Count; i++)
+            {
+                var card = rawStraight[i];
+                if (card.Rank - previousCard.Rank == 1)
+                {
+                    possibleStraight = true;
+                    if (possibleStraightHighRank == Ranks.Any)
+                        possibleStraightHighRank = card.Rank;
+                    previousCard = card;
+                    possibleStraightCount++;
+                }
+                else
+                {
+                    possibleStraight = false;
+                    possibleStraightCount = 0;
+                }
+            }
+            return hand;
+        }
+
         public static void FindType(Hand hand)
         {
             bool isStraight = false;
@@ -87,19 +123,19 @@ namespace Algorithms.Apps.TexasHoldem
                             switch (first)
                             {
                                 case 1:
-                                    hand.Type = HandType.FourOfAKind;
+                                    hand.BestHandType = HandType.FourOfAKind;
                                     hand.HighestRank = hand[1].Rank;
                                     break;
                                 case 4:
-                                    hand.Type = HandType.FourOfAKind;
+                                    hand.BestHandType = HandType.FourOfAKind;
                                     hand.HighestRank = hand[0].Rank;
                                     break;
                                 case 2:
-                                    hand.Type = HandType.FullHouse;
+                                    hand.BestHandType = HandType.FullHouse;
                                     hand.HighestRank = hand[1].Rank;
                                     break;
                                 case 3:
-                                    hand.Type = HandType.FullHouse;
+                                    hand.BestHandType = HandType.FullHouse;
                                     hand.HighestRank = hand[0].Rank;
                                     break;
                             }
@@ -111,25 +147,25 @@ namespace Algorithms.Apps.TexasHoldem
                             var second = groups[hand[1].Rank];
                             if ((first == 3 && second == 1) || (first == 1 && second == 3) || (first == 1 && second == 1))
                             {
-                                hand.Type = HandType.ThreeOfAKind;
+                                hand.BestHandType = HandType.ThreeOfAKind;
                                 hand.HighestRank = hand[2].Rank; // the mid one always have 3.
                             }
                             else
                             {
-                                hand.Type = HandType.TwoPair;
+                                hand.BestHandType = HandType.TwoPair;
                                 hand.HighestRank = first == 1 ? hand[2].Rank : hand[0].Rank;
                             }
                             break;
                         }
                     case 4: // 1pair
                         {
-                            hand.Type = HandType.OnePair;
+                            hand.BestHandType = HandType.OnePair;
                             hand.HighestRank = groups[hand[1].Rank] == 2 ? hand[1].Rank : hand[3].Rank;
                             break;
                         }
                     case 5: // high card (ex. straights)
                         {
-                            hand.Type = HandType.HighCard;
+                            hand.BestHandType = HandType.HighCard;
                             hand.HighestRank = hand[0].Rank;
                             break;
                         }
@@ -139,74 +175,11 @@ namespace Algorithms.Apps.TexasHoldem
             }
 
             if (isStraight && isFlush)
-                hand.Type = HandType.StraightFlush;
+                hand.BestHandType = HandType.StraightFlush;
             else if (isStraight)
-                hand.Type = HandType.Straight;
+                hand.BestHandType = HandType.Straight;
             else
-                hand.Type = HandType.Flush;
-        }
-    }
-
-    /// <summary>
-    /// There are 2598960 possible combinations for 5-card poker hand (52C5) with suit rule.
-    /// </summary>
-    internal static class FiveCardCombinations
-    {
-        public static Dictionary<int, Hand> Combinations = new Dictionary<int, Hand>();
-
-        public static void InitializeStraightFlushes()
-        {
-            // 10 cases (ignoring suits), 2000-1991
-            // from "?A ?K ?Q ?J ?10" to "?6 ?5 ?4 ?3 ?2" (rank 1992)
-            for (int i = 14; i >= 6; i--)
-            {
-                var initStr =
-                   string.Concat("?", ((Ranks)i).Name(),
-                   " ?", ((Ranks)(i - 1)).Name(),
-                   " ?", ((Ranks)(i - 2)).Name(),
-                   " ?", ((Ranks)(i - 3)).Name(),
-                   " ?", ((Ranks)(i - 4)).Name());
-                Combinations[i + 1986] = new Hand(initStr, HandType.StraightFlush);
-            }
-            Combinations[1991] = new Hand("?5 ?4 ?3 ?2 ?A", HandType.StraightFlush);
-        }
-
-        public static void InitializeFourOfAKinds()
-        {
-            // 13 cases (ignoring suits), 1990-1978
-            for (int i = 14; i >= 2; i--)
-            {
-                var temp = "?" + ((Ranks)i).Name() + " ";
-                var initStr = string.Concat(temp, temp, temp, temp, "??");
-                Combinations[i + 1976] = new Hand(initStr, HandType.FourOfAKind);
-            }
-        }
-
-        public static void InitializeFullHouses()
-        {
-            // 13 cases (ignoring suits), 1977-1965
-            for (int i = 14; i >= 2; i--)
-            {
-                var temp = "?" + ((Ranks)i).Name() + " ";
-                var initStr = string.Concat(temp, temp, temp, "?? ??");
-                Combinations[i + 1963] = new Hand(initStr, HandType.FullHouse);
-            }
-        }
-
-        public static void InitializeStraights()
-        {
-            // 13 cases (ignoring suits), start at rank 1963-1951
-            for (int i = 14; i >= 6; i--)
-            {
-                var initStr =
-                   string.Concat("?", ((Ranks)i).Name(),
-                   " ?", ((Ranks)(i - 1)).Name(),
-                   " ?", ((Ranks)(i - 2)).Name(),
-                   " ?", ((Ranks)(i - 3)).Name(),
-                   " ?", ((Ranks)(i - 4)).Name());
-                Combinations[i + 1949] = new Hand(initStr, HandType.StraightFlush);
-            }
-            Combinations[1951] = new Hand("?5 ?4 ?3 ?2 ?A", HandType.StraightFlush);
+                hand.BestHandType = HandType.Flush;
         }
     }
 }

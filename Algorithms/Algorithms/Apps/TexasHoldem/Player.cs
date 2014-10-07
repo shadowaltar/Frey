@@ -21,7 +21,7 @@ namespace Algorithms.Apps.TexasHoldem
 
         public List<Card> HandCards { get; private set; }
         public List<Card> AllCards { get; private set; }
-        public List<Card> BestPokerHand { get; private set; }
+        public Hand BestPokerHand { get; private set; }
 
         public bool IsFolded { get; set; }
 
@@ -32,6 +32,8 @@ namespace Algorithms.Apps.TexasHoldem
         /// </summary>
         public int CurrentRoundBet { get; private set; }
         public int AllRoundBet { get; private set; }
+
+        public List<int[]> BetHistory { get; set; }
 
         /// <summary>
         /// How many times the player places a bet on the table in current round.
@@ -65,18 +67,86 @@ namespace Algorithms.Apps.TexasHoldem
             HandCards = Sortings.QuickSort(HandCards);
         }
 
-        public int Bet(BetAction action = BetAction.Check)
+        public BetAction Bet(int betRound, int previousPlayerBet)
         {
-            var bet = 0;
-            if (action == BetAction.Check)
+            if (betRound == 1)
             {
-                bet = game.MinimumBet;
-                Money -= bet;
-                CurrentRoundBet += bet;
-                AllRoundBet += bet;
+                if (IsSmallBlind)
+                {
+                    var bet = game.MinimumBet / 2;
+                    Money -= bet;
+                    CurrentRoundBet = bet;
+                    AllRoundBet += bet;
+                    game.BetOnTheTable += bet;
+                    return BetAction.SmallBlind;
+                }
+                if (IsBigBlind)
+                {
+                    var bet = game.MinimumBet;
+                    Money -= bet;
+                    CurrentRoundBet = bet;
+                    AllRoundBet += bet;
+                    game.BetOnTheTable += bet;
+                    return BetAction.BigBlind;
+                }
+                else
+                {
+                    Think();
+                    if (CardPower == CardPower.Ok)
+                    {
+
+                    }
+                }
             }
 
-            return bet;
+            if (game.BetRound == 1)
+            {
+                if (IsSmallBlind)
+                {
+                    var bet = game.MinimumBet / 2;
+                    Money -= bet;
+                    CurrentRoundBet = bet;
+                    AllRoundBet += bet;
+                    game.BetOnTheTable += bet;
+
+                }
+                else if (IsBigBlind)
+                {
+                    var bet = game.MinimumBet;
+                    Money -= bet;
+                    CurrentRoundBet = bet;
+                    AllRoundBet += bet;
+                    game.BetOnTheTable += bet;
+                }
+            }
+            switch (action)
+            {
+                case BetAction.Check:
+                    {
+                        CurrentRoundBet = 0;
+                        break;
+                    }
+                case BetAction.Raise:
+                    {
+                        int bet = CalculateBetAmount(previousPlayerBet);
+
+                        Money -= bet;
+                        CurrentRoundBet += bet;
+                        AllRoundBet += bet;
+                        game.BetOnTheTable += bet;
+                        break;
+                    }
+            }
+        }
+
+        /// <summary>
+        /// TODO: naive algo.
+        /// </summary>
+        /// <param name="previousPlayerBet"></param>
+        /// <returns></returns>
+        protected virtual int CalculateBetAmount(int previousPlayerBet)
+        {
+            return game.MinimumBet + previousPlayerBet;
         }
 
         public void Think()
@@ -106,19 +176,5 @@ namespace Algorithms.Apps.TexasHoldem
         {
             return string.Format("{0} {1}, {2}, has {3}", Name, HandCardsToString(), IsFolded ? "folded" : "playing", Money);
         }
-    }
-
-    public enum CardPower
-    {
-        Weak,
-        Ok,
-        Strong,
-    }
-
-    public enum BetAction
-    {
-        Raise,
-        Follow,
-        Check,
     }
 }

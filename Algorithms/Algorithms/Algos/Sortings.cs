@@ -77,11 +77,7 @@ namespace Algorithms.Algos
             throw new NotImplementedException();
         }
 
-        internal class MergeSorting()
 
-    {
-        
-    }
         private static void InternalMerge(int[] input, int low, int mid, int high)
         {
             var cache = new int[input.Length];

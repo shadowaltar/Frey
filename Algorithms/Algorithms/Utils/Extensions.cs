@@ -6,9 +6,9 @@ namespace Algorithms.Utils
 {
     public static class Extensions
     {
-        public static IEnumerable<T> Values<T>(this Type x)
+        public static IEnumerable<T> Values<T>(this Type x, params T[] excepts)
         {
-            return Enum.GetValues(x).Cast<T>();
+            return Enum.GetValues(x).Cast<T>().Except(excepts);
         }
     }
 }

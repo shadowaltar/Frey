@@ -1,6 +1,7 @@
 ﻿using Algorithms.Algos;
 using System;
 using System.Windows;
+using Algorithms.Apps.TexasHoldem;
 
 namespace Algorithms
 {
@@ -12,6 +13,8 @@ namespace Algorithms
         public MainWindow()
         {
             InitializeComponent();
+
+            GameTest.Start();
         }
 
         private double pDouble { get { return Convert.ToDouble(P.Text); } }

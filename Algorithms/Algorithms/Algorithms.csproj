@@ -80,15 +80,19 @@
     <Compile Include="Apps\FileSpaces\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Apps\TexasHoldem\BetAction.cs" />
     <Compile Include="Apps\TexasHoldem\Card.cs" />
     <Compile Include="Apps\TexasHoldem\CardCombinationResult.cs" />
+    <Compile Include="Apps\TexasHoldem\CardPower.cs" />
     <Compile Include="Apps\TexasHoldem\Deck.cs" />
     <Compile Include="Apps\TexasHoldem\Game.cs" />
     <Compile Include="Apps\TexasHoldem\GameTest.cs" />
+    <Compile Include="Apps\TexasHoldem\GameType.cs" />
     <Compile Include="Apps\TexasHoldem\Hand.cs" />
     <Compile Include="Apps\TexasHoldem\HandType.cs" />
     <Compile Include="Apps\TexasHoldem\Player.cs" />
     <Compile Include="Apps\TexasHoldem\CardCombinationHelper.cs" />
+    <Compile Include="Apps\TexasHoldem\RaiseRule.cs" />
     <Compile Include="Apps\TexasHoldem\Ranks.cs" />
     <Compile Include="Apps\TexasHoldem\Suits.cs" />
     <Compile Include="Collections\Bag.cs" />

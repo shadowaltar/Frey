@@ -11,7 +11,7 @@
 
             game.IsStarted = true;
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
                 PlayOneRound(game);
 
@@ -27,7 +27,10 @@
             game.DealCards();
             game.BetOrFold();
             if (game.ActivePlayerCount == 1)
+            {
+                game.Payout();
                 return;
+            }
 
             // first 3 cards
             game.DealFlop();

@@ -22,9 +22,9 @@ namespace Algorithms.Apps.TexasHoldem
                 case Suits.Spades:
                     return "\u2660";
                 case Suits.Hearts:
-                    return "\u2661";
+                    return "\u2665";
                 case Suits.Diamonds:
-                    return "\u2662";
+                    return "\u2666";
                 case Suits.Any:
                     return "?";
             }

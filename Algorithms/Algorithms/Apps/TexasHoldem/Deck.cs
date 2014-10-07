@@ -53,9 +53,9 @@ namespace Algorithms.Apps.TexasHoldem
         {
             var deck = new Deck();
             var cards = new List<Card>();
-            foreach (var rank in typeof(Ranks).Values<Ranks>())
+            foreach (var rank in typeof(Ranks).Values(Ranks.Any))
             {
-                foreach (var suit in typeof(Suits).Values<Suits>())
+                foreach (var suit in typeof(Suits).Values(Suits.Any))
                 {
                     cards.Add(new Card(suit, rank));
                 }
@@ -121,6 +121,14 @@ namespace Algorithms.Apps.TexasHoldem
 
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            var temp = Cards.Take(6).ToList();
+            var moreThanSix = Cards.Count > 6;
+            return string.Format("First 6 Cards: {0},{1},{2},{3},{4},{5}{6}",
+                temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], moreThanSix ? "..." : "");
         }
     }
 }
