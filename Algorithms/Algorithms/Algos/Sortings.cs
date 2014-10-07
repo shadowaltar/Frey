@@ -5,9 +5,66 @@ namespace Algorithms.Algos
 {
     public static class Sortings
     {
-        public static int[] BubbleSort(int[] input)
+        /// <summary>
+        /// Worst N^2, best N^2, average N^2; in-place.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static void SelectionSort(int[] input)
         {
-            throw new NotImplementedException();
+            var n = input.Length;
+            int min;
+            for (int i = 0; i < n; i++)
+            {
+                min = i;
+                for (int j = i + 1; j < n; j++)
+                {
+                    if (input[j] < input[min])
+                    {
+                        min = j;
+                    }
+                }
+                Exchange(input, i, min);
+            }
+        }
+
+        /// <summary>
+        /// Worst N^2, best N, average N^2; stable; adaptive; in-place.
+        /// </summary>
+        /// <param name="input"></param>
+        public static void InsertionSort(int[] input)
+        {
+            var n = input.Length;
+            for (int i = 1; i < n; i++)
+            {
+                for (int j = i; j > 0 && input[j] < input[j - 1]; j--)
+                {
+                    Exchange(input, j, j - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Worst N^2, best NlogN; average ?; unstable; adaptive.
+        /// </summary>
+        /// <param name="input"></param>
+        public static void ShellSort(int[] input)
+        {
+            int n = input.Length;
+            int h = 1;
+            while (h < n / 3)
+                h = 3 * h + 1;
+            while (h >= 1)
+            {
+                for (int i = h; i < n; i++)
+                {
+                    for (int j = i; j >= h && input[j] < input[j - h]; j -= h)
+                    {
+                        Exchange(input, j, j - h);
+                    }
+                }
+                h /= 3;
+            }
         }
 
         /// <summary>
@@ -15,7 +72,30 @@ namespace Algorithms.Algos
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static int[] MergeSort(int[] input)
+        public static void MergeSort(int[] input)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void InternalMerge(int[] input, int low, int mid, int high)
+        {
+            var cache = new int[input.Length];
+            int i = low, j = mid + 1;
+            for (int k = low; k <= high; k++)
+            {
+                cache[k] = input[k];
+            }
+
+            for (int k = low; k <= high; k++)
+            {
+                if (i > mid) input[k] = cache[j++];
+                else if (j > high) input[k] = cache[i++];
+                else if (cache[j] < cache[i]) input[k] = cache[j++];
+                else input[k] = cache[i++];
+            }
+        }
+
+        public static int[] BubbleSort(int[] input)
         {
             throw new NotImplementedException();
         }
@@ -60,6 +140,13 @@ namespace Algorithms.Algos
             }
             Exchange(inputs, low, j);
             return j;
+        }
+
+        private static void Exchange(int[] array, int a, int b)
+        {
+            var t = array[b];
+            array[b] = array[a];
+            array[a] = t;
         }
 
         private static void Exchange<T>(List<T> inputs, int i, int j) where T : IComparable<T>

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Algorithms.Algos;
+using Algorithms.Apps.FileSpaces;
 using Algorithms.Apps.TexasHoldem;
+using Algorithms.Exercises.Cases.UnionFind;
 
 namespace Algorithms
 {
@@ -8,7 +10,8 @@ namespace Algorithms
     {
         public static double Test(double p, double q)
         {
-            GameTest.Start();
+            var mv = new MainView();
+            mv.Show();
 
             return 0;
         }

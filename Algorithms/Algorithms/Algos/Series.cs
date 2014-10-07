@@ -30,6 +30,15 @@ namespace Algorithms.Algos
             return sequence.ToArray().Scramble();
         }
 
+        public static IEnumerable<int> RandomArray(int count, int min, int max)
+        {
+            var r = new Random((int)DateTime.Now.Ticks);
+            for (int i = 0; i < count; i++)
+            {
+                yield return r.Next(min, max);
+            }
+        }
+
         public static T[] GetColumn<T>(this T[][] array, int columnIndex)
         {
             var n = array.Length;

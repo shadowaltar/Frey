@@ -76,6 +76,10 @@
     <Compile Include="Algos\Filterings.cs" />
     <Compile Include="Algos\Games.cs" />
     <Compile Include="Algos\Sortings.cs" />
+    <Compile Include="Apps\FileSpaces\FileExtendedInfo.cs" />
+    <Compile Include="Apps\FileSpaces\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Apps\TexasHoldem\Card.cs" />
     <Compile Include="Apps\TexasHoldem\CardCombinationResult.cs" />
     <Compile Include="Apps\TexasHoldem\Deck.cs" />
@@ -91,6 +95,9 @@
     <Compile Include="Collections\Deque.cs" />
     <Compile Include="Collections\Stack.cs" />
     <Compile Include="Exercises\Buffer.cs" />
+    <Compile Include="Exercises\Cases\UnionFind\IUnionFind.cs" />
+    <Compile Include="Exercises\Cases\UnionFind\UnionFindTest.cs" />
+    <Compile Include="Exercises\Cases\UnionFind\WeightedQuickUnionFind.cs" />
     <Compile Include="Exercises\ClosestPair.cs" />
     <Compile Include="Exercises\DoublingTest.cs" />
     <Compile Include="Exercises\FarthestPair.cs" />
@@ -104,6 +111,11 @@
     <Compile Include="Utils\Counter.cs" />
     <Compile Include="Exercises\Exercises.cs" />
     <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Utils\ReportTime.cs" />
+    <Page Include="Apps\FileSpaces\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -145,9 +157,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exercises\Cases\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
