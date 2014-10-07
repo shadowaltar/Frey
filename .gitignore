@@ -11,5 +11,7 @@
 /Automata.Tests/obj
 /Automata.Tests/bin
 
+/Algorithms/packages
+
 *.user
 *.suo
