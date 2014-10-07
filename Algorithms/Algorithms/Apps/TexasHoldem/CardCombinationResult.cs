@@ -4,7 +4,7 @@ namespace Algorithms.Apps.TexasHoldem
 {
     public class CardCombinationResult
     {
-        public CardCombinationType BestCombinationType { get; set; }
+        public HandType BestCombinationType { get; set; }
         public List<Card> BestCombination { get; set; }
         public CardPower PlayerCardPower { get; set; }
         public CardPower AverageOpponentCardPower { get; set; }
@@ -12,20 +12,7 @@ namespace Algorithms.Apps.TexasHoldem
 
     public class CardCombinationEvaluation
     {
-        public CardCombinationType Type { get; set; }
+        public HandType Type { get; set; }
 
-    }
-
-    public enum CardCombinationType
-    {
-        StraightFlush,
-        FourOfAKind,
-        FullHouse,
-        Flush,
-        Straight,
-        ThreeOfAKind,
-        TwoPair,
-        OnePair,
-        HighCard,
     }
 }

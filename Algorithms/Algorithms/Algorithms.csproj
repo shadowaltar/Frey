@@ -85,6 +85,8 @@
     <Compile Include="Apps\TexasHoldem\Deck.cs" />
     <Compile Include="Apps\TexasHoldem\Game.cs" />
     <Compile Include="Apps\TexasHoldem\GameTest.cs" />
+    <Compile Include="Apps\TexasHoldem\Hand.cs" />
+    <Compile Include="Apps\TexasHoldem\HandType.cs" />
     <Compile Include="Apps\TexasHoldem\Player.cs" />
     <Compile Include="Apps\TexasHoldem\CardCombinationHelper.cs" />
     <Compile Include="Apps\TexasHoldem\Ranks.cs" />

@@ -5,7 +5,7 @@ using Ninject;
 
 namespace Automata.Dashboard
 {
-    public class Bootstrapper : Bootstrapper<IMainViewModel>
+    public class Bootstrapper : Bootstrapper<IAutocallMainViewModel>
     {
         private IKernel kernel;
 
@@ -15,7 +15,8 @@ namespace Automata.Dashboard
             kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
             kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
 
-            kernel.Bind<IMainViewModel>().To<MainViewModel>();
+            kernel.Bind<ICollarTwinWinMainViewModel>().To<CollarTwinWinMainViewModel>();
+            kernel.Bind<IAutocallMainViewModel>().To<AutocallMainViewModel>();
         }
 
         protected override object GetInstance(Type service, string key)

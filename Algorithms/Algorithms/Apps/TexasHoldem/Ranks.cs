@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Documents;
 
 namespace Algorithms.Apps.TexasHoldem
 {
@@ -17,6 +20,8 @@ namespace Algorithms.Apps.TexasHoldem
         Four = 4,
         Three = 3,
         Two = 2,
+
+        Any = 0,
     }
 
     public static class RankHelper
@@ -43,6 +48,8 @@ namespace Algorithms.Apps.TexasHoldem
                 case "X":
                 case "10":
                     return Ranks.Ten;
+                case "?":
+                    return Ranks.Any;
                 default:
                     int val;
                     if (int.TryParse(str, out val))
@@ -50,6 +57,11 @@ namespace Algorithms.Apps.TexasHoldem
                     break;
             }
             throw new InvalidOperationException();
+        }
+
+        public static IEnumerable<string> StringValues()
+        {
+            return Enum.GetValues(typeof(Ranks)).OfType<Ranks>().Select(f => f.Name());
         }
     }
 }

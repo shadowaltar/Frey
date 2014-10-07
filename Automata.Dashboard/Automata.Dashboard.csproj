@@ -104,14 +104,20 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="IMainViewModel.cs" />
-    <Compile Include="MainViewModel.cs" />
+    <Compile Include="AutocallMainViewModel.cs" />
+    <Compile Include="IAutocallMainViewModel.cs" />
+    <Compile Include="ICollarTwinWinMainViewModel.cs" />
+    <Compile Include="CollarTwinWinMainViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelBase.cs" />
-    <Page Include="MainView.xaml">
+    <Page Include="CollarTwinWinMainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutocallMainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
