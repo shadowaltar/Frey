@@ -6,6 +6,8 @@ namespace Algorithms.Apps.TexasHoldem
 {
     public enum Ranks
     {
+        Any = 0,
+
         A = 14,
         K = 13,
         Q = 12,
@@ -19,8 +21,6 @@ namespace Algorithms.Apps.TexasHoldem
         Four = 4,
         Three = 3,
         Two = 2,
-
-        Any = 0,
     }
 
     public static class RankHelper

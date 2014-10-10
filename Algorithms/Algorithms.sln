@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Charting", "Charting\Charti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms.Tests", "Algorithms.Tests\Algorithms.Tests.csproj", "{F10FE144-2744-4A30-B409-CF080A46F5DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfUtilities", "WpfUtilities\WpfUtilities.csproj", "{BE909B57-E6D8-48A6-BFD3-187AE2935479}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Debug|Any CPU.Build.0 = Debug|x86
 		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -127,7 +127,7 @@ namespace Algorithms.Apps.TexasHoldem
         {
             var temp = Cards.Take(6).ToList();
             var moreThanSix = Cards.Count > 6;
-            return string.Format("First 6 Cards: {0},{1},{2},{3},{4},{5}{6}",
+            return string.Format("{0},{1},{2},{3},{4},{5}{6}",
                 temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], moreThanSix ? "..." : "");
         }
     }

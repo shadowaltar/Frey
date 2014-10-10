@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E451394F-008F-43BE-BE64-3116BFD9AB51}</ProjectGuid>
+    <ProjectGuid>{BE909B57-E6D8-48A6-BFD3-187AE2935479}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Algorithms</RootNamespace>
-    <AssemblyName>Algorithms</AssemblyName>
+    <RootNamespace>WpfUtilities</RootNamespace>
+    <AssemblyName>WpfUtilities</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -33,28 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -72,65 +53,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Algos\Distributions.cs" />
-    <Compile Include="Algos\Filterings.cs" />
-    <Compile Include="Algos\Games.cs" />
-    <Compile Include="Algos\Sortings.cs" />
-    <Compile Include="Apps\FileSpaces\FileExtendedInfo.cs" />
-    <Compile Include="Apps\FileSpaces\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Apps\TexasHoldem\BetAction.cs" />
-    <Compile Include="Apps\TexasHoldem\Card.cs" />
-    <Compile Include="Apps\TexasHoldem\CardCombinationResult.cs" />
-    <Compile Include="Apps\TexasHoldem\CardPower.cs" />
-    <Compile Include="Apps\TexasHoldem\Cards.cs" />
-    <Compile Include="Apps\TexasHoldem\Deck.cs" />
-    <Compile Include="Apps\TexasHoldem\Game.cs" />
-    <Compile Include="Apps\TexasHoldem\GameTest.cs" />
-    <Compile Include="Apps\TexasHoldem\GameType.cs" />
-    <Compile Include="Apps\TexasHoldem\Hand.cs" />
-    <Compile Include="Apps\TexasHoldem\HandType.cs" />
-    <Compile Include="Apps\TexasHoldem\Player.cs" />
-    <Compile Include="Apps\TexasHoldem\CardCombinationHelper.cs" />
-    <Compile Include="Apps\TexasHoldem\RaiseRule.cs" />
-    <Compile Include="Apps\TexasHoldem\Ranks.cs" />
-    <Compile Include="Apps\TexasHoldem\Suits.cs" />
-    <Compile Include="Collections\Bag.cs" />
-    <Compile Include="Collections\LinkedList.cs" />
-    <Compile Include="Collections\Queue.cs" />
-    <Compile Include="Collections\Deque.cs" />
-    <Compile Include="Collections\Stack.cs" />
-    <Compile Include="Exercises\Buffer.cs" />
-    <Compile Include="Exercises\Cases\UnionFind\IUnionFind.cs" />
-    <Compile Include="Exercises\Cases\UnionFind\UnionFindTest.cs" />
-    <Compile Include="Exercises\Cases\UnionFind\WeightedQuickUnionFind.cs" />
-    <Compile Include="Exercises\ClosestPair.cs" />
-    <Compile Include="Exercises\DoublingTest.cs" />
-    <Compile Include="Exercises\FarthestPair.cs" />
-    <Compile Include="Exercises\FindMinima.cs" />
-    <Compile Include="Exercises\MoveToFront.cs" />
-    <Compile Include="Exercises\RingBuffer.cs" />
-    <Compile Include="Utils\Date.cs" />
-    <Compile Include="Randoms\ThreadSafeRandom.cs" />
-    <Compile Include="Tests.cs" />
-    <Compile Include="Utils\Accumulator.cs" />
-    <Compile Include="Utils\Counter.cs" />
-    <Compile Include="Exercises\Exercises.cs" />
-    <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Utils\ReportTime.cs" />
-    <Page Include="Apps\FileSpaces\MainView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Algos\Arithmetics.cs" />
-    <Compile Include="Algos\Series.cs" />
-    <Compile Include="Algos\Formats.cs" />
-    <Compile Include="Algos\Searches.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -164,7 +90,6 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

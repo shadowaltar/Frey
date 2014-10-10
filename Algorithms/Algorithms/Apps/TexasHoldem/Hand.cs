@@ -8,7 +8,7 @@ namespace Algorithms.Apps.TexasHoldem
 {
     public class Hand : IList<Card>, IComparable<Hand>
     {
-        private List<Card> cards = new List<Card>();
+        private readonly List<Card> cards = new List<Card>();
 
         public Hand()
         {
@@ -16,6 +16,8 @@ namespace Algorithms.Apps.TexasHoldem
         }
 
         public Dictionary<Ranks, int> Groups { get; private set; }
+
+        public bool IsFive { get { return cards.Count == 5; } }
 
         public Hand(string hand)
             : this()
@@ -28,9 +30,9 @@ namespace Algorithms.Apps.TexasHoldem
                 var rank = abbr.Replace(suit, "");
                 cards.Add(new Card(SuitHelper.Parse(suit), RankHelper.Parse(rank)));
             }
-            cards = Sortings.QuickSort(cards);
-            IsSorted = true;
+            cards.Sort();
             AddRange(cards);
+            IsSorted = true;
         }
 
         public Hand(string hand, HandType bestHandType)
@@ -39,12 +41,21 @@ namespace Algorithms.Apps.TexasHoldem
             BestHandType = bestHandType;
         }
 
-        public Hand(List<Card> cards)
+        public Hand(params Card[] cards)
             : this()
         {
-            var sorted = Sortings.QuickSort(cards);
+            Array.Sort(cards);
+            AddRange(cards);
             IsSorted = true;
-            AddRange(sorted);
+        }
+
+        public Hand(IEnumerable<Card> cards)
+            : this()
+        {
+            var cs = cards.ToList();
+            cs.Sort();
+            AddRange(cs);
+            IsSorted = true;
         }
 
         public Hand(Hand hand)
@@ -59,6 +70,11 @@ namespace Algorithms.Apps.TexasHoldem
         public Ranks HighestRank { get; set; }
 
         public bool IsSorted { get; protected set; }
+
+        public List<Card> ToCards()
+        {
+            return cards.ToList();
+        }
 
         /// <summary>
         /// Sort the cards.

@@ -2,6 +2,8 @@
 {
     public enum CardPower
     {
+        Unknown,
+
         Weak,
         Ok,
         Strong,

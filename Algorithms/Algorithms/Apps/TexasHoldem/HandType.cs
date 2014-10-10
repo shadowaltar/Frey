@@ -1,18 +1,21 @@
-﻿namespace Algorithms.Apps.TexasHoldem
+﻿using System;
+
+namespace Algorithms.Apps.TexasHoldem
 {
+    [Flags]
     public enum HandType
     {
-        StraightFlush,
-        FourOfAKind,
-        FullHouse,
-        Flush,
-        Straight,
-        ThreeOfAKind,
-        TwoPair,
-        OnePair,
-        HighCard,
+        Unknown = 0,
 
-        Unknown,
+        StraightFlush = 256,
+        FourOfAKind = 128,
+        FullHouse = 64,
+        Flush = 32,
+        Straight = 16,
+        ThreeOfAKind = 8,
+        TwoPair = 4,
+        OnePair = 2,
+        HighCard = 1,
     }
 
     public enum HandSortType

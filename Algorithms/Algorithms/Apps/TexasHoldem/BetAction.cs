@@ -2,6 +2,7 @@
 {
     public enum BetAction
     {
+        NotDecided, // unknown
         Check, // don't raise and pass
         Raise, // raise the bet from 0 or previous player's bet
         Call,  // follow previous player's bet.
