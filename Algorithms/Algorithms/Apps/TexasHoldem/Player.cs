@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Algorithms.Apps.TexasHoldem
 {
@@ -14,8 +15,7 @@ namespace Algorithms.Apps.TexasHoldem
             CurrentMoney = money;
 
             HandCards = new Cards();
-            AllCards = new Cards();
-            BestPokerHand = null;
+            BestHand = null;
 
             IsFolded = false;
             IsLoss = false;
@@ -24,24 +24,25 @@ namespace Algorithms.Apps.TexasHoldem
         public string Name { get; set; }
 
         public Cards HandCards { get; private set; }
-        public Cards AllCards { get; private set; }
-        public Hand BestPokerHand { get; private set; }
+        public Cards AllCards { get { return GetAllCards(); } }
+
+        public Hand BestHand { get; set; }
 
         public bool IsFolded { get; set; }
         public bool IsLoss { get; set; }
         public bool IsActive { get { return !IsFolded && !IsLoss; } }
         public BetAction LatestBetAction { get; set; }
 
-        public int InitialMoney { get; set; }
+        public double InitialMoney { get; set; }
 
         public int AddedBetOfFirstBetRound { get; private set; }
         public int AddedBetOfSecondBetRound { get; private set; }
         public int BetOfCardRound { get { return AddedBetOfFirstBetRound + AddedBetOfSecondBetRound; } }
         public int BetOfGameRound { get; private set; }
 
-        public int CurrentMoney { get; private set; }
+        public double CurrentMoney { get; private set; }
 
-        public List<int[]> BetHistory { get; set; }
+        public List<double[]> BetHistory { get; set; }
 
         /// <summary>
         /// Small blind is the player who receive card first.
@@ -73,7 +74,7 @@ namespace Algorithms.Apps.TexasHoldem
 
             HandCards.Clear();
             AllCards.Clear();
-            BestPokerHand = null;
+            BestHand = null;
 
             LatestBetAction = BetAction.NotDecided;
 
@@ -265,14 +266,26 @@ namespace Algorithms.Apps.TexasHoldem
 
             CurrentMoney -= amount;
             BetOfGameRound += amount;
-            game.GameRoundBetPool += amount;
+            game.Pot += amount;
         }
 
         public void Think()
         {
-            var results = CardCombinationHelper.Calculate(game.CardsOnTheTable, game.CardRound, HandCards);
+            var results = CardCombinationHelper.Calculate(game.CardsOnTable, game.CardRound, HandCards);
             CardPower = results[0];
             AverageOpponentCardPower = results[1];
+        }
+
+        public void SortCards()
+        {
+            BestHand = CardCombinationHelper.Find(AllCards);
+        }
+
+        private Cards GetAllCards()
+        {
+            var cards = new Cards(game.CardsOnTable);
+            cards.AddRange(HandCards);
+            return cards;
         }
 
         private void Fold()
@@ -326,8 +339,14 @@ namespace Algorithms.Apps.TexasHoldem
 
         public override string ToString()
         {
-            return string.Format("{0} {1}, {2}, has {3}", Name, HandCardsToString(),
+            return string.Format("{0}; holds {1}; {2}, {3}, has {4}", Name, HandCardsToString(),
+                BestHand == null ? "No best-hand" : "(" + BestHand.Type + ")" + BestHand.SignificantRank,
                 IsFolded ? "folded" : "playing", CurrentMoney);
+        }
+
+        public void Win(double amount)
+        {
+            CurrentMoney += amount;
         }
     }
 }

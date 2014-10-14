@@ -7,6 +7,13 @@ namespace Algorithms.Apps.TexasHoldem
 {
     public class Cards : List<Card>
     {
+        public Cards()
+        { }
+
+        public Cards(IEnumerable<Card> cards)
+            : base(cards)
+        { }
+
         /// <summary>
         /// Sort the cards.
         /// </summary>
@@ -26,12 +33,19 @@ namespace Algorithms.Apps.TexasHoldem
                     throw new NotImplementedException();
             }
         }
+
+        public void SortByDescending()
+        {
+            Sort((c1, c2) => -c1.CompareTo(c2));
+        }
+
         public IEnumerable<Card> DistinctOrderBy(HandSortType type)
         {
             switch (type)
             {
                 case HandSortType.ByRanks:
-                    return this.DistinctBy(c => c.Rank).OrderBy(c => c.Rank).ThenBy(c => c.Suit);
+                    //          return this.DistinctBy(c => c.Rank).OrderBy(c => c.Rank).ThenBy(c => c.Suit);
+                    return SortByRanks();
                 case HandSortType.ByRanksReversed:
                     return this.DistinctBy(c => c.Rank).OrderByDescending(c => c.Rank).ThenByDescending(c => c.Suit);
                 case HandSortType.BySuits:
@@ -43,12 +57,42 @@ namespace Algorithms.Apps.TexasHoldem
             }
         }
 
+        private IEnumerable<Card> SortByRanks()
+        {
+            var cards = new List<Card>(this);
+            cards.Sort();
+            Card previous = null;
+            foreach (var card in cards)
+            {
+                if (previous != card)
+                {
+                    yield return card;
+                }
+                previous = card;
+            }
+        }
+
+        public static IEnumerable<Card> GetCards(Ranks rank)
+        {
+            var cards = new Cards();
+            foreach (var suit in SuitHelper.Values())
+            {
+                cards.Add(new Card(suit, rank));
+            }
+            return cards;
+        }
+
         public override string ToString()
         {
-            var temp = this.Take(6).ToList();
-            var moreThanSix = Count > 6;
-            return string.Format("{0},{1},{2},{3},{4},{5}{6}",
-                temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], moreThanSix ? "..." : "");
+            var temp = this.Take(7).ToList();
+            var more = Count > 7;
+            var result = "";
+            foreach (var card in temp)
+            {
+                result += card + ",";
+            }
+            result = result.Trim(',');
+            return result + (more ? "..." : "");
         }
     }
 }

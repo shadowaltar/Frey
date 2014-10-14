@@ -32,8 +32,8 @@
         </ScrollViewer>
         <Grid x:Name="Grid"
               Grid.Column="4"
-              Margin="5,10,10,10" >
-            <Button/>
+              Margin="5,10,10,10">
+            <Button />
         </Grid>
     </Grid>
 </Window>

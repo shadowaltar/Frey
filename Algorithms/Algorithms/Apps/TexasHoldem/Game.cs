@@ -11,22 +11,23 @@ namespace Algorithms.Apps.TexasHoldem
             Players = new List<Player>();
 
             Flop = new Cards();
-            CardsOnTheTable = new Cards();
-
-            RaiseRule = RaiseRule.OneRaise;
-
-            MinimumBet = 10;
+            CardsOnTable = new Cards();
+            GameHistory = new List<GameRound>();
         }
 
         public bool IsStarted { get; set; }
+
+        public int CurrentGameRound { get; set; }
 
         public bool HasGameRoundWinner { get { return Players.Count(p => p.IsActive) == 1; } }
 
         public int MinimumBet { get; set; }
 
-        public int GameRoundBetPool { get; set; }
+        public double Pot { get; set; }
 
         public int CardRound { get; set; }
+
+        public List<GameRound> GameHistory { get; private set; }
 
         public List<Player> Players { get; private set; }
         public List<Player> ActivePlayers { get { return Players.Where(p => p.IsActive).ToList(); } }
@@ -35,8 +36,6 @@ namespace Algorithms.Apps.TexasHoldem
 
         public int PlayerCount { get { return Players.Count; } }
         public int ActivePlayerCount { get { return Players.Count(p => p.IsActive); } }
-
-        public RaiseRule RaiseRule { get; protected set; }
 
         /// <summary>
         /// All initial cards.
@@ -55,7 +54,7 @@ namespace Algorithms.Apps.TexasHoldem
         /// </summary>
         public Card River { get; private set; }
 
-        public Cards CardsOnTheTable { get; private set; }
+        public Cards CardsOnTable { get; private set; }
 
         public void Initialize(int playerCount)
         {
@@ -75,9 +74,10 @@ namespace Algorithms.Apps.TexasHoldem
             PrepareCards();
 
             InitializeRound();
-
+            var winners = ActivePlayers;
             // the beginning
             DealCards();
+
             var hasWinner = PlayCardRound(1);
             if (!hasWinner)
             {
@@ -93,13 +93,44 @@ namespace Algorithms.Apps.TexasHoldem
                         hasWinner = PlayCardRound(4);
                         if (!hasWinner)
                         {
-                            Showdown();
+                            winners = Showdown().ToList();
                         }
                     }
                 }
             }
-            Payout();
+            Payout(winners);
+            Record(winners);
             SetBlinds();
+        }
+
+        private void Record(List<Player> winners)
+        {
+            foreach (var player in ActivePlayers)
+            {
+                Console.WriteLine("{0} has money: {1}", player.Name, player.CurrentMoney);
+            }
+
+            var gr = new GameRound(CurrentGameRound, CardsOnTable);
+            foreach (var player in Players)
+            {
+                var pgr = new PlayerGameRound();
+                pgr.BestHand = player.BestHand;
+                pgr.Bet = player.BetOfGameRound;
+                pgr.CurrentMoney = player.CurrentMoney;
+                pgr.CardsHeld = new Cards(player.HandCards);
+
+                if (winners.Contains(player))
+                {
+                    pgr.IsWinner = true;
+                    pgr.ProfitLoss = Pot / winners.Count;
+                }
+                else
+                {
+                    pgr.ProfitLoss = -player.BetOfGameRound;
+                }
+                gr.Players.Add(pgr);
+            }
+            GameHistory.Add(gr);
         }
 
         public void PrepareCards()
@@ -109,6 +140,7 @@ namespace Algorithms.Apps.TexasHoldem
 
         public void InitializeRound()
         {
+            CurrentGameRound++;
             CurrentFirstPlayer = CurrentSmallBlind;
 
             foreach (var player in Players)
@@ -116,7 +148,11 @@ namespace Algorithms.Apps.TexasHoldem
                 player.InitializeGameRound();
             }
 
-            GameRoundBetPool = 0;
+            Pot = 0;
+            CardsOnTable.Clear();
+            Flop.Clear();
+            Turn = null;
+            River = null;
         }
 
         public void DealCards()
@@ -139,23 +175,23 @@ namespace Algorithms.Apps.TexasHoldem
             Flop.Add(Deck.Draw());
             Flop.Add(Deck.Draw());
             Flop.Sort();
-            CardsOnTheTable.AddRange(Flop);
+            CardsOnTable.AddRange(Flop);
         }
 
         public void DealTurn()
         {
             Burn();
             Turn = Deck.Draw();
-            CardsOnTheTable.Add(Turn);
-            CardsOnTheTable.Sort();
+            CardsOnTable.Add(Turn);
+            CardsOnTable.Sort();
         }
 
         public void DealRiver()
         {
             Burn();
             River = Deck.Draw();
-            CardsOnTheTable.Add(River);
-            CardsOnTheTable.Sort();
+            CardsOnTable.Add(River);
+            CardsOnTable.Sort();
         }
 
         private bool PlayCardRound(int cardRound)
@@ -212,13 +248,44 @@ namespace Algorithms.Apps.TexasHoldem
             } while (actionFinishedCount != toPlayCount);
         }
 
-        public void Showdown()
+        public HashSet<Player> Showdown()
         {
-            var bestPlayerAndHands = new Dictionary<Player, Cards>();
-            foreach (var activePlayer in ActivePlayers)
+            var players = ActivePlayers;
+            players.ForEach(a => a.SortCards());
+            var strongest = players[0];
+            var results = new HashSet<Player>();
+            for (int i = 1; i < players.Count; i++)
             {
-                CardCombinationHelper.Find(activePlayer.AllCards);
+                var current = players[i];
+
+                var r = strongest.BestHand.CompareTo(current.BestHand);
+                if (r == 0)
+                {
+                    results.Add(strongest);
+                    results.Add(current);
+                }
+                else if (r < 0)
+                {
+                    strongest = current;
+                    results.Clear();
+                }
             }
+
+            if (results.Count == 0)
+            {
+                results.Add(strongest);
+            }
+
+            Console.WriteLine("[CARDS ON TABLE] {0}", CardsOnTable);
+            foreach (var player in players)
+            {
+                Console.WriteLine("{0} has {1}; best hand: {2}", player.Name, player.HandCards, player.BestHand);
+            }
+            foreach (var winner in results)
+            {
+                Console.WriteLine("[WINNER] {0} {1}", winner.Name, winner.BestHand);
+            }
+            return results;
         }
 
         public void SetBlinds()
@@ -246,9 +313,39 @@ namespace Algorithms.Apps.TexasHoldem
             }
         }
 
-        public void Payout()
+        public void Payout(List<Player> winners)
         {
+            foreach (var winner in winners)
+            {
+                var winAmount = Pot / winners.Count;
+                winner.Win(winAmount);
 
+                Console.WriteLine("{0} earns {1}!", winner.Name, winAmount);
+            }
         }
+    }
+
+    public class GameRound
+    {
+        public GameRound(int round, Cards cardsOnTable)
+        {
+            Players = new List<PlayerGameRound>();
+            Round = round;
+            CardsOnTable = cardsOnTable;
+        }
+
+        public int Round { get; private set; }
+        public Cards CardsOnTable { get; private set; }
+        public List<PlayerGameRound> Players { get; private set; }
+    }
+
+    public class PlayerGameRound
+    {
+        public bool IsWinner { get; set; }
+        public Cards CardsHeld { get; set; }
+        public Hand BestHand { get; set; }
+        public int Bet { get; set; }
+        public double ProfitLoss { get; set; }
+        public double CurrentMoney { get; set; }
     }
 }

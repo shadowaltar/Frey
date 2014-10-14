@@ -131,4 +131,17 @@ namespace Algorithms.Apps.TexasHoldem
                 temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], moreThanSix ? "..." : "");
         }
     }
+
+    public static class DeckExtensions
+    {
+        public static Cards DrawCards(this Deck deck, int cardCount = 7)
+        {
+            var cards = new Cards();
+            for (int i = 0; i < cardCount; i++)
+            {
+                cards.Add(deck.Draw());
+            }
+            return cards;
+        }
+    }
 }

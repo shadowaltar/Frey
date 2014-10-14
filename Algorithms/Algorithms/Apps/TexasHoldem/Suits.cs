@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithms.Apps.TexasHoldem
 {
@@ -18,12 +21,16 @@ namespace Algorithms.Apps.TexasHoldem
             switch (suit)
             {
                 case Suits.Clubs:
+                    return "C";
                     return "\u2663";
                 case Suits.Spades:
+                    return "S";
                     return "\u2660";
                 case Suits.Hearts:
+                    return "H";
                     return "\u2665";
                 case Suits.Diamonds:
+                    return "D";
                     return "\u2666";
                 case Suits.Any:
                     return "?";
@@ -47,6 +54,14 @@ namespace Algorithms.Apps.TexasHoldem
                     return Suits.Any;
             }
             throw new InvalidOperationException();
+        }
+
+        public static IEnumerable<Suits> Values()
+        {
+            for (int i = 4; i > 0; i--)
+            {
+                yield return (Suits)i;
+            }
         }
     }
 }

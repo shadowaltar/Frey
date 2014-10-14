@@ -60,7 +60,10 @@ namespace Algorithms.Apps.TexasHoldem
 
         public static IEnumerable<string> StringValues()
         {
-            return Enum.GetValues(typeof(Ranks)).OfType<Ranks>().Select(f => f.Name());
+            for (int i = 14; i >= 2; i--)
+            {
+                yield return ((Ranks)i).ToString();
+            }
         }
     }
 }

@@ -8,7 +8,8 @@ namespace Algorithms.Apps.TexasHoldem
 {
     public class Hand : IList<Card>, IComparable<Hand>
     {
-        private readonly List<Card> cards = new List<Card>();
+        private readonly Cards cards = new Cards();
+        public Cards Cards { get { return cards; } }
 
         public Hand()
         {
@@ -22,23 +23,23 @@ namespace Algorithms.Apps.TexasHoldem
         public Hand(string hand)
             : this()
         {
-            var cards = new List<Card>();
+            var values = new List<Card>();
             var abbrs = hand.Split(' ');
             foreach (var abbr in abbrs)
             {
                 var suit = abbr.Substring(0, 1);
                 var rank = abbr.Replace(suit, "");
-                cards.Add(new Card(SuitHelper.Parse(suit), RankHelper.Parse(rank)));
+                values.Add(new Card(SuitHelper.Parse(suit), RankHelper.Parse(rank)));
             }
-            cards.Sort();
-            AddRange(cards);
+            values.Sort();
+            AddRange(values);
             IsSorted = true;
         }
 
-        public Hand(string hand, HandType bestHandType)
+        public Hand(string hand, HandType type)
             : this(hand)
         {
-            BestHandType = bestHandType;
+            Type = type;
         }
 
         public Hand(params Card[] cards)
@@ -58,6 +59,13 @@ namespace Algorithms.Apps.TexasHoldem
             IsSorted = true;
         }
 
+        public Hand(Cards cards)
+            : this()
+        {
+            cards.Sort();
+            AddRange(cards);
+        }
+
         public Hand(Hand hand)
             : this()
         {
@@ -65,15 +73,30 @@ namespace Algorithms.Apps.TexasHoldem
             AddRange(sorted);
         }
 
-        public HandType BestHandType { get; set; }
+        public HandType Type { get; set; }
 
-        public Ranks HighestRank { get; set; }
+        public Ranks SignificantRank { get; set; }
 
         public bool IsSorted { get; protected set; }
 
-        public List<Card> ToCards()
+        public bool IsSet { get; protected set; }
+
+        public void Set(HandType type, Ranks significantRank)
         {
-            return cards.ToList();
+            Type = type;
+            SignificantRank = significantRank;
+            IsSet = true;
+
+            if (type == HandType.StraightFlush || type == HandType.Straight)
+            {
+                cards.SortByDescending();
+                if (cards[0].Rank == Ranks.A && cards[1].Rank == Ranks.Five)
+                {
+                    cards.Add(cards[0]);
+                    cards.RemoveAt(0);
+                }
+            }
+            IsSorted = true;
         }
 
         /// <summary>
@@ -96,37 +119,14 @@ namespace Algorithms.Apps.TexasHoldem
             }
         }
 
+        public void Reverse()
+        {
+            cards.Reverse();
+        }
+
         public int CompareTo(Hand two)
         {
-            if (Count < 5 || two.Count < 5)
-                throw new InvalidOperationException();
-
-            if (BestHandType == HandType.Unknown)
-                CardCombinationHelper.FindType(this);
-            if (two.BestHandType == HandType.Unknown)
-                CardCombinationHelper.FindType(two);
-
-            if (BestHandType > two.BestHandType)
-                return 1;
-            if (BestHandType < two.BestHandType)
-                return -1;
-
-            // same type:
-            switch (BestHandType)
-            {
-                case HandType.StraightFlush:
-                case HandType.FourOfAKind:
-                case HandType.FullHouse:
-                case HandType.Straight:
-                case HandType.ThreeOfAKind:
-                    return HighestRank.CompareTo(two.HighestRank);
-                case HandType.Flush:
-                    return CardCombinationHelper.CompareFlushRank(this, two);
-                case HandType.TwoPair:
-                    break;
-            }
-
-            return 0;
+            return CardCombinationHelper.Compare(this, two);
         }
 
         public IEnumerator<Card> GetEnumerator()
@@ -204,6 +204,11 @@ namespace Algorithms.Apps.TexasHoldem
                 cards[index] = value;
                 IsSorted = false;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", Cards, Type);
         }
     }
 }
