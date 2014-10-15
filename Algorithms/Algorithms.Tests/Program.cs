@@ -1,5 +1,6 @@
 ﻿using System;
-using Algorithms.Apps.TexasHoldem;
+using Algorithms.Apps.Maze;
+using Algorithms.Apps.TinyDiceDungeon;
 
 namespace Algorithms.Tests
 {
@@ -8,7 +9,6 @@ namespace Algorithms.Tests
         [STAThread]
         public static void Main(params string[] args)
         {
-            GameTest.Start();
             Console.ReadLine();
         }
     }

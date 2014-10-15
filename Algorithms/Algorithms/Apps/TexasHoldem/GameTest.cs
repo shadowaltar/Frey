@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Mime;
 using System.Text;
 using System.Windows;
-using Algorithms.Utils;
 
 namespace Algorithms.Apps.TexasHoldem
 {
@@ -23,6 +21,9 @@ namespace Algorithms.Apps.TexasHoldem
                 game.PlayOneRound();
                 Console.WriteLine("[ROUND END {0}]", i.ToString("D5"));
             }
+
+            var str = game.Report();
+            Console.WriteLine(str);
         }
 
         public static void TestFindHand()

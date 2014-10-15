@@ -80,6 +80,17 @@
     <Compile Include="Apps\FileSpaces\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Apps\Maze\Algorithms\IMazeGenerator.cs" />
+    <Compile Include="Apps\Maze\Algorithms\RecursiveBacktracker.cs" />
+    <Compile Include="Apps\Maze\Cell.cs" />
+    <Compile Include="Apps\Maze\Game.cs" />
+    <Compile Include="Apps\Maze\Graphics.cs" />
+    <Compile Include="Apps\Maze\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Apps\Maze\Maze.cs" />
+    <Compile Include="Apps\Maze\MazeGraphic.cs" />
+    <Compile Include="Apps\Maze\Wall.cs" />
     <Compile Include="Apps\TexasHoldem\BetAction.cs" />
     <Compile Include="Apps\TexasHoldem\Card.cs" />
     <Compile Include="Apps\TexasHoldem\CardCombinationResult.cs" />
@@ -96,6 +107,8 @@
     <Compile Include="Apps\TexasHoldem\RaiseRule.cs" />
     <Compile Include="Apps\TexasHoldem\Ranks.cs" />
     <Compile Include="Apps\TexasHoldem\Suits.cs" />
+    <Compile Include="Apps\TinyDiceDungeon\Game.cs" />
+    <Compile Include="Apps\TinyDiceDungeon\GameTest.cs" />
     <Compile Include="Collections\Bag.cs" />
     <Compile Include="Collections\LinkedList.cs" />
     <Compile Include="Collections\Queue.cs" />
@@ -121,6 +134,10 @@
     <Compile Include="Utils\ReportTime.cs" />
     <Compile Include="Utils\StaticRandom.cs" />
     <Page Include="Apps\FileSpaces\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Apps\Maze\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

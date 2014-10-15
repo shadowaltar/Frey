@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Algorithms.Apps.TexasHoldem
 {
@@ -36,6 +37,8 @@ namespace Algorithms.Apps.TexasHoldem
 
         public int PlayerCount { get { return Players.Count; } }
         public int ActivePlayerCount { get { return Players.Count(p => p.IsActive); } }
+
+        public int RemainingCards { get { return Deck.Cards.Count; } }
 
         /// <summary>
         /// All initial cards.
@@ -99,7 +102,7 @@ namespace Algorithms.Apps.TexasHoldem
                 }
             }
             Payout(winners);
-            Record(winners);
+            //Record(winners);
             SetBlinds();
         }
 
@@ -322,6 +325,16 @@ namespace Algorithms.Apps.TexasHoldem
 
                 Console.WriteLine("{0} earns {1}!", winner.Name, winAmount);
             }
+        }
+
+        public string Report()
+        {
+            var sb = new StringBuilder();
+            foreach (var player in Players)
+            {
+                sb.Append(player.Name).Append(": ").AppendLine(player.CurrentMoney.ToString());
+            }
+            return sb.ToString();
         }
     }
 
