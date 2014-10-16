@@ -81,6 +81,8 @@
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Apps\Maze\Algorithms\IMazeGenerator.cs" />
+    <Compile Include="Apps\Maze\Algorithms\RandomizedKruskal.cs" />
+    <Compile Include="Apps\Maze\Algorithms\RandomizedPrims.cs" />
     <Compile Include="Apps\Maze\Algorithms\RecursiveBacktracker.cs" />
     <Compile Include="Apps\Maze\Cell.cs" />
     <Compile Include="Apps\Maze\Game.cs" />

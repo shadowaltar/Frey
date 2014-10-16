@@ -5,29 +5,27 @@ namespace Algorithms.Apps.Maze.Algorithms
 {
     public class RecursiveBacktracker : IMazeGenerator
     {
-        private int width;
-        private int height;
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-        public Maze Generate(int w, int h)
+        public Maze Generate()
         {
-            width = w;
-            height = h;
             var stack = new Stack<Cell>();
             var visited = new HashSet<Cell>();
             var unvisited = new HashSet<Cell>();
             var walls = new HashSet<Wall>();
             Cell currentCell;
             // prepare cells n walls
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < Width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < Height; j++)
                 {
                     currentCell = new Cell(i, j);
                     unvisited.Add(currentCell);
 
-                    if (j < height - 1)
+                    if (j < Height - 1)
                         walls.Add(new Wall(new Cell(i, j), new Cell(i, j + 1)));
-                    if (i < width - 1)
+                    if (i < Width - 1)
                         walls.Add(new Wall(new Cell(i, j), new Cell(i + 1, j)));
                 }
             }
@@ -39,7 +37,7 @@ namespace Algorithms.Apps.Maze.Algorithms
             {
                 var neighbors = FindUnvisitedNeighborCells(currentCell, visited);
                 var neighbor = neighbors.Random();
-                if (neighbor != null)
+                if (neighbor.IsInitialized)
                 {
                     stack.Push(currentCell);
                     RemoveWall(walls, currentCell, neighbor);
@@ -59,7 +57,7 @@ namespace Algorithms.Apps.Maze.Algorithms
                 }
             }
 
-            return new Maze { MazeWidth = w, MazeHeight = h, Walls = walls };
+            return new Maze { MazeWidth = Width, MazeHeight = Height, Walls = walls };
         }
 
         private HashSet<Cell> FindUnvisitedNeighborCells(Cell cell, HashSet<Cell> visited)
@@ -78,13 +76,13 @@ namespace Algorithms.Apps.Maze.Algorithms
                 if (!visited.Contains(neighbor))
                     results.Add(neighbor);
             }
-            if (cell.X != width - 1)
+            if (cell.X != Width - 1)
             {
                 neighbor = new Cell(cell.X + 1, cell.Y);
                 if (!visited.Contains(neighbor))
                     results.Add(neighbor);
             }
-            if (cell.Y != height - 1)
+            if (cell.Y != Height - 1)
             {
                 neighbor = new Cell(cell.X, cell.Y + 1);
                 if (!visited.Contains(neighbor))

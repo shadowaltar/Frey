@@ -25,7 +25,10 @@ namespace Algorithms.Apps.Maze
             graphics.LineThickness = 1;
             var mg = new MazeGraphics(graphics);
             var game = new Game();
-            var maze = game.GenerateRectangular(20, 20);
+            var maze = game.GenerateRectangular(50, 50);
+
+            mg.PathDisplayHeight = 2;
+            mg.PathDisplayWidth = 2;
             mg.DrawMaze(maze);
         }
     }

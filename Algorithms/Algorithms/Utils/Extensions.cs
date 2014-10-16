@@ -26,10 +26,10 @@ namespace Algorithms.Utils
             return items[i];
         }
 
-        public static T Random<T>(this ISet<T> items) where T : class
+        public static T Random<T>(this ISet<T> items)
         {
             if (items.Count == 0)
-                return null;
+                return default(T);
             var i = StaticRandom.Instance.Next(items.Count);
             return items.ElementAtOrDefault(i);
         }

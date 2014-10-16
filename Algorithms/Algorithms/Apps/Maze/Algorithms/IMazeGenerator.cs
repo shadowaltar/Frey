@@ -2,6 +2,8 @@
 {
     public interface IMazeGenerator
     {
-        Maze Generate(int width, int height);
+        Maze Generate();
+        int Width { get; set; }
+        int Height { get; set; }
     }
 }

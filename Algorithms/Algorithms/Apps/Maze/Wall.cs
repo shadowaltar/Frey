@@ -2,7 +2,7 @@
 
 namespace Algorithms.Apps.Maze
 {
-    public class Wall
+    public struct Wall
     {
         private readonly Cell one;
         private readonly Cell two;
@@ -12,9 +12,15 @@ namespace Algorithms.Apps.Maze
         public int X2 { get { return two.X; } }
         public int Y2 { get { return two.Y; } }
 
+        public Cell One {get { return one; }}
+        public Cell Two { get { return two; } }
+
         public bool IsHorizontal { get { return X1 == X2; } }
 
+        public bool IsInitialized { get; private set; }
+
         public Wall(Cell one, Cell two)
+            : this()
         {
             this.one = one;
             this.two = two;
@@ -28,6 +34,17 @@ namespace Algorithms.Apps.Maze
                 this.two = one;
                 this.one = temp;
             }
+
+            IsInitialized = true;
+        }
+
+        public Cell GetOpposite(Cell c)
+        {
+            if (c == one)
+                return two;
+            if (c == two)
+                return one;
+            return default(Cell);
         }
 
         public bool Contains(Cell cellOne, Cell cellTwo)
@@ -39,35 +56,36 @@ namespace Algorithms.Apps.Maze
             return false;
         }
 
-        protected bool Equals(Wall other)
+        public bool Equals(Wall other)
         {
-            return Equals(one, other.one) && Equals(two, other.two);
+            return one.Equals(other.one) && two.Equals(other.two) && IsInitialized.Equals(other.IsInitialized);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Wall)obj);
+            return obj is Wall && Equals((Wall)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((one != null ? one.GetHashCode() : 0) * 397) ^ (two != null ? two.GetHashCode() : 0);
+                int hashCode = one.GetHashCode();
+                hashCode = (hashCode * 397) ^ two.GetHashCode();
+                hashCode = (hashCode * 397) ^ IsInitialized.GetHashCode();
+                return hashCode;
             }
         }
 
         public static bool operator ==(Wall left, Wall right)
         {
-            return Equals(left, right);
+            return left.Equals(right);
         }
 
         public static bool operator !=(Wall left, Wall right)
         {
-            return !Equals(left, right);
+            return !left.Equals(right);
         }
 
         public override string ToString()
@@ -75,5 +93,4 @@ namespace Algorithms.Apps.Maze
             return string.Format("{0}--{1}", one, two);
         }
     }
-
 }

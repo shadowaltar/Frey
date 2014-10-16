@@ -1,79 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Algorithms.Utils;
 
 namespace Algorithms.Apps.Maze
 {
-    public class Cell
+    public struct Cell
     {
         public Cell(int x, int y)
+            : this()
         {
             X = x;
             Y = y;
+            IsInitialized = true;
         }
 
         public int X { get; private set; }
         public int Y { get; private set; }
 
-        protected bool Equals(Cell other)
+        public bool IsInitialized { get; private set; }
+
+        public static Cell RandomInMaze(int mazeWidth, int mazeHeight)
         {
-            return X == other.X && Y == other.Y;
+            return new Cell(StaticRandom.Instance.Next(0, mazeWidth), StaticRandom.Instance.Next(0, mazeHeight));
+        }
+
+        public bool Equals(Cell other)
+        {
+            return X == other.X && IsInitialized.Equals(other.IsInitialized) && Y == other.Y;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Cell)obj);
+            return obj is Cell && Equals((Cell)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X * 397) ^ Y;
+                int hashCode = X;
+                hashCode = (hashCode * 397) ^ IsInitialized.GetHashCode();
+                hashCode = (hashCode * 397) ^ Y;
+                return hashCode;
             }
         }
 
         public static bool operator ==(Cell left, Cell right)
         {
-            return Equals(left, right);
+            return left.Equals(right);
         }
 
         public static bool operator !=(Cell left, Cell right)
         {
-            return !Equals(left, right);
-        }
-
-        private sealed class XYEqualityComparer : IEqualityComparer<Cell>
-        {
-            public bool Equals(Cell x, Cell y)
-            {
-                if (ReferenceEquals(x, y)) return true;
-                if (ReferenceEquals(x, null)) return false;
-                if (ReferenceEquals(y, null)) return false;
-                if (x.GetType() != y.GetType()) return false;
-                return x.X == y.X && x.Y == y.Y;
-            }
-
-            public int GetHashCode(Cell obj)
-            {
-                unchecked
-                {
-                    return (obj.X * 397) ^ obj.Y;
-                }
-            }
-        }
-
-        private static readonly IEqualityComparer<Cell> XYComparerInstance = new XYEqualityComparer();
-
-        public static IEqualityComparer<Cell> XYComparer
-        {
-            get { return XYComparerInstance; }
+            return !left.Equals(right);
         }
 
         public override string ToString()
         {
-            return string.Format("({0}, {1})", X, Y);
+            return string.Format("({0}, {1}){2}", X, Y, IsInitialized ? "" : " INVALID");
+        }
+
+        public IEnumerable<Wall> GetWalls(int width, int height)
+        {
+            if (X != 0)
+                yield return new Wall(this, new Cell(X - 1, Y));
+            if (X != width - 1)
+                yield return new Wall(this, new Cell(X + 1, Y));
+            if (Y != 0)
+                yield return new Wall(this, new Cell(X, Y - 1));
+            if (Y != height - 1)
+                yield return new Wall(this, new Cell(X, Y + 1));
         }
     }
 }

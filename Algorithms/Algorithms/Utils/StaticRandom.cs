@@ -16,5 +16,10 @@ namespace Algorithms.Utils
         }
 
         public static Random Instance { get { return threadLocal.Value; } }
+
+        public static int ThrowDice(int faces = 6)
+        {
+            return Instance.Next(0, faces + 1);
+        }
     }
 }
