@@ -17,5 +17,21 @@ namespace Algorithms.Utils
             var seenKeys = new HashSet<TKey>();
             return source.Where(element => seenKeys.Add(keySelector(element)));
         }
+
+        public static T Random<T>(this IList<T> items) where T : class
+        {
+            if (items.Count == 0)
+                return null;
+            var i = StaticRandom.Instance.Next(items.Count);
+            return items[i];
+        }
+
+        public static T Random<T>(this ISet<T> items)
+        {
+            if (items.Count == 0)
+                return default(T);
+            var i = StaticRandom.Instance.Next(items.Count);
+            return items.ElementAtOrDefault(i);
+        }
     }
 }

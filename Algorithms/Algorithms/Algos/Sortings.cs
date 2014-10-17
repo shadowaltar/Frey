@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Algorithms.Utils;
 
 namespace Algorithms.Algos
 {
@@ -191,12 +192,11 @@ namespace Algorithms.Algos
 
         public static List<T> Scramble<T>(this List<T> numbers)
         {
-            var r = new Random();
             var results = new List<T>();
             var count = numbers.Count;
             while (true)
             {
-                var i = r.Next(0, count);
+                var i = StaticRandom.Instance.Next(1, count);
                 results.Add(numbers[i]);
                 numbers[i] = numbers[count - 1];
                 count--;

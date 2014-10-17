@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms.Tests", "Algorit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfUtilities", "WpfUtilities\WpfUtilities.csproj", "{BE909B57-E6D8-48A6-BFD3-187AE2935479}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1220F15B-A8A5-4FC5-9EDB-AEE7E0640829}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,12 +29,15 @@ Global
 		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Debug|Any CPU.Build.0 = Debug|x86
 		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F10FE144-2744-4A30-B409-CF080A46F5DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Debug|Any CPU.Build.0 = Debug|x86
 		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE909B57-E6D8-48A6-BFD3-187AE2935479}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

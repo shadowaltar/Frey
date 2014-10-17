@@ -14,7 +14,7 @@ namespace Algorithms
         {
             InitializeComponent();
 
-            GameTest.Start();
+            GameTest.TestFindHand();
         }
 
         private double pDouble { get { return Convert.ToDouble(P.Text); } }
