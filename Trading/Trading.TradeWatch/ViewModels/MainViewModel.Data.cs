@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Windows.Documents;
+using Caliburn.Micro;
 using MahApps.Metro.Controls.Dialogs;
 using MySql.Data.MySqlClient;
 using Trading.Common.Entities;
@@ -25,7 +26,6 @@ namespace Trading.TradeWatch.ViewModels
         {
             IsSecurityLoaded = false;
 
-            allSecurityViewModels = new HashSet<SecurityViewModel>();
             allMarkets.Clear();
             Securities.Clear();
 
@@ -33,8 +33,8 @@ namespace Trading.TradeWatch.ViewModels
             progress = await ViewService.ShowLoading();
             try
             {
-                await LoadMarkets();
-                await LoadSecurities();
+                await TaskEx.WhenAll(LoadMarkets(), LoadSecurities());
+                LoadPerformanceData();
 
                 FilterFlyout.IsReady = false;
 
@@ -61,7 +61,7 @@ namespace Trading.TradeWatch.ViewModels
                    {
                        table = access.GetAllMarkets();
                    }
-                   progress.AppendMessageForLoading("Data are loaded.");
+                   progress.AppendMessageForLoading("Markets are loaded.");
 
                    foreach (DataRow row in table.Rows)
                    {
@@ -90,30 +90,82 @@ namespace Trading.TradeWatch.ViewModels
                     {
                         var vm = new SecurityViewModel(security);
 
-                        allSecurities[security(security);
+                        allSecurities[security.Code] = (security);
                         Securities.Add(vm);
                     }
                 }
-                progress.AppendMessageForLoading("Data are loaded.");
+                progress.AppendMessageForLoading("Securities are loaded.");
             });
         }
 
-        private async  void LoadPrices(string hk)
+        private async Task<List<Price>> LoadPrices(string code, DateTime from, DateTime to)
         {
-          await  TaskEx.Run(() =>
+            if (from > to)
+            {
+                return null;
+            }
+
+            Security security;
+            if (!allSecurities.TryGetValue(code, out security))
+            {
+                return null;
+            }
+            var span = TimeSpan.FromDays(1);
+
+            var results = await TaskEx.Run(() =>
             {
                 using (var access = DataAccessFactory.New())
                 {
-                    foreach (var security in access.EnumeratePrices(allMarkets))
-                    {
-                        var vm = new SecurityViewModel(security);
-                        allSecurityViewModels.Add(vm);
-                        Securities.Add(vm);
-                    }
+                    return access.GetPrices(security, span, @from, to);
                 }
-                progress.AppendMessageForLoading("Data are loaded.");
             });
-            IsSecurityLoaded = true;
+            return results;
+        }
+
+        private void LoadPerformanceData()
+        {
+            HoldingsPerformances.Clear();
+            HoldingsPerformances.Add(new HoldingPerformance
+            {
+                Security = Securities.FirstOrDefault(s => s.Code == "AAPL").Security,
+                Price = new Price { At = DateTime.Now.Date, Open = 94.26m, High = 94.82m, Low = 93.28m, Close = 94.74m },
+                Position = new Position { Price = 93.3m, Quantity = 500, Time = DateTime.Now.AddDays(-1) },
+                BloombergCode = "AAPL",
+                PriceChange = 2.9m,
+                PriceChangePercentage = 0.28m,
+                Volume = 47.35e+6m,
+                Weight = 15,
+            });
+            HoldingsPerformances.Add(new HoldingPerformance
+            {
+                Security = Securities.FirstOrDefault(s => s.Code == "GOOG").Security,
+                Price = new Price { At = DateTime.Now.Date, Open = 563.56m, High = 570.25m, Low = 560.35m, Close = 568.77m },
+                Position = new Position { Price = 560.22m, Quantity = 20, Time = DateTime.Now.AddDays(-0.5) },
+                BloombergCode = "GOOG",
+                PriceChange = 5.03m,
+                PriceChangePercentage = 0.96m,
+                Volume = 1.57e+6m,
+                Weight = 10,
+            });
+            HoldingsPerformances.Add(new HoldingPerformance
+            {
+                Security = Securities.FirstOrDefault(s => s.Code == "FB").Security,
+                BloombergCode = "FB",
+                Price = new Price { At = DateTime.Now.Date, Open = 73.40m, High = 73.43m, Low = 72.56m, Close = 73.06m },
+                Position = new Position { Price = 74.1m, Quantity = 100, Time = DateTime.Now.AddDays(-0.5) },
+                PriceChange = -0.7m,
+                PriceChangePercentage = -0.15m,
+                Volume = 43.59e+6m,
+                Weight = 10,
+            });
+
+            PortfolioPerformanceItems.Clear();
+            PortfolioPerformanceItems.Add(new KeyValuePair<string, decimal>("CASH Wt%", 65m));
+            PortfolioPerformanceItems.Add(new KeyValuePair<string, decimal>("YTD Return", 0.1424m));
+            PortfolioPerformanceItems.Add(new KeyValuePair<string, decimal>("YTD Stdev", 0.2627m));
+            PortfolioPerformanceItems.Add(new KeyValuePair<string, decimal>("YTD Sharpe Ratio", 0.5420m));
+            PortfolioPerformanceItems.Add(new KeyValuePair<string, decimal>("YTD Skew", 0.2m));
+            PortfolioPerformanceItems.Add(new KeyValuePair<string, decimal>("YTD Kurtosis", 4.2m));
         }
     }
 }

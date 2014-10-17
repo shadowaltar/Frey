@@ -38,13 +38,35 @@ namespace Trading.Common.Data
                 Security = security,
                 At = r["Time"].ConvertDate(),
                 Span = span,
-                Open = r["Open"].ConvertDouble(),
-                High = r["High"].ConvertDouble(),
-                Low = r["Low"].ConvertDouble(),
-                Close = r["Close"].ConvertDouble(),
+                Open = r["Open"].ConvertDecimal(),
+                High = r["High"].ConvertDecimal(),
+                Low = r["Low"].ConvertDecimal(),
+                Close = r["Close"].ConvertDecimal(),
                 Volume = r["Volume"].ConvertLong(),
-            }, "Select * from Instruments.Prices Where SecurityId = {0} and Time >= '{1}' and Time <= '{2}' AND ORDER BY Time",
+            }, "Select * from Instruments.Prices Where SecurityId = {0} and Time >= '{1}' and Time <= '{2}' ORDER BY Time",
             security.Id, from.IsoFormat(), to.IsoFormat());
+        }
+        public List<Price> GetPrices(Security security, TimeSpan span, DateTime from, DateTime to)
+        {
+            var table = Query("Select * from Instruments.Prices Where SecurityId = {0} and Time >= '{1}' and Time <= '{2}' ORDER BY Time",
+            security.Id, from.IsoFormat(), to.IsoFormat());
+            var results = new List<Price>();
+            foreach (DataRow r in table.Rows)
+            {
+                var p = new Price
+                {
+                    Security = security,
+                    At = r["Time"].ConvertDate(),
+                    Span = span,
+                    Open = r["Open"].ConvertDecimal(),
+                    High = r["High"].ConvertDecimal(),
+                    Low = r["Low"].ConvertDecimal(),
+                    Close = r["Close"].ConvertDecimal(),
+                    Volume = r["Volume"].ConvertLong(),
+                };
+                results.Add(p);
+            }
+            return results;
         }
 
         public DataTable GetAllMarkets()

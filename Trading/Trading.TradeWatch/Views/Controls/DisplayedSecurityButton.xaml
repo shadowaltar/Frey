@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="Trading.TradeWatch.Views.Controls.DisplayedSecurityButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignWidth="300" Height="30" Foreground="White" Margin="5,0"
+             x:Name="Control" Background="{StaticResource AccentColorBrush}">
+    <DockPanel LastChildFill="True" Background="{Binding ElementName=Control, Path=Background}">
+        <Button DockPanel.Dock="Right" Margin="4,8,8,8" Click="ButtonBase_OnClick"
+                Style="{StaticResource WithCrossButtonStyle}">
+        </Button>
+        <Label DockPanel.Dock="Left" Foreground="{Binding ElementName=Control, Path=Foreground}" x:Name="CodeLabel"
+                   VerticalContentAlignment="Center" Margin="4,0" Content="{Binding ElementName=Control, Path=SecurityCode}" />
+    </DockPanel>
+</UserControl>

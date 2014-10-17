@@ -130,8 +130,11 @@
     <Compile Include="Entities\Decorators\IHasBindingChildNodes.cs" />
     <Compile Include="Entities\Decorators\IHasChildNodes.cs" />
     <Compile Include="Entities\Decorators\ITreeNode.cs" />
+    <Compile Include="Entities\Position.cs" />
     <Compile Include="Entities\Price.cs" />
     <Compile Include="Entities\Security.cs" />
+    <Compile Include="Entities\TimeValue.cs" />
+    <Compile Include="Entities\VolumeValue.cs" />
     <Compile Include="ModuleBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedSettings\InfrastructureSettings.cs" />
@@ -154,6 +157,7 @@
     <Compile Include="Utils\IViewService.cs" />
     <Compile Include="Utils\ReportTime.cs" />
     <Compile Include="Utils\ZeroToHideConverter.cs" />
+    <Compile Include="ViewModels\VolumeValueViewModel.cs" />
     <Compile Include="ViewModels\FilterViewModelBase.cs" />
     <Compile Include="ViewModels\MainViewModelBase.cs" />
     <Compile Include="ViewModels\OptionsViewModelBase.cs" />

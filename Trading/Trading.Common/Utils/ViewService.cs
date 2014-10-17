@@ -33,7 +33,7 @@ namespace Trading.Common.Utils
 
         public MetroWindow Window
         {
-            private get { return window; }
+            get { return window; }
             set
             {
                 window = value;

@@ -10,7 +10,7 @@ namespace Trading.Common.Utils
     public interface IViewService
     {
         IWindowManager WindowManager { get; }
-        MetroWindow Window { set; }
+        MetroWindow Window { get; set; }
 
         /// <summary>
         /// Show an input dialog.

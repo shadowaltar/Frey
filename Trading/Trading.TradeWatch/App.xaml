@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Clean/CleanWindow.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Trading.Common;component/Resources/Generic.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Trading.Common;component/Resources/Icons.xaml"/>
+                <ResourceDictionary Source="/Trading.TradeWatch;component/Views/Controls/DisplayedSecurityButtonStyle.xaml" />
                 <ResourceDictionary>
                     <securityResearch:Bootstrapper x:Key="Bo" />
                 </ResourceDictionary>

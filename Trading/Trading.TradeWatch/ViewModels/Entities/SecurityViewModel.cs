@@ -1,4 +1,5 @@
 ﻿using Trading.Common.Entities;
+using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 
 namespace Trading.TradeWatch.ViewModels.Entities
@@ -45,6 +46,16 @@ namespace Trading.TradeWatch.ViewModels.Entities
                 Security.Name = value;
                 Notify();
             }
+        }
+
+        public string DisplayName
+        {
+            get { return Security.DisplayName; }
+        }
+
+        public override string ToString()
+        {
+            return Code;
         }
     }
 }

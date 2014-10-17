@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Caliburn.Micro;
-using Infragistics.Controls.Charts;
 using MahApps.Metro.Controls;
 using Trading.Common;
 using Trading.Common.Data;
@@ -17,6 +17,7 @@ using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.TradeWatch.ViewModels.Entities;
+using Trading.TradeWatch.Views.Controls;
 
 namespace Trading.TradeWatch.ViewModels
 {
@@ -31,15 +32,15 @@ namespace Trading.TradeWatch.ViewModels
             : base(dataAccessFactory, settings)
         {
             FilterFlyout = filterFlyout;
+            SecurityCode = "Security Watch";
+            SecurityCurrentPrice = "";
         }
-
-
 
         protected override void OnViewLoaded(object view)
         {
             base.OnViewLoaded(view);
+
             Load();
-            LoadPrices("0001.HK");
         }
 
         public async void HandleDoubleClick()
@@ -83,33 +84,118 @@ namespace Trading.TradeWatch.ViewModels
             if (IsSecurityLoaded) ToggleFilter();
         }
 
+        public void HandleSearchBoxKeys(KeyEventArgs c)
+        {
+            if (c.Key == Key.Enter)
+            {
+                Add();
+            }
+        }
+
         public void Handle(ActivityMessage<IMainViewModel> message)
         {
-            switch (message.Type)
-            {
-                case ActivityType.Filter:
-                    Filter(message.Item as FilterOptions);
-                    break;
-            }
         }
 
-        private void Filter(FilterOptions filterOptions)
+        public async void Add()
         {
-            foreach (var option in filterOptions)
+            if (SelectedSecurity == null)
+                return;
+
+            SecurityCode = SelectedSecurity.Code;
+
+            progress = await ViewService.ShowProgress("Loading Prices", "Loading portfolio top 5 security price histories...");
+            var results = await LoadPrices(SelectedSecurity.Code, new DateTime(2006, 1, 1), new DateTime(2013, 1, 1));
+
+            if (results != null)
             {
-                var pair = option;
-                switch (option.Key)
+                AddSecurityToChart(results);
+                var averages = CalculateMovingAverage(results, 15);
+                AddMovingAverageToChart(averages);
+                AddOrderBookData();
+            }
+
+            // fake selections
+
+            var code = "0003.HK";
+            results = await LoadPrices(code, new DateTime(2006, 1, 1), new DateTime(2013, 1, 1));
+            if (results != null)
+            {
+                SecondSecurityCode = code;
+
+                SecondSecurityPrices.ClearAndAddRange(results);
+
+                SecondSecurityCurrentPrice = SecondSecurityPrices.Count > 0
+                    ? SecondSecurityPrices.Last().Close.ConvertString() : "N/A";
+            }
+
+            code = "0004.HK";
+            results = await LoadPrices("0004.HK", new DateTime(2006, 1, 1), new DateTime(2013, 1, 1));
+            if (results != null)
+            {
+                ThirdSecurityCode = code;
+
+                ThirdSecurityPrices.ClearAndAddRange(results);
+
+                ThirdSecurityCurrentPrice = ThirdSecurityPrices.Count > 0
+                    ? ThirdSecurityPrices.Last().Close.ConvertString() : "N/A";
+            }
+
+            await progress.Stop();
+
+        }
+
+        private List<TimeValue> CalculateMovingAverage(List<Price> inputs, int periods)
+        {
+            var results = new List<TimeValue>();
+            var queue = new Queue<decimal>();
+            foreach (var result in inputs.Select(x => new { x.Close, x.At }))
+            {
+                queue.Enqueue(result.Close);
+                if (queue.Count == periods)
                 {
-                    case "Market":
-                        var results = allSecurityViewModels.Where(m => m.Security.Market.Code == pair.Value).OrderBy(vm => vm.Code);
-                        Securities.ClearAndAddRange(results);
-                        break;
+                    results.Add(new TimeValue(queue.Average(), result.At));
+                    queue.Dequeue();
+                }
+                else
+                {
+                    results.Add(new TimeValue(result.Close, result.At));
                 }
             }
+            return results;
         }
 
+        private List<TimeValue> CalculateStochasticMovingAverage(List<Price> inputs, int periods)
+        {
+            var results = new List<TimeValue>();
+            var queue = new Queue<decimal>();
+            foreach (var result in inputs.Select(x => new { x.Close, x.At }))
+            {
+                queue.Enqueue(result.Close);
+                if (queue.Count == periods)
+                {
+                    results.Add(new TimeValue(queue.Average(), result.At));
+                    queue.Dequeue();
+                }
+                else
+                {
+                    results.Add(new TimeValue(result.Close, result.At));
+                }
+            }
+            return results;
+        }
 
+        private void AddMovingAverageToChart(List<TimeValue> values)
+        {
+            MainPriceIndicatorValues.ClearAndAddRange(values);
+        }
 
+        public void Remove(string code)
+        {
+        }
 
+        public void About()
+        {
+            ViewService.ShowMessage("About Portfolio Holdings Dashboard", "Demo application written by Mars Wang");
+        }
     }
 }
