@@ -32,6 +32,8 @@ namespace Trading.DataDownload
                             using (var reader = new StreamReader(responseStream))
                             {
                                 var content = reader.ReadToEnd();
+                                if (File.Exists(saveFilePath))
+                                    File.Delete(saveFilePath);
                                 File.WriteAllText(saveFilePath, content);
                                 Log.InfoFormat("Saved {0} ({1} - {2}) to {3}", yahooStockSymbol, from, to, saveFilePath);
                             }
