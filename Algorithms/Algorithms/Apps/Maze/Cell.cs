@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Algorithms.Utils;
 
 namespace Algorithms.Apps.Maze

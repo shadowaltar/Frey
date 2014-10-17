@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Algorithms.Apps.Maze
@@ -26,7 +29,7 @@ namespace Algorithms.Apps.Maze
                 throw new InvalidOperationException("No Window!");
         }
 
-        public Brush LineStroke { get; set; }
+        public SolidColorBrush LineStroke { get; set; }
         public Brush FillColor { get; set; }
 
         public double LineThickness { get; set; }
@@ -85,6 +88,16 @@ namespace Algorithms.Apps.Maze
             DrawRectangle(x, y, width, height, null);
         }
 
+        public void DrawRectangle(WriteableBitmap bmp, int x, int y, int width, int height)
+        {
+            bmp.DrawRectangle(x,y,x+width,y+height, LineStroke.Color);
+        }
+
+        public void DrawLine(WriteableBitmap bmp, int x1, int y1, int x2, int y2)
+        {
+            bmp.DrawLine(x1, y1, x2, y2, LineStroke.Color);
+        }
+
         protected void DrawRectangle(double x, double y, double width, double height, Brush fill)
         {
             var rectangle = new Rectangle
@@ -99,6 +112,110 @@ namespace Algorithms.Apps.Maze
                 VerticalAlignment = VerticalAlignment.Top,
             };
             canvas.Children.Add(rectangle);
+        }
+
+        public void DrawRectangle(WriteableBitmap bitmap, int x, int y, int width, int height, Color fill)
+        {
+            int color = fill.R << 16;
+            color |= fill.G << 8;
+            color |= fill.B;
+            int bpp = bitmap.Format.BitsPerPixel / 8;
+
+            unsafe
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    // Get a pointer to the back buffer
+                    int buf = (int)bitmap.BackBuffer;
+
+                    // Find the address of the pixel to draw
+                    buf += (y + j) * bitmap.BackBufferStride;
+                    buf += x * bpp;
+
+                    for (int i = 0; i < width; i++)
+                    {
+                        // Assign the color data to the pixel
+                        *((int*)buf) = color;
+
+                        // Increment the address of the pixel to draw
+                        buf += bpp;
+                    }
+                }
+            }
+            bitmap.AddDirtyRect(new Int32Rect(x, y, width, height));
+        }
+
+        public void DrawBitmap()
+        {
+
+            WriteableBitmap writeableBmp = BitmapFactory.New(512, 512);
+
+        }
+
+        public static void DrawLine(WriteableBitmap bitmap, int x, int y)
+        {
+            int column = x;
+            int row = y;
+
+            // Reserve the back buffer for updates.
+            bitmap.Lock();
+
+            unsafe
+            {
+                // Get a pointer to the back buffer. 
+                int pBackBuffer = (int)bitmap.BackBuffer;
+
+                // Find the address of the pixel to draw.
+                pBackBuffer += row * bitmap.BackBufferStride;
+                pBackBuffer += column * 4;
+
+                // Compute the pixel's color. 
+                int colorData = 255 << 16; // R
+                colorData |= 128 << 8;   // G
+                colorData |= 255 << 0;   // B 
+
+                // Assign the color data to the pixel.
+                *((int*)pBackBuffer) = colorData;
+            }
+
+            // Specify the area of the bitmap that changed.
+            bitmap.AddDirtyRect(new Int32Rect(column, row, 1, 1));
+
+            // Release the back buffer and make it available for display.
+            bitmap.Unlock();
+        }
+
+        public static void DrawPixel(WriteableBitmap bitmap, int x, int y)
+        {
+            int column = x;
+            int row = y;
+
+            // Reserve the back buffer for updates.
+            bitmap.Lock();
+
+            unsafe
+            {
+                // Get a pointer to the back buffer. 
+                int pBackBuffer = (int)bitmap.BackBuffer;
+
+                // Find the address of the pixel to draw.
+                pBackBuffer += row * bitmap.BackBufferStride;
+                pBackBuffer += column * 4;
+
+                // Compute the pixel's color. 
+                int colorData = 255 << 16; // R
+                colorData |= 128 << 8;   // G
+                colorData |= 255 << 0;   // B 
+
+                // Assign the color data to the pixel.
+                *((int*)pBackBuffer) = colorData;
+            }
+
+            // Specify the area of the bitmap that changed.
+            bitmap.AddDirtyRect(new Int32Rect(column, row, 1, 1));
+
+            // Release the back buffer and make it available for display.
+            bitmap.Unlock();
         }
 
         public T FindAncestor<T>(FrameworkElement element) where T : FrameworkElement

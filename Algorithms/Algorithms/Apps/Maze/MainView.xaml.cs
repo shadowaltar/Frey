@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Algorithms.Apps.Maze
 {
@@ -18,18 +11,18 @@ namespace Algorithms.Apps.Maze
     /// </summary>
     public partial class MainView : Window
     {
+        private MazeView mazeView;
+
         public MainView()
         {
             InitializeComponent();
-            var graphics = new Graphics(Canvas);
-            graphics.LineThickness = 1;
-            var mg = new MazeGraphics(graphics);
-            var game = new Game();
-            var maze = game.GenerateRectangular(50, 50);
+        }
 
-            mg.PathDisplayHeight = 2;
-            mg.PathDisplayWidth = 2;
-            mg.DrawMaze(maze);
+        private void GenerateMaze(object sender, RoutedEventArgs routedEventArgs)
+        {
+            mazeView = new MazeView();
+            mazeView.Generate(Convert.ToInt32(Width.Text), Convert.ToInt32(Height.Text), 4);
+            mazeView.ShowDialog();
         }
     }
 }
