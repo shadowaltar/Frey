@@ -104,7 +104,6 @@ namespace Algorithms.Algos
                     t = (a + t) / 2.0;
                     lastErr = Absolute(t - a);
                 }
-                Console.WriteLine("a:{0};b:{1};t:{2}", a, b, t);
                 if (Math.Abs(lastErr - b) < error || b < error || double.IsNaN(b))
                     break;
             }

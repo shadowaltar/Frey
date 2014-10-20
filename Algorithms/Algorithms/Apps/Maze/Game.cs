@@ -1,19 +1,28 @@
-﻿using Algorithms.Apps.Maze.Algorithms;
+﻿using System;
+using System.Collections.Generic;
+using Algorithms.Apps.Maze.Algorithms;
 using Algorithms.Utils;
 
 namespace Algorithms.Apps.Maze
 {
     public class Game
     {
-        public Maze GenerateRectangular(int width, int height)
+        public Maze Maze { get; protected set; }
+
+        public void GenerateRectangular<T>(int width, int height) where T : IMazeGenerator
         {
-            IMazeGenerator gen = new RandomizedPrims();
-            // IMazeGenerator gen = new RandomizedKruskal();
-            // IMazeGenerator gen = new RecursiveBacktracker();
+            var gen = (IMazeGenerator)Activator.CreateInstance<T>();
             gen.Width = width;
             gen.Height = height;
             using (new ReportTime())
-                return gen.Generate();
+                Maze = gen.Generate();
+        }
+
+        public List<Cell> Solve<T>() where T : IMazeSolver
+        {
+            var solver = (IMazeSolver)Activator.CreateInstance<T>();
+            solver.Solve(Maze);
+            return solver.Solution;
         }
     }
 }

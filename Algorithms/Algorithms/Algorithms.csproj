@@ -53,6 +53,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MoreLinq">
+      <HintPath>..\packages\morelinq.1.1.0\lib\net35\MoreLinq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
@@ -84,10 +87,13 @@
     <Compile Include="Apps\FileSpaces\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Apps\Maze\Algorithms\AStar.cs" />
     <Compile Include="Apps\Maze\Algorithms\IMazeGenerator.cs" />
+    <Compile Include="Apps\Maze\Algorithms\IMazeSolver.cs" />
     <Compile Include="Apps\Maze\Algorithms\RandomizedKruskal.cs" />
     <Compile Include="Apps\Maze\Algorithms\RandomizedPrims.cs" />
     <Compile Include="Apps\Maze\Algorithms\RecursiveBacktracker.cs" />
+    <Compile Include="Apps\Maze\Algorithms\RecursiveSolver.cs" />
     <Compile Include="Apps\Maze\Cell.cs" />
     <Compile Include="Apps\Maze\Game.cs" />
     <Compile Include="Apps\Maze\Graphics.cs" />

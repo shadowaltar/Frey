@@ -11,6 +11,9 @@ namespace Algorithms.Apps.Maze.Algorithms
         public Maze Generate()
         {
             var walls = new HashSet<Wall>();
+            var mazeCells = new HashSet<Cell>();
+            var growingWalls = new HashSet<Wall>();
+
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Height; j++)
@@ -21,8 +24,6 @@ namespace Algorithms.Apps.Maze.Algorithms
                         walls.Add(new Wall(new Cell(i, j), new Cell(i + 1, j)));
                 }
             }
-            var mazeCells = new HashSet<Cell>();
-            var growingWalls = new HashSet<Wall>();
             var cell = Cell.RandomInMaze(Width, Height);
             mazeCells.Add(cell);
             foreach (var nextCellWall in cell.GetWalls(Width, Height))

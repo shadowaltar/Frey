@@ -18,12 +18,21 @@ namespace Algorithms.Utils
             return source.Where(element => seenKeys.Add(keySelector(element)));
         }
 
-        public static T Random<T>(this IList<T> items) where T : class
+        public static T Random<T>(this IList<T> items)
         {
             if (items.Count == 0)
-                return null;
+                return default(T);
             var i = StaticRandom.Instance.Next(items.Count);
             return items[i];
+        }
+
+
+        public static T Random<T>(this LinkedList<T> items)
+        {
+            if (items.Count == 0)
+                return default(T);
+            var i = StaticRandom.Instance.Next(items.Count);
+            return items.ElementAtOrDefault(i);
         }
 
         public static T Random<T>(this ISet<T> items)

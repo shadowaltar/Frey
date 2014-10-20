@@ -1,41 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using Algorithms.Apps.Maze.Algorithms;
 
 namespace Algorithms.Apps.Maze
 {
     /// <summary>
     /// Interaction logic for MazeView.xaml
     /// </summary>
-    public partial class MazeView : Window
+    public partial class MazeView
     {
-        private Graphics graphics;
+        private readonly Graphics graphics;
+        private Game game;
 
         public MazeView()
         {
             InitializeComponent();
-            graphics = new Graphics(Canvas) { LineThickness = 1 };
+            graphics = new Graphics { LineThickness = 1 };
         }
 
-        public void Generate(int width, int height, int pathDisplayWidth = 5)
+        public void Generate<T>(int width, int height) where T : IMazeGenerator
         {
-            graphics.Clear();
             var mg = new MazeGraphics(graphics);
-            var game = new Game();
-            var maze = game.GenerateRectangular(width, height);
+            game = new Game();
+            game.GenerateRectangular<T>(width, height);
+            mg.DrawingMazeEx(ref Image, game.Maze);
+        }
 
-            mg.PathDisplayHeight = pathDisplayWidth;
-            mg.PathDisplayWidth = pathDisplayWidth;
-            mg.DrawMazeEx(ref Image, maze);
+        public void Solve<T>() where T : IMazeSolver
+        {
+            if (game == null)
+                return;
+            game.Maze.SetDefaultExit();
+            var solution = game.Solve<T>();
         }
     }
 }

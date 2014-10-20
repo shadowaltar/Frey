@@ -19,6 +19,25 @@ namespace Algorithms.Apps.Maze
 
         public bool IsInitialized { get; private set; }
 
+        public Wall(int x1, int y1, int x2, int y2)
+            : this()
+        {
+            one = new Cell(x1, y1);
+            two = new Cell(x2, y2);
+            if (one.X == two.X && one.Y == two.Y)
+                throw new ArgumentException();
+
+            // swap one & two, make sure one.x<=two.x and one.y<=two.y
+            if (one.X > two.X || (one.X == two.X && one.Y > two.Y))
+            {
+                var temp = two;
+                two = one;
+                one = temp;
+            }
+
+            IsInitialized = true;
+        }
+
         public Wall(Cell one, Cell two)
             : this()
         {

@@ -11,9 +11,10 @@ namespace Algorithms.Apps.Maze.Algorithms
         public Maze Generate()
         {
             var stack = new Stack<Cell>();
-            var visited = new HashSet<Cell>();
+            var visited = new bool[Width, Height];
             var unvisited = new HashSet<Cell>();
-            var walls = new HashSet<Wall>();
+            var walls = new bool[Width, Height][]; // f, invalid/not-init; t, valid
+
             Cell currentCell;
             // prepare cells n walls
             for (int i = 0; i < Width; i++)
@@ -22,17 +23,17 @@ namespace Algorithms.Apps.Maze.Algorithms
                 {
                     currentCell = new Cell(i, j);
                     unvisited.Add(currentCell);
-
+                    walls[i, j] = new bool[2];
                     if (j < Height - 1)
-                        walls.Add(new Wall(new Cell(i, j), new Cell(i, j + 1)));
+                        walls[i, j][0] = true; //horizontal, bottom edge, #0
                     if (i < Width - 1)
-                        walls.Add(new Wall(new Cell(i, j), new Cell(i + 1, j)));
+                        walls[i, j][1] = true; //vertical, right edge, #1
                 }
             }
 
             currentCell = new Cell(0, 0);
             unvisited.Remove(currentCell);
-            visited.Add(currentCell);
+            visited[currentCell.X, currentCell.Y] = true;
             while (unvisited.Count > 0)
             {
                 var neighbors = FindUnvisitedNeighborCells(currentCell, visited);
@@ -43,7 +44,7 @@ namespace Algorithms.Apps.Maze.Algorithms
                     RemoveWall(walls, currentCell, neighbor);
                     currentCell = neighbor;
                     unvisited.Remove(currentCell);
-                    visited.Add(currentCell);
+                    visited[currentCell.X, currentCell.Y] = true;
                 }
                 else if (stack.Count > 0)
                 {
@@ -53,47 +54,51 @@ namespace Algorithms.Apps.Maze.Algorithms
                 {
                     currentCell = unvisited.Random();
                     unvisited.Remove(currentCell);
-                    visited.Add(currentCell);
+                    visited[currentCell.X, currentCell.Y] = true;
                 }
             }
 
-            return new Maze { MazeWidth = Width, MazeHeight = Height, Walls = walls };
+            var newWalls = new HashSet<Wall>();
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    if (walls[i, j][0]) // horizontal
+                    {
+                        newWalls.Add(new Wall(i, j, i, j + 1));
+                    }
+                    if (walls[i, j][1]) // vertical
+                    {
+                        newWalls.Add(new Wall(i, j, i + 1, j));
+                    }
+                }
+            }
+            return new Maze { MazeWidth = Width, MazeHeight = Height, Walls = newWalls };
         }
 
-        private HashSet<Cell> FindUnvisitedNeighborCells(Cell cell, HashSet<Cell> visited)
+        private HashSet<Cell> FindUnvisitedNeighborCells(Cell cell, bool[,] visited)
         {
-            Cell neighbor;
             var results = new HashSet<Cell>();
-            if (cell.X != 0)
-            {
-                neighbor = new Cell(cell.X - 1, cell.Y);
-                if (!visited.Contains(neighbor))
-                    results.Add(neighbor);
-            }
-            if (cell.Y != 0)
-            {
-                neighbor = new Cell(cell.X, cell.Y - 1);
-                if (!visited.Contains(neighbor))
-                    results.Add(neighbor);
-            }
-            if (cell.X != Width - 1)
-            {
-                neighbor = new Cell(cell.X + 1, cell.Y);
-                if (!visited.Contains(neighbor))
-                    results.Add(neighbor);
-            }
-            if (cell.Y != Height - 1)
-            {
-                neighbor = new Cell(cell.X, cell.Y + 1);
-                if (!visited.Contains(neighbor))
-                    results.Add(neighbor);
-            }
+            if (cell.X != 0 && !visited[cell.X - 1, cell.Y]) results.Add(new Cell(cell.X - 1, cell.Y));
+            if (cell.Y != 0 && !visited[cell.X, cell.Y - 1]) results.Add(new Cell(cell.X, cell.Y - 1));
+            if (cell.X != Width - 1 && !visited[cell.X + 1, cell.Y]) results.Add(new Cell(cell.X + 1, cell.Y));
+            if (cell.Y != Height - 1 && !visited[cell.X, cell.Y + 1]) results.Add(new Cell(cell.X, cell.Y + 1));
             return results;
         }
 
-        private void RemoveWall(HashSet<Wall> walls, Cell cellOne, Cell cellTwo)
+        private void RemoveWall(bool[,][] walls, Cell one, Cell two)
         {
-            walls.RemoveWhere(wall => wall.Contains(cellOne, cellTwo));
+            // swap one & two, make sure one.x<=two.x and one.y<=two.y
+            if (one.X > two.X || (one.X == two.X && one.Y > two.Y))
+            {
+                var temp = two;
+                two = one;
+                one = temp;
+            }
+            if (one.X == two.X)
+                walls[one.X, one.Y][0] = false;
+            else
+                walls[one.X, one.Y][1] = false;
         }
     }
 }

@@ -71,5 +71,17 @@ namespace Algorithms.Apps.Maze
             if (Y != height - 1)
                 yield return new Wall(this, new Cell(X, Y + 1));
         }
+
+        public IEnumerable<Cell> GetNeighbors(int width, int height)
+        {
+            if (X != 0)
+                yield return new Cell(X - 1, Y);
+            if (X != width - 1)
+                yield return new Cell(X + 1, Y);
+            if (Y != 0)
+                yield return new Cell(X, Y - 1);
+            if (Y != height - 1)
+                yield return new Cell(X, Y + 1);
+        }
     }
 }

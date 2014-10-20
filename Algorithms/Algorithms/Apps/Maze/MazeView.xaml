@@ -7,7 +7,9 @@
     <Grid>
         <Canvas x:Name="Canvas" />
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Image x:Name="Image" />
+            <Border BorderBrush="Orange" BorderThickness="2">
+                <Image x:Name="Image" SnapsToDevicePixels="True" />
+            </Border>
         </ScrollViewer>
     </Grid>
 </Window>
