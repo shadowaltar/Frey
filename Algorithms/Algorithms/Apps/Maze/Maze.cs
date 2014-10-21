@@ -12,6 +12,8 @@ namespace Algorithms.Apps.Maze
 
         public HashSet<Wall> Walls { get; set; }
 
+        public List<Cell> Solution { get; set; } 
+
         public bool[,][] SimpliedWalls { get { return GenerateSimpliedWalls(); } }
 
         private bool[,][] GenerateSimpliedWalls()

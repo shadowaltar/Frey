@@ -7,21 +7,22 @@ namespace Algorithms.Apps.Maze
     /// </summary>
     public partial class MazeView
     {
-        private readonly Graphics graphics;
+        private readonly MazeGraphics graphics;
         private Game game;
 
         public MazeView()
         {
             InitializeComponent();
-            graphics = new Graphics { LineThickness = 1 };
+            var g = new Graphics();
+            graphics = new MazeGraphics(g);
         }
 
         public void Generate<T>(int width, int height) where T : IMazeGenerator
         {
-            var mg = new MazeGraphics(graphics);
+
             game = new Game();
             game.GenerateRectangular<T>(width, height);
-            mg.DrawingMazeEx(ref Image, game.Maze);
+            graphics.DrawMaze(ref Image, game.Maze);
         }
 
         public void Solve<T>() where T : IMazeSolver
@@ -29,7 +30,8 @@ namespace Algorithms.Apps.Maze
             if (game == null)
                 return;
             game.Maze.SetDefaultExit();
-            var solution = game.Solve<T>();
+            game.Solve<T>();
+            graphics.DrawSolution(ref Image, game.Maze);
         }
     }
 }

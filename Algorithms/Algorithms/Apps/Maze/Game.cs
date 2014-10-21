@@ -18,11 +18,11 @@ namespace Algorithms.Apps.Maze
                 Maze = gen.Generate();
         }
 
-        public List<Cell> Solve<T>() where T : IMazeSolver
+        public void Solve<T>() where T : IMazeSolver
         {
             var solver = (IMazeSolver)Activator.CreateInstance<T>();
             solver.Solve(Maze);
-            return solver.Solution;
+            Maze.Solution = solver.Solution;
         }
     }
 }

@@ -8,29 +8,24 @@ namespace Algorithms.Apps.Maze
     {
         public Graphics()
         {
-            LineStroke = new SolidColorBrush(Colors.Black);
-            FillColor = new SolidColorBrush(Colors.Black);
-            LineThickness = 1;
+            BrushColor = Colors.Black;
         }
 
-        public SolidColorBrush LineStroke { get; set; }
-        public SolidColorBrush FillColor { get; set; }
-
-        public double LineThickness { get; set; }
+        public Color BrushColor { get; set; }
 
         public void DrawRectangle(WriteableBitmap bmp, int x, int y, int width, int height)
         {
-            bmp.DrawRectangle(x, y, x + width, y + height, LineStroke.Color);
+            bmp.DrawRectangle(x, y, x + width, y + height, BrushColor);
         }
 
         public void FillRectangle(WriteableBitmap bmp, int x1, int y1, int x2, int y2)
         {
-            bmp.FillRectangle(x1, y1, x2, y2, FillColor.Color);
+            bmp.FillRectangle(x1, y1, x2, y2, BrushColor);
         }
 
         public void DrawLine(WriteableBitmap bmp, int x1, int y1, int x2, int y2)
         {
-            bmp.DrawLine(x1, y1, x2, y2, LineStroke.Color);
+            bmp.DrawLine(x1, y1, x2, y2, BrushColor);
         }
 
         public static void DrawLine(WriteableBitmap bitmap, int x, int y)

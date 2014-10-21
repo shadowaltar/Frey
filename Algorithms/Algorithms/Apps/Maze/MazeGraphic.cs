@@ -6,6 +6,8 @@ namespace Algorithms.Apps.Maze
     public class MazeGraphics
     {
         private readonly Graphics graphics;
+        private int pathDisplayWidth;
+        private int pathDisplayHeight;
 
         public MazeGraphics(Graphics graphics)
         {
@@ -20,14 +22,33 @@ namespace Algorithms.Apps.Maze
 
         public double MazeDisplayWidth { get; set; }
         public double MazeDisplayHeight { get; set; }
-        public int PathDisplayWidth { get; set; }
-        public int PathDisplayHeight { get; set; }
+
+        public int PathDisplayWidth
+        {
+            get { return pathDisplayWidth; }
+            set
+            {
+                if (value % 2 == 1) pathDisplayWidth = value;
+                else pathDisplayWidth = value + 1;
+            }
+        }
+
+        public int PathDisplayHeight
+        {
+            get { return pathDisplayHeight; }
+            set
+            {
+                if (value % 2 == 1) pathDisplayHeight = value;
+                else pathDisplayHeight = value + 1;
+            }
+        }
+
         public int WallDisplayWidth { get; set; }
         public int WallDisplayHeight { get; set; }
         protected int MarginTop { get; set; }
         protected int MarginLeft { get; set; }
 
-        public void DrawingMazeEx(ref Image image, Maze maze)
+        public void DrawMaze(ref Image image, Maze maze)
         {
             var mazeDisplayWidth = maze.MazeWidth * (PathDisplayWidth + WallDisplayWidth) + WallDisplayWidth - 1;
             var mazeDisplayHeight = maze.MazeHeight * (PathDisplayHeight + WallDisplayHeight) + WallDisplayHeight - 1;
@@ -35,10 +56,18 @@ namespace Algorithms.Apps.Maze
             var canvasWidth = mazeDisplayWidth + MarginLeft * 2;
             var canvasHeight = mazeDisplayHeight + MarginTop * 2;
 
-            var bitmap = BitmapFactory.New(canvasWidth, canvasHeight);
-            image.Width = canvasWidth;
-            image.Height = canvasHeight;
-            image.Source = bitmap;
+            WriteableBitmap bitmap;
+            if (image.Source == null)
+            {
+                bitmap = BitmapFactory.New(canvasWidth, canvasHeight);
+                image.Width = canvasWidth;
+                image.Height = canvasHeight;
+                image.Source = bitmap;
+            }
+            else
+            {
+                bitmap = (WriteableBitmap)image.Source;
+            }
 
             // top edge
             graphics.FillRectangle(bitmap,
@@ -81,6 +110,44 @@ namespace Algorithms.Apps.Maze
                         MarginLeft + (wall.X1 + 1) * (WallDisplayWidth + PathDisplayWidth) + WallDisplayWidth,
                         MarginTop + (wall.Y1 + 1) * (WallDisplayHeight + PathDisplayHeight) + WallDisplayHeight);
                 }
+            }
+        }
+
+        public void DrawSolution(ref Image image, Maze maze)
+        {
+            if (maze.Solution == null || maze.Solution.Count <= 0)
+                return;
+
+            var mazeDisplayWidth = maze.MazeWidth * (PathDisplayWidth + WallDisplayWidth) + WallDisplayWidth - 1;
+            var mazeDisplayHeight = maze.MazeHeight * (PathDisplayHeight + WallDisplayHeight) + WallDisplayHeight - 1;
+
+            var canvasWidth = mazeDisplayWidth + MarginLeft * 2;
+            var canvasHeight = mazeDisplayHeight + MarginTop * 2;
+
+            WriteableBitmap bitmap;
+            if (image.Source == null)
+            {
+                bitmap = BitmapFactory.New(canvasWidth, canvasHeight);
+                image.Width = canvasWidth;
+                image.Height = canvasHeight;
+                image.Source = bitmap;
+            }
+            else
+            {
+                bitmap = (WriteableBitmap)image.Source;
+            }
+
+            var one = maze.Start;
+            for (int i = 0; i < maze.Solution.Count; i++)
+            {
+                var two = maze.Solution[i];
+                graphics.DrawLine(bitmap,
+                    MarginLeft + WallDisplayWidth + one.X * (WallDisplayWidth + PathDisplayWidth) + (PathDisplayWidth + 1) / 2,
+                    MarginTop + WallDisplayHeight + one.Y * (WallDisplayHeight + PathDisplayHeight) + (PathDisplayHeight + 1) / 2,
+                    MarginLeft + WallDisplayWidth + two.X * (WallDisplayWidth + PathDisplayWidth) + (PathDisplayWidth + 1) / 2,
+                    MarginTop + WallDisplayHeight + two.Y * (WallDisplayHeight + PathDisplayHeight) + (PathDisplayHeight + 1) / 2);
+
+                one = two;
             }
         }
     }

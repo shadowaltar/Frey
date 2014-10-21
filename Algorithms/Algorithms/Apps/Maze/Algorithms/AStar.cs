@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
-using Algorithms.Algos;
 using MoreLinq;
 
 namespace Algorithms.Apps.Maze.Algorithms
 {
     public class AStar : IMazeSolver
     {
+        private double[,] hValues;
+
         protected class Node
         {
             public Node()
@@ -31,54 +30,41 @@ namespace Algorithms.Apps.Maze.Algorithms
             public int G { get; set; }
             public double H { get; set; }
 
-            public static double GetH(Node a, Node b)
-            {
-                return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
-            }
-
-            public IEnumerable<Node> GetAccessibleNeighbors(int w, int h, bool[,][] walls, Node exit)
+            public IEnumerable<Node> GetAccessibleNeighbors(int w, int h, bool[,][] walls, AStar solver)
             {
                 if (X != 0) // left
                 {
-                    var n = new Node(X - 1, Y, this);
-                    if (!walls[n.X, Y][1])
+                    if (!walls[X - 1, Y][1])
                     {
-                        n.Parent = this;
-                        n.G = G + 1;
-                        n.H = GetH(n, exit);
+                        var n = new Node(X - 1, Y, this) { Parent = this, G = G + 1 };
+                        n.H = solver.hValues[n.X, n.Y];
                         yield return n;
                     }
                 }
                 if (X != w - 1) // right
                 {
-                    var n = new Node(X + 1, Y, this);
                     if (!walls[X, Y][1])
                     {
-                        n.Parent = this;
-                        n.G = G + 1;
-                        n.H = GetH(n, exit);
+                        var n = new Node(X + 1, Y, this) { Parent = this, G = G + 1 };
+                        n.H = solver.hValues[n.X, n.Y];
                         yield return n;
                     }
                 }
                 if (Y != 0) // top
                 {
-                    var n = new Node(X, Y - 1, this);
-                    if (!walls[X, n.Y][0])
+                    if (!walls[X, Y - 1][0])
                     {
-                        n.Parent = this;
-                        n.G = G + 1;
-                        n.H = GetH(n, exit);
+                        var n = new Node(X, Y - 1, this) { Parent = this, G = G + 1 };
+                        n.H = solver.hValues[n.X, n.Y];
                         yield return n;
                     }
                 }
                 if (Y != h - 1) // bottom
                 {
-                    var n = new Node(X, Y + 1, this);
                     if (!walls[X, Y][0])
                     {
-                        n.Parent = this;
-                        n.G = G + 1;
-                        n.H = GetH(n, exit);
+                        var n = new Node(X, Y + 1, this) { Parent = this, G = G + 1 };
+                        n.H = solver.hValues[n.X, n.Y];
                         yield return n;
                     }
                 }
@@ -93,7 +79,7 @@ namespace Algorithms.Apps.Maze.Algorithms
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
+                if (obj.GetType() != GetType()) return false;
                 return Equals((Node)obj);
             }
 
@@ -122,18 +108,32 @@ namespace Algorithms.Apps.Maze.Algorithms
         }
 
         protected List<Node> opens;
-        protected List<Node> closeds;
+        protected HashSet<Node> closeds;
         protected Maze maze;
 
-        public void Solve(Maze maze)
+        public void Solve(Maze m)
         {
-            opens = new List<Node>();
-            closeds = new List<Node>();
-            this.maze = maze;
+            maze = m;
+
             var simpliedWalls = maze.SimpliedWalls;
             var start = new Node { X = maze.Start.X, Y = maze.Start.Y };
             var exit = new Node { X = maze.Exit.X, Y = maze.Exit.Y };
+
+            opens = new List<Node>();
+            closeds = new HashSet<Node>();
             opens.Add(start);
+
+            // init h values
+            hValues = new double[maze.MazeWidth, maze.MazeHeight];
+            var tx = exit.X;
+            var ty = exit.Y;
+            for (int i = 0; i < maze.MazeWidth; i++)
+            {
+                for (int j = 0; j < maze.MazeHeight; j++)
+                {
+                    hValues[i, j] = Math.Sqrt(Math.Pow(i - tx, 2) + Math.Pow(j - ty, 2));
+                }
+            }
 
             while (opens.Count > 0)
             {
@@ -146,34 +146,32 @@ namespace Algorithms.Apps.Maze.Algorithms
                     Solution = TraceBack(s).Select(c => new Cell(c.X, c.Y)).ToList();
                     return;
                 }
-                else
+
+                var neighbors = s.GetAccessibleNeighbors(maze.MazeWidth, maze.MazeHeight, simpliedWalls, this);
+                // not know g
+                foreach (var neighbor in neighbors)
                 {
-                    var neighbors = s.GetAccessibleNeighbors(maze.MazeWidth, maze.MazeHeight, simpliedWalls, exit);
-                    // not know g
-                    foreach (var neighbor in neighbors)
+                    if (!closeds.Contains(neighbor))
                     {
-                        if (!closeds.Contains(neighbor))
+                        var exist = opens.FirstOrDefault(o => o.X == neighbor.X && o.Y == neighbor.Y);
+                        if (exist != null)
                         {
-                            var exist = opens.FirstOrDefault(o => o.X == neighbor.X && o.Y == neighbor.Y);
-                            if (exist != null)
+                            if (neighbor.F < exist.F)
                             {
-                                if (neighbor.F < exist.F)
-                                {
-                                    opens.Remove(exist);
-                                    opens.Add(neighbor);
-                                }
-                            }
-                            else
-                            {
+                                opens.Remove(exist);
                                 opens.Add(neighbor);
                             }
+                        }
+                        else
+                        {
+                            opens.Add(neighbor);
                         }
                     }
                 }
             }
         }
 
-        private List<Node> TraceBack(Node node)
+        private IEnumerable<Node> TraceBack(Node node)
         {
             var n = node;
             var results = new List<Node>();
