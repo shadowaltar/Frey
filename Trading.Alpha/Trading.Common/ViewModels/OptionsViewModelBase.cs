@@ -11,20 +11,6 @@ namespace Trading.Common.ViewModels
             Environments = new BindableCollection<string>();
         }
 
-        protected override void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-
-            if (Settings == null || Settings.Environments.Count == 0)
-            {
-                Log.Error("Cannot set environments into option flyout.");
-            }
-            else
-            {
-                Environments.AddRange(Settings.Environments.Keys);
-            }
-        }
-
         public ISettings Settings { get; set; }
 
         public BindableCollection<string> Environments { get; private set; }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 
 namespace Trading.Common
 {
@@ -10,5 +12,11 @@ namespace Trading.Common
 
         public static string UserName { get { return Environment.UserName.ToUpperInvariant(); } }
         public static DateTime MaxExpiryDate { get { return DateTime.MaxValue.Date; } }
+
+
+        public static string CurrentDirectory { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
+        public static string CurrentDrive { get { return Path.GetPathRoot(Assembly.GetExecutingAssembly().Location); } }
+        public static string PricesDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\Prices"); } }
+        public static string SecurityListDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\SecurityList"); } }
     }
 }

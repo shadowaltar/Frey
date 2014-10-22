@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
+using Trading.Common;
 using Trading.Common.Data;
 using Trading.Common.Entities;
 using Trading.Common.SharedSettings;
@@ -15,22 +16,22 @@ using Trading.Common.ViewModels;
 
 namespace Trading.DataDownload.ViewModels
 {
-    public class MainViewModel : MainViewModelBase<LoaderDataAccess>, IMainViewModel
+    public partial class MainViewModel : MainViewModelBase<LoaderDataAccess>, IMainViewModel
     {
-
         public MainViewModel(IDataAccessFactory<LoaderDataAccess> dataAccessFactory, ISettings settings)
             : base(dataAccessFactory, settings)
         {
-            if (!Directory.Exists(PricesDirectory))
+            Initalize();
+            if (!Directory.Exists(Constants.PricesDirectory))
             {
-                Directory.CreateDirectory(PricesDirectory);
+                Directory.CreateDirectory(Constants.PricesDirectory);
+            }
+            if (!Directory.Exists(Constants.SecurityListDirectory))
+            {
+                Directory.CreateDirectory(Constants.SecurityListDirectory);
             }
         }
 
-        public string CurrentDirectory { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
-        public string CurrentDrive { get { return Path.GetPathRoot(Assembly.GetExecutingAssembly().Location); } }
-        public string PricesDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\Prices"); } }
-        public string SecurityListDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\SecurityList"); } }
         public override string ProgramName { get { return "Data Loader"; } }
 
         private string selectedStockCode;
@@ -62,7 +63,7 @@ namespace Trading.DataDownload.ViewModels
         public void Download(string symbol, string marketCode)
         {
             var downloader = new YahooDailyPriceWorker();
-            var dir = Path.Combine(PricesDirectory, marketCode);
+            var dir = Path.Combine(Constants.PricesDirectory, marketCode);
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
@@ -77,14 +78,14 @@ namespace Trading.DataDownload.ViewModels
         public void OpenPricesFolder()
         {
             var p = new Process();
-            p.StartInfo.FileName = PricesDirectory;
+            p.StartInfo.FileName = Constants.PricesDirectory;
             p.Start();
         }
 
         public void OpenSecurityListFolder()
         {
             var p = new Process();
-            p.StartInfo.FileName = SecurityListDirectory;
+            p.StartInfo.FileName = Constants.SecurityListDirectory;
             p.Start();
         }
 
@@ -128,7 +129,7 @@ namespace Trading.DataDownload.ViewModels
                 {
                     var sectorIndustries = new HashSet<Tuple<string, string>>();
                     var securities = new List<Stock>();
-                    var files = Directory.GetFiles(SecurityListDirectory);
+                    var files = Directory.GetFiles(Constants.SecurityListDirectory);
                     var symbolFile = files.FirstOrDefault(f => f.ContainsIgnoreCase(marketCode));
                     if (symbolFile != null)
                     {
@@ -254,7 +255,7 @@ namespace Trading.DataDownload.ViewModels
             var prog = await ViewService.ShowProgress("Saving", "Saving prices for market " + marketCode);
             try
             {
-                var mktDir = Path.Combine(PricesDirectory, marketCode);
+                var mktDir = Path.Combine(Constants.PricesDirectory, marketCode);
                 var files = Directory.GetFiles(mktDir);
                 var totalCount = files.Length.ConvertDouble();
                 var progressCount = 0;

@@ -19,9 +19,6 @@ namespace Trading.Common.ViewModels
         {
             DataAccessFactory = factory;
             Settings = settings;
-            Environment = Settings.DefaultEnvironment;
-            DataAccessFactory.Environment = environment;
-            DataAccessFactory.Environments.ClearAndAddRange(Settings.Environments);
         }
 
         protected override void OnViewLoaded(object view)

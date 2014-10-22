@@ -10,6 +10,8 @@ namespace Trading.Common.Utils
         private readonly Stopwatch sw;
         private readonly string formattedString = "Used {0}";
 
+        public string Message { get { return string.Format(formattedString, sw.Elapsed.TotalMilliseconds); } }
+
         private bool isReportSql;
 
         public ReportTime()
@@ -25,6 +27,11 @@ namespace Trading.Common.Utils
             sw.Start();
         }
 
+        public static ReportTime Start(string formattedString = "")
+        {
+            return formattedString.IsNullOrWhitespace() ? new ReportTime() : new ReportTime(formattedString);
+        }
+
         public static ReportTime ReportSql(bool isReading, int serialNumber, string sql)
         {
             var formattedString = isReading ? "Read " : "Execute ";
@@ -38,14 +45,11 @@ namespace Trading.Common.Utils
 
             if (isReportSql)
             {
-                Log.InfoFormat(formattedString, sw.Elapsed.TotalMilliseconds);
+                Log.InfoFormat(Message);
             }
             else
             {
-                Log.DebugFormat(formattedString, sw.Elapsed.TotalMilliseconds);
-#if DEBUG
-                Console.WriteLine(formattedString, sw.Elapsed.TotalMilliseconds);
-#endif
+                Log.DebugFormat(Message);
             }
         }
     }

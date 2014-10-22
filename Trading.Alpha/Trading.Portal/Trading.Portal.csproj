@@ -62,9 +62,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.2.0.3\lib\net40-client\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro, Version=0.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\MahApps.Metro.dll</HintPath>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\..\Libs\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.165\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
@@ -171,14 +170,6 @@
     <ProjectReference Include="..\Trading.DataDownload\Trading.DataDownload.csproj">
       <Project>{3d976da1-aaae-4840-be8e-24e43e90fece}</Project>
       <Name>Trading.DataDownload</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.SecurityScreener\Trading.SecurityScreener.csproj">
-      <Project>{ec75548d-7025-4b16-8831-6f35ad3a2258}</Project>
-      <Name>Trading.SecurityScreener</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.TradeWatch\Trading.TradeWatch.csproj">
-      <Project>{e1d22fbb-372a-4303-b8f8-0cda213f83ad}</Project>
-      <Name>Trading.TradeWatch</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

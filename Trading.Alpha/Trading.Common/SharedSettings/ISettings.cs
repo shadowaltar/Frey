@@ -8,7 +8,5 @@ namespace Trading.Common.SharedSettings
     /// </summary>
     public interface ISettings
     {
-        Dictionary<string, string> Environments { get; }
-        string DefaultEnvironment { get; }
     }
 }

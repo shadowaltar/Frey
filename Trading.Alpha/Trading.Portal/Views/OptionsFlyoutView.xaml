@@ -11,7 +11,6 @@
     <UserControl.Resources>
         <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
         <Style BasedOn="{StaticResource TextBlockStyle}" TargetType="TextBlock" />
-        <Style BasedOn="{StaticResource ToggleSwitchTextStyle}" TargetType="controls:ToggleSwitch" />
         <Style BasedOn="{StaticResource AccentedSquareButtonStyle}" TargetType="Button" />
     </UserControl.Resources>
     <StackPanel Margin="20">

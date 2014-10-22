@@ -75,6 +75,19 @@ namespace Trading.Common.Utils
             return value.IndexOf(substring, StringComparison.InvariantCultureIgnoreCase) != -1;
         }
 
+        public static bool IsNullOrWhitespace(this string s)
+        {
+            return string.IsNullOrWhiteSpace(s);
+        }
+
+        public static DateTime GetMonday(this DateTime date)
+        {
+            var result = date.Date;
+            while (result.DayOfWeek != DayOfWeek.Monday)
+                result = result.AddDays(-1);
+            return result;
+        }
+
         public static void AddRange<T, T2>(this Dictionary<T, T2> target, Dictionary<T, T2> source)
         {
             if (target != null && source != null)

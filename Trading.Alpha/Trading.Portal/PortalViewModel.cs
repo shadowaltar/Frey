@@ -38,7 +38,6 @@ namespace Trading.Portal
 
             OptionsFlyout = optionsFlyout;
 
-            environment = infrastructureSettings.DefaultEnvironment;
 
             desiredTilesGridDimensions[1] = new[] { 1, 1 };
             desiredTilesGridDimensions[2] = new[] { 1, 2 };
