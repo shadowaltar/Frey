@@ -96,7 +96,7 @@ namespace Trading.DataDownload.ViewModels
 
         public void DownloadWholeHistory()
         {
-            var start = DateTime.Parse("1990-01-01");
+            var start = DateTime.Parse("1900-01-01");
             Download(start);
         }
 
