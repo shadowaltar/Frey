@@ -14,9 +14,11 @@
         <TabItem Header="DOWNLOAD">
             <Grid>
                 <ListBox x:Name="Markets"
-                         Width="134"
+                         Width="384"
                          Margin="10,45,0,10"
-                         HorizontalAlignment="Left" />
+                         HorizontalAlignment="Left"
+                         BorderBrush="{DynamicResource AccentColorBrush}"
+                         BorderThickness="1" />
                 <TextBlock Margin="10,10,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
@@ -34,8 +36,6 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         Content="Download This Week" />
-
-
             </Grid>
         </TabItem>
         <TabItem Header="ORIGINAL">

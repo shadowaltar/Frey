@@ -85,6 +85,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\Libs\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Reactive.Core">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net40\System.Reactive.Core.dll</HintPath>
@@ -152,6 +155,7 @@
     <Compile Include="Utils\AesEncryption.cs" />
     <Compile Include="Utils\Converters\BoolToValueConverter.cs" />
     <Compile Include="Utils\Dummies.cs" />
+    <Compile Include="Utils\FileHelper.cs" />
     <Compile Include="Utils\IHasDataAccessFactory.cs" />
     <Compile Include="Utils\FilterOption.cs" />
     <Compile Include="Utils\FilterOptions.cs" />
@@ -161,7 +165,6 @@
     <Compile Include="Utils\IHasEventAggregator.cs" />
     <Compile Include="Utils\IHasViewService.cs" />
     <Compile Include="Utils\MultiBooleanToVisibilityConverter.cs" />
-    <Compile Include="Utils\PeriodicTaskFactory.cs" />
     <Compile Include="Utils\Singularizer.cs" />
     <Compile Include="Utils\ViewService.cs" />
     <Compile Include="Utils\Extensions.cs" />

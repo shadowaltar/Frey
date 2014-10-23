@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.WorkExtractor", "Tr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.R", "Trading.R\Trading.R.csproj", "{B6BAE231-D40E-45A3-A511-F75193537760}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataCache", "Trading.DataCache\Trading.DataCache.csproj", "{15BD19A3-78E5-422B-AE97-8D0563039FC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,16 @@ Global
 		{B6BAE231-D40E-45A3-A511-F75193537760}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B6BAE231-D40E-45A3-A511-F75193537760}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B6BAE231-D40E-45A3-A511-F75193537760}.Release|x86.ActiveCfg = Release|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Debug|Any CPU.Build.0 = Debug|x64
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +100,6 @@ Global
 		{3D976DA1-AAAE-4840-BE8E-24E43E90FECE} = {30F42A9E-0010-409C-84A3-0A16AA8D6D17}
 		{296D0BBA-D906-4CF6-B29C-F8DBDD0CC105} = {30F42A9E-0010-409C-84A3-0A16AA8D6D17}
 		{B6BAE231-D40E-45A3-A511-F75193537760} = {30F42A9E-0010-409C-84A3-0A16AA8D6D17}
+		{15BD19A3-78E5-422B-AE97-8D0563039FC4} = {30F42A9E-0010-409C-84A3-0A16AA8D6D17}
 	EndGlobalSection
 EndGlobal
