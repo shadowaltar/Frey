@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using CsvHelper;
 using Trading.Common;
 using Trading.Common.Data;
@@ -17,7 +16,7 @@ namespace Trading.DataCache.ViewModels
 {
     public class MainViewModel : MainViewModelBase<CacheDataAccess>, IMainViewModel
     {
-        private Process dbProcess;
+        private static string DefaultSchema { get { return "TRADING"; } }
 
         public MainViewModel(IDataAccessFactory<CacheDataAccess> dataAccessFactory, ISettings settings)
             : base(dataAccessFactory, settings)
@@ -32,11 +31,6 @@ namespace Trading.DataCache.ViewModels
 
         public void RunDatabase()
         {
-            using (ReportTime.Start("Start in-memory database used {0}."))
-            {
-                var result = FileHelper.FindFileInParents("sqlite3.exe");
-                dbProcess = Process.Start(result);
-            }
             using (ReportTime.Start("Initialize in-memory database schema used {0}."))
                 InitializeDatabase();
 
@@ -44,10 +38,30 @@ namespace Trading.DataCache.ViewModels
                 InitializeData();
         }
 
+        public void AddUniqueIndexToPrices()
+        {
+            try
+            {
+                using (var access = DataAccessFactory.New())
+                {
+                    access.CreatePriceTableConstraint();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Failed to add contraint.", e);
+            }
+        }
+
         protected void InitializeDatabase()
         {
             using (var access = DataAccessFactory.New())
             {
+                if (!access.CheckSchemaExists(DefaultSchema))
+                {
+                    access.CreateSchema(DefaultSchema);
+                }
+                access.UseSchema(DefaultSchema);
                 access.CreateSecurityTable();
                 access.CreateSecurityPriceTable();
             }
@@ -56,9 +70,13 @@ namespace Trading.DataCache.ViewModels
         protected async void InitializeData()
         {
             var p = await ViewService.ShowProgress("Loading", "Reading security files..");
-            var securitiesTask = Task.Run(() =>
+            await Task.Run(() =>
             {
                 var files = Directory.GetFiles(Constants.SecurityListDirectory);
+                using (var access = DataAccessFactory.New())
+                {
+                    access.Clear("SECURITIES");
+                }
                 foreach (var fileName in files)
                 {
                     try
@@ -89,7 +107,6 @@ namespace Trading.DataCache.ViewModels
                                 }
                             }
                         }
-                        Console.WriteLine("{0} is done.", fileName);
                     }
                     catch (Exception e)
                     {
@@ -97,60 +114,87 @@ namespace Trading.DataCache.ViewModels
                     }
                 }
             });
-            var pricesTask = Task.Run(() =>
+            await Task.Run(() =>
             {
                 var folders = Directory.GetDirectories(Constants.PricesDirectory);
+                Dictionary<string, Security> securities;
+                using (var access = DataAccessFactory.New())
+                {
+                    securities = access.GetSecurities().ToDictionary(s => s.Code, s => s);
+                    access.Clear("PRICES");
+                }
                 foreach (var folder in folders)
                 {
-                    try
+                    using (ReportTime.Start(folder + " prices loaded used: {0}"))
                     {
-                        using (var access = DataAccessFactory.NewTransaction())
-                        using (new ReportTime("Read " + folder + " used {0}"))
+                        try
                         {
-                            foreach (var fileName in Directory.GetFiles(folder))
+                            using (var access = DataAccessFactory.NewTransaction())
+                            using (new ReportTime("Read " + folder + " used {0}"))
                             {
-                                using (var reader = File.OpenText(fileName))
-                                using (var records = new CsvReader(reader))
+                                var files = Directory.GetFiles(folder);
+                                double cnt = 0;
+                                var n = files.Count();
+
+                                foreach (var fileName in files)
                                 {
-                                    while (records.Read())
+                                    try
                                     {
-                                        try
+                                        p.SetMessage("Reading " + fileName + " (" + (cnt / n).ToString("P") + ")");
+                                        var code = Path.GetFileNameWithoutExtension(fileName);
+                                        long secId;
+                                        Security sec;
+                                        if (!securities.TryGetValue(code, out sec))
                                         {
-                                            var time = records.GetField<string>("Date").ConvertDate("yyyy-MM-dd");
-                                            var open = records.GetField<double>("Open");
-                                            var high = records.GetField<double>("High");
-                                            var low = records.GetField<double>("Low");
-                                            var close = records.GetField<double>("Close");
-                                            var volume = records.GetField<double>("Volume");
-                                            var adjClose = records.GetField<double>("Adj Close");
+                                            Log.WarnFormat("Cannot handle code {0}", code);
+                                            continue;
                                         }
-                                        catch (Exception e)
+                                        secId = sec.Id;
+
+                                        if (!securities.ContainsKey(code.ToUpperInvariant()))
+                                            continue;
+                                        using (var reader = File.OpenText(fileName))
+                                        using (var records = new CsvReader(reader))
                                         {
-                                            Log.Warn("Failed to read symbol.", e);
+                                            while (records.Read())
+                                            {
+                                                try
+                                                {
+                                                    var time = records.GetField<string>("Date")
+                                                        .ConvertDate("yyyy-MM-dd");
+                                                    var open = records.GetField<double>("Open");
+                                                    var high = records.GetField<double>("High");
+                                                    var low = records.GetField<double>("Low");
+                                                    var close = records.GetField<double>("Close");
+                                                    var volume = records.GetField<double>("Volume");
+                                                    var adjClose = records.GetField<double>("Adj Close");
+                                                    access.AddPrice(secId, time, open, high, low, close, volume,
+                                                        adjClose);
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    Log.Warn("Failed to read symbol.", e);
+                                                }
+                                            }
                                         }
+                                        cnt++;
+                                        Console.WriteLine(cnt / n);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Log.Error("Failed to handle file " + fileName, e);
                                     }
                                 }
-                                Console.WriteLine("{0} is done.", fileName);
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e);
+                        catch (Exception e)
+                        {
+                            Log.Error("Error occurred when inserting prices: folder " + folder, e);
+                        }
                     }
                 }
             });
-
-
-            await securitiesTask;
-            await pricesTask;
-        }
-
-        protected override void OnDeactivate(bool close)
-        {
-            base.OnDeactivate(close);
-            if (dbProcess != null)
-                dbProcess.Kill();
+            await p.Stop();
         }
     }
 

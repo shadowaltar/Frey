@@ -539,5 +539,40 @@ namespace Trading.Common.Utils
         {
             return value.All(c => char.IsLetterOrDigit(c) || (chars != null && chars.Contains(c)));
         }
+
+        public static DataRow FirstOrDefault(this DataTable table)
+        {
+            return table.Rows[0];
+        }
+
+        public static T FirstOrDefaultValue<T>(this DataTable table)
+        {
+            try
+            {
+                if (table.Rows.Count > 0)
+                {
+                    var r = table.Rows[0];
+                    return (T)r[0];
+                }
+            }
+            catch
+            {
+                return default(T);
+            }
+            return default(T);
+        }
+
+        public static T FirstOrDefault<T>(this DataTable table, Func<DataRow, T> converter)
+        {
+            return converter(table.Rows[0]);
+        }
+
+        public static IEnumerable<T> To<T>(this DataTable table, Func<DataRow, T> converter)
+        {
+            foreach (DataRow row in table.Rows)
+            {
+                yield return converter(row);
+            }
+        }
     }
 }

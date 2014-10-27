@@ -14,12 +14,12 @@ namespace Trading.Common.Data
 
         public IDataCache DataCache { get; set; }
 
-        private bool isRollback;
+        protected bool isRollback;
 
-        private MySqlConnection database;
-        private MySqlTransaction transaction;
+        protected MySqlConnection database;
+        protected MySqlTransaction transaction;
 
-        public void Connect(string connectionString)
+        public virtual void Connect(string connectionString)
         {
             if (isRollback)
                 throw new InvalidOperationException("Cannot connect when the transaction rollback is done.");
@@ -63,7 +63,7 @@ namespace Trading.Common.Data
             }
         }
 
-        public int Execute(string query)
+        public virtual int Execute(string query)
         {
             if (isRollback)
                 throw new InvalidOperationException("Cannot execute when the transaction rollback is done.");
@@ -77,7 +77,7 @@ namespace Trading.Common.Data
             }
         }
 
-        public int Execute(string query, params object[] args)
+        public virtual int Execute(string query, params object[] args)
         {
             if (isRollback)
                 throw new InvalidOperationException("Cannot execute when the transaction rollback is done.");

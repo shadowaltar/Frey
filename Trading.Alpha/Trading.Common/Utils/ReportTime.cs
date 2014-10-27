@@ -12,8 +12,6 @@ namespace Trading.Common.Utils
 
         public string Message { get { return string.Format(formattedString, sw.Elapsed.TotalMilliseconds); } }
 
-        private bool isReportSql;
-
         public ReportTime()
         {
             sw = new Stopwatch();
@@ -36,21 +34,14 @@ namespace Trading.Common.Utils
         {
             var formattedString = isReading ? "Read " : "Execute ";
             formattedString += "(" + serialNumber.ToString("D5") + ") Used {0}; " + sql;
-            return new ReportTime(formattedString) { isReportSql = true };
+            return new ReportTime(formattedString);
         }
 
         public void Dispose()
         {
             sw.Stop();
-
-            if (isReportSql)
-            {
-                Log.InfoFormat(Message);
-            }
-            else
-            {
-                Log.DebugFormat(Message);
-            }
+            Log.InfoFormat(Message);
+            Console.WriteLine(Message);
         }
     }
 }

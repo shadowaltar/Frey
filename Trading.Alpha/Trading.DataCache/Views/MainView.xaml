@@ -13,17 +13,33 @@
     <Grid>
         <TextBox x:Name="ResultSqls"
                  Height="Auto"
-                 Margin="10,44,10,10"
+                 Margin="10,78,10,10"
                  VerticalAlignment="Stretch"
                  AcceptsReturn="True"
                  TextWrapping="Wrap" />
         <Button x:Name="RunDatabase"
-                Width="120"
+                Width="190"
                 Margin="10,10,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Content="Run Database" />
+                Content="Insert Securities and Prices" />
+        <Button x:Name="AddUniqueIndexToPrices"
+                Width="199"
+                Margin="205,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Add Constraint to Prices" />
+        <Button x:Name="AddUniqueIndexToSecurities"
+                Width="199"
+                Margin="205,44,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Add Constraint to Securities" />
     </Grid>
 </controls:MetroWindow>

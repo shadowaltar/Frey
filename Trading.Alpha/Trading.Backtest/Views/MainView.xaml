@@ -1,0 +1,25 @@
+<controls:MetroWindow x:Class="Trading.Backtest.Views.MainView"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Width="552.305"
+                      Height="366.135"
+                      BorderThickness="3"
+                      GlowBrush="{DynamicResource AccentColorBrush}">
+    <controls:MetroWindow.Resources>
+        <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
+        <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
+    </controls:MetroWindow.Resources>
+    <controls:MetroAnimatedTabControl>
+        <TabItem Header="BASICS">
+            <Grid>
+                <Button x:Name="Test"
+                        Width="75"
+                        Margin="10,10,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Start US" />
+            </Grid>
+        </TabItem>
+    </controls:MetroAnimatedTabControl>
+</controls:MetroWindow>
