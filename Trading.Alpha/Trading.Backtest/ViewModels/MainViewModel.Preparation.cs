@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using Trading.Common.Entities;
+using MySql.Data.MySqlClient;
+using Trading.Backtest.Data;
 using Trading.Common.Utils;
 
 namespace Trading.Backtest.ViewModels
@@ -10,22 +11,29 @@ namespace Trading.Backtest.ViewModels
     {
         /// <summary>
         /// c1: the 1000 biggest volume as sec universe.
-        /// c2: check secs every monday.
+        /// c2: check secs every tuesday.
         /// </summary>
         /// <returns></returns>
-        private List<Security> PrepareSecurities(DateTime time)
+        private IEnumerable<KeyValuePair<DateTime, Dictionary<int, double>>> PrepareSecurities(MySqlCommand cmd,
+            BacktestDataAccess access, DateTime time, DateTime time2)
         {
-            if (time.DayOfWeek != DayOfWeek.Monday)
-                return null;
-            DataTable dt;
-            using (var access = DataAccessFactory.New())
+            DataTable dt = access.QueryEx(cmd,
+                @"SELECT SECID, date_format(time, '%Y-%m-%d') TIME, VOLUME FROM PRICES P WHERE TIME >= '" + time.IsoFormat()
+                + @"' AND TIME <= '" + time2.IsoFormat() + "' AND VOLUME > 200000");
+
+            var ct = dt.FirstOrDefault()["TIME"].ToString();
+            var dict = new Dictionary<int, double>();
+            foreach (DataRow r in dt.Rows)
             {
-                dt =access.Query(@"SELECT SECID, CLOSE, VOLUME FROM PRICES P, SECURITIES S WHERE P.SECID = S.ID
-AND TIME = '" + time.IsoFormat() + @"'ORDER BY VOLUME DESC LIMIT 0, 1000");
-            }
-            foreach (DataRow dataRow in dt.Rows)
-            {
-                Console.WriteLine(dataRow);
+                var t = r["TIME"].ToString();
+                if (ct != t && dict.Count > 0)
+                {
+                    yield return new KeyValuePair<DateTime, Dictionary<int, double>>(ct.ConvertDate(), dict);
+                    dict = new Dictionary<int, double>();
+                }
+
+                ct = t;
+                dict[r["SECID"].ConvertInt()] = r["VOLUME"].ConvertDouble();
             }
         }
     }
