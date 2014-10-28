@@ -2,17 +2,11 @@ using log4net;
 using Trading.Common.Utils;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Trading.Common.Data
 {
     public class TradingDataAccessFactory<T> : IDataAccessFactory<T> where T : TradingDataAccess, new()
     {
-        public TradingDataAccessFactory(IDataCache cache)
-        {
-            this.cache = cache;
-        }
-
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly object authSyncRoot = new object();
@@ -35,7 +29,6 @@ namespace Trading.Common.Data
         }
 
         private readonly Dictionary<string, string> environments = new Dictionary<string, string>();
-        private IDataCache cache;
         public Dictionary<string, string> Environments { get { return environments; } }
 
         public T New()
@@ -49,7 +42,7 @@ namespace Trading.Common.Data
             if (!CanLogin)
                 throw new Exception("Cannot login to database.");
 
-            var access = new T {DataCache = cache};
+            var access = new T();
             try
             {
                 access.Connect(CreateConnectionString());

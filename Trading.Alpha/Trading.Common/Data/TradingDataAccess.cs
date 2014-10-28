@@ -12,8 +12,6 @@ namespace Trading.Common.Data
     {
         protected static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public IDataCache DataCache { get; set; }
-
         protected bool isRollback;
 
         protected MySqlConnection database;

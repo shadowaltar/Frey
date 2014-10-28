@@ -8,7 +8,6 @@ namespace Trading.DataDownload
     {
         protected override void Bind()
         {
-            BindSingleton<IDataCache, DataCache>();
             Load<Module>();
         }
     }

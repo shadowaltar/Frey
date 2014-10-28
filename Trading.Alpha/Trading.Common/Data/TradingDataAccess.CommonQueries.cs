@@ -8,29 +8,6 @@ namespace Trading.Common.Data
 {
     public partial class TradingDataAccess
     {
-        public IEnumerable<Security> EnumerateAllSecurities(Dictionary<long, Market> markets)
-        {
-            return YieldQuery(r =>
-              {
-                  Market mkt;
-                  markets.TryGetValue(r["MarketId"].ConvertLong(), out mkt);
-                  var security = new Security
-                  {
-                      Id = r["Id"].ConvertLong(),
-                      Code = r["Symbol"].ConvertString(),
-                      Name = r["Name"].ConvertString(),
-                      Type = r["Type"].ConvertString(),
-                      Inception = r["InceptionDate"].ConvertDate(),
-                      LotSize = r["Lot"].ConvertInt(),
-                      Currency = r["Currency"].ConvertString(),
-                      IsShortSellable = r["AllowShortSell"].ConvertInt().From01(),
-                      Market = mkt,
-                  };
-                  DataCache.SecurityCache[security.Id] = security;
-                  return security;
-              }, "Select * from References.Securities ORDER BY MarketId, Symbol");
-        }
-
         public IEnumerable<Price> EnumeratePrices(Security security, TimeSpan span, DateTime from, DateTime to)
         {
             return YieldQuery(r => new Price

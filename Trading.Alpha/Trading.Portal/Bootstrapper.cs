@@ -18,8 +18,6 @@ namespace Trading.Portal
             Bind<IPortalViewModel, PortalViewModel>();
             Bind<IOptionsFlyoutViewModel, OptionsFlyoutViewModel>();
             BindSingleton<ISettings, InfrastructureSettings>();
-
-            BindSingleton<IDataCache, DataCache>();
         }
     }
 }

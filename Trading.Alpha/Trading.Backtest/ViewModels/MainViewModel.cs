@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
+using Caliburn.Micro;
+using MahApps.Metro.Controls.Dialogs;
 using MySql.Data.MySqlClient;
 using Trading.Backtest.Data;
 using Trading.Common.Data;
@@ -18,6 +21,10 @@ namespace Trading.Backtest.ViewModels
             : base(dataAccessFactory, settings)
         {
             DataAccessFactory = dataAccessFactory;
+            StartYears = new BindableCollection<int>(Enumerable.Range(2000, 15));
+            EndYears = new BindableCollection<int>(Enumerable.Range(2000, 15));
+            SelectedStartYear = 2004;
+            SelectedEndYear = 2014;
         }
 
         public override string ProgramName
@@ -25,37 +32,22 @@ namespace Trading.Backtest.ViewModels
             get { return "Backtest"; }
         }
 
-        public async void Test()
-        {
-            var startTime = new DateTime(2004, 1, 1);
-            var endTime = new DateTime(2014, 1, 1);
-            var currentTime = startTime;
-            var periodEndDate = startTime.AddYears(1);
+        private ProgressDialogController progressIndicator;
 
-            var results = new Dictionary<DateTime, Dictionary<int, double>>();
-            // day looping
-            await Task.Run(() =>
-            {
-                using (var access = DataAccessFactory.New())
-                using (var cmd = new MySqlCommand())
-                {
-                    while (currentTime < endTime)
-                    {
-                        using (ReportTime.Start("1Y time: {0}"))
-                        {
-                            var volumes = PrepareSecurities(cmd, access, currentTime, periodEndDate);
-                            foreach (var p in volumes)
-                            {
-                                results[p.Key] = p.Value;
-                            }
-                        }
-                        // to the next dates
-                        currentTime = periodEndDate.AddDays(1);
-                        periodEndDate = currentTime.AddYears(1);
-                    }
-                }
-            });
-            Console.WriteLine(results.Count);
+        public BindableCollection<int> StartYears { get; private set; }
+        public BindableCollection<int> EndYears { get; private set; }
+
+        private int selectedStartYear;
+        public int SelectedStartYear { get { return selectedStartYear; } set { SetNotify(ref selectedStartYear, value); } }
+        private int selectedEndYear;
+        public int SelectedEndYear { get { return selectedEndYear; } set { SetNotify(ref selectedEndYear, value); } }
+
+        public async void Initialize()
+        {
+            // get prices 
+            progressIndicator = await ViewService.ShowProgress("Loading data", "", true);
+            await Task.WhenAll(GetSecurityVolumeInfo(), GetAllSecurities());
+            await progressIndicator.Stop();
         }
     }
 

@@ -118,7 +118,6 @@
     <Compile Include="BootstrapperBase.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Data\TradingDataAccess.Admin.cs" />
-    <Compile Include="Data\DataCache.cs" />
     <Compile Include="Data\TradingDataAccess.CommonQueries.cs" />
     <Compile Include="Data\DataAccess.cs" />
     <Compile Include="Data\TradingDataAccess.cs" />

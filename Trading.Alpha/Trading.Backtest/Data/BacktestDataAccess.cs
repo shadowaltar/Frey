@@ -1,7 +1,9 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using MySql.Data.MySqlClient;
 using Trading.Common.Data;
 using System;
+using Trading.Common.Entities;
 using Trading.Common.Utils;
 
 namespace Trading.Backtest.Data

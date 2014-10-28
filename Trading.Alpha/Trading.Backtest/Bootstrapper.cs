@@ -8,7 +8,6 @@ namespace Trading.Backtest
     {
         protected override void Bind()
         {
-            BindSingleton<IDataCache, DataCache>();
             Load<Module>();
         }
     }
