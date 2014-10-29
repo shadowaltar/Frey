@@ -48,13 +48,15 @@ namespace Trading.Backtest.ViewModels
             var results = DataCache.SecurityCache;
             return Task.Run(() =>
             {
+                using (ReportTime.Start("Get all securities used {0}"))
                 using (var access = DataAccessFactory.New())
                 {
-
-                    results.AddRange(access.GetAllSecurities());
+                    var secs = access.GetAllSecurities();
+                    foreach (var sec in secs)
+                    {
+                        results[sec.Id] = sec;
+                    }
                 }
-
-                Console.WriteLine(results.Count);
             });
         }
 
@@ -84,6 +86,17 @@ namespace Trading.Backtest.ViewModels
                 ct = t;
                 dict[r["SECID"].ConvertInt()] = r["VOLUME"].ConvertDouble();
             }
+        }
+
+        private DateTime GetStartDateWithData()
+        {
+            var d = new DateTime(SelectedStartYear, 1, 1);
+
+            while (d.DayOfWeek != DayOfWeek.Tuesday)
+                d = d.AddDays(1);
+
+            
+            return d;
         }
     }
 }

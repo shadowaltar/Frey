@@ -21,24 +21,30 @@
                         Content="Initialize" />
                 <ComboBox x:Name="StartYears"
                           Width="120"
-                          Margin="10,79,0,0"
+                          Margin="168,10,0,0"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top" />
-                <TextBlock Margin="10,44,0,0"
+                <TextBlock Margin="90,10,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Text="Start Year"
                            TextWrapping="Wrap" />
                 <ComboBox x:Name="EndYears"
                           Width="120"
-                          Margin="135,79,0,0"
+                          Margin="365,10,0,0"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top" />
-                <TextBlock Margin="135,44,0,0"
+                <TextBlock Margin="293,10,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Text="End Year"
                            TextWrapping="Wrap" />
+                <Button x:Name="Run"
+                        Width="75"
+                        Margin="10,44,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="RUN" />
             </Grid>
         </TabItem>
     </controls:MetroAnimatedTabControl>

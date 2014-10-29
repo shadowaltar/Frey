@@ -100,5 +100,10 @@ namespace Trading.Backtest.Data
                 result.Load(reader);
             return result;
         }
+
+        public MySqlCommand GetCommonCommand()
+        {
+            return new MySqlCommand { Connection = database };
+        }
     }
 }

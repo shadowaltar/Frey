@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Threading.Tasks;
 using Caliburn.Micro;
 using MahApps.Metro.Controls.Dialogs;
+using System.Linq;
+using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Trading.Backtest.Data;
 using Trading.Common.Data;
-using Trading.Common.Entities;
 using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
@@ -27,10 +24,7 @@ namespace Trading.Backtest.ViewModels
             SelectedEndYear = 2014;
         }
 
-        public override string ProgramName
-        {
-            get { return "Backtest"; }
-        }
+        public override string ProgramName { get { return "Backtest"; } }
 
         private ProgressDialogController progressIndicator;
 
@@ -48,6 +42,20 @@ namespace Trading.Backtest.ViewModels
             progressIndicator = await ViewService.ShowProgress("Loading data", "", true);
             await Task.WhenAll(GetSecurityVolumeInfo(), GetAllSecurities());
             await progressIndicator.Stop();
+        }
+
+        private BacktestDataAccess commonAccess;
+        private MySqlCommand commonCommand;
+        public async void Run()
+        {
+            if (commonAccess == null)
+                commonAccess = DataAccessFactory.New();
+            if (commonCommand == null)
+                commonCommand = commonAccess.GetCommonCommand();
+
+            var startDate = GetStartDateWithData();
+
+            var results = commonAccess.GetTwoDaysTopVolumes(startDate);
         }
     }
 
