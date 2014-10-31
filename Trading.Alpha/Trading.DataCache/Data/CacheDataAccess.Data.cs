@@ -19,8 +19,8 @@ namespace Trading.DataCache.Data
         {
             var sb = new StringBuilder();
             sb.Append("INSERT INTO PRICES (SECID,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ADJCLOSE) VALUES (")
-                .Append(securityId).Append(",'")
-                .Append(time.IsoFormat()).Append("',")
+                .Append(securityId).Append(',')
+                .Append(time.Year * 10000 + time.Month * 100 + time.Day).Append(',')
                 .Append(open).Append(',')
                 .Append(high).Append(',')
                 .Append(low).Append(',')

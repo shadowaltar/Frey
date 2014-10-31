@@ -53,9 +53,19 @@ namespace Trading.Backtest.ViewModels
             if (commonCommand == null)
                 commonCommand = commonAccess.GetCommonCommand();
 
-            var startDate = GetStartDateWithData();
+            using (ReportTime.Start())
+            {
+                var startDate = GetStartDateWithData();
 
-            var results = commonAccess.GetTwoDaysTopVolumes(startDate);
+                var results = commonAccess.GetOneYearPriceData(2000);
+            }
+
+            using (ReportTime.Start())
+            {
+                var startDate = GetStartDateWithData();
+
+                var results = commonAccess.GetOneYearPriceData(2001);
+            }
         }
     }
 

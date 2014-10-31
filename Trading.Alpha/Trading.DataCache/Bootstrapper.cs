@@ -9,7 +9,6 @@ namespace Trading.DataCache
     {
         protected override void Bind()
         {
-            Bind<IDataCache, Common.Data.DataCache>();
             Load<Module>();
         }
     }

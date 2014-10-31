@@ -43,24 +43,25 @@ namespace Trading.Backtest.Data
             }
         }
 
-        public Dictionary<long, double[]> GetTwoDaysTopVolumes(DateTime date)
+        public Dictionary<DateTime, Dictionary<long, Price>> GetOneYearPriceData(int year)
         {
-            var results = new Dictionary<long, double[]>();
+            var start = new DateTime(year, 1, 1);
+            var end = new DateTime(year, 12, 31);
+            var results = new Dictionary<DateTime, Dictionary<long, Price>>();
             MySqlCommand cmd;
             if (!preparedCommands.TryGetValue("GetOneDayTopVolumes", out cmd))
             {
-                cmd = new MySqlCommand("SELECT SECID, CLOSE, VOLUME FROM PRICES P WHERE TIME = @tt AND VOLUME > @Vol AND CLOSE > @minClose");
-                cmd.Parameters.Add("@tt", MySqlDbType.DateTime);
-                cmd.Parameters.Add("@Vol", MySqlDbType.Int32);
-                cmd.Parameters.Add("@minClose", MySqlDbType.Double);
+                cmd = new MySqlCommand("SELECT SECID, TIME, OPEN, HIGH, LOW, CLOSE, VOLUME FROM PRICES P WHERE TIME >= @TStart AND TIME <= @TEnd");
+                cmd.Parameters.Add("@TStart", MySqlDbType.DateTime);
+                cmd.Parameters.Add("@TEnd", MySqlDbType.DateTime);
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = database;
+                cmd.CommandTimeout = 30000;
                 cmd.Prepare();
                 preparedCommands["GetOneDayTopVolumes"] = cmd;
             }
-            cmd.Parameters["@tt"].Value = date;
-            cmd.Parameters["@Vol"].Value = 200000;
-            cmd.Parameters["@minClose"].Value = 20;
+            cmd.Parameters["@TStart"].Value = start;
+            cmd.Parameters["@TEnd"].Value = end;
 
             var dt = new DataTable();
             using (var da = new MySqlDataAdapter(cmd))
@@ -69,10 +70,24 @@ namespace Trading.Backtest.Data
             }
             foreach (var r in dt.AsEnumerable())
             {
-                var array = new double[2];
-                results[r[0].ConvertLong()] = array;
-                array[0] = r[1].ConvertDouble();
-                array[1] = r[2].ConvertDouble();
+                var id = r[0].ConvertLong();
+                var time = r["TIME"].ConvertDate();
+                Dictionary<long, Price> ps;
+                if (!results.TryGetValue(time, out ps))
+                {
+                    results[time] = new Dictionary<long, Price>();
+                }
+                ps = results[time];
+                var p = new Price
+                {
+                    At = r["TIME"].ConvertDate(),
+                    Open = r["OPEN"].ConvertDecimal(),
+                    High = r["HIGH"].ConvertDecimal(),
+                    Low = r["LOW"].ConvertDecimal(),
+                    Close = r["CLOSE"].ConvertDecimal(),
+                    Volume = r["VOLUME"].ConvertLong(),
+                };
+                ps[id] = p;
             }
             return results;
         }
