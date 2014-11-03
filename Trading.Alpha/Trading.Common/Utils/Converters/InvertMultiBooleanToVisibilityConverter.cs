@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Trading.Common.Utils
+namespace Trading.Common.Utils.Converters
 {
     public class InvertMultiBooleanToVisibilityConverter : IMultiValueConverter
     {

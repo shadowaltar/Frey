@@ -80,10 +80,24 @@ namespace Trading.Common.Utils
             return string.IsNullOrWhiteSpace(s);
         }
 
-        public static DateTime GetMonday(this DateTime date)
+        public static DateTime Next(this DateTime date, DayOfWeek day)
         {
+            if (date.DayOfWeek == day)
+                return date.Date.AddDays(7);
+
             var result = date.Date;
-            while (result.DayOfWeek != DayOfWeek.Monday)
+            while (result.DayOfWeek != day)
+                result = result.AddDays(1);
+            return result;
+        }
+
+        public static DateTime Previous(this DateTime date, DayOfWeek day)
+        {
+            if (date.DayOfWeek == day)
+                return date.Date.AddDays(-7);
+
+            var result = date.Date;
+            while (result.DayOfWeek != day)
                 result = result.AddDays(-1);
             return result;
         }
@@ -260,22 +274,19 @@ namespace Trading.Common.Utils
                 DateTime.ParseExact(value.ToString(), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
 
+        public static int ToDateInt(this DateTime time)
+        {
+            return time.Year * 10000 + time.Month * 100 + time.Day;
+        }
+
+        public static double ToTimeDouble(this DateTime time)
+        {
+            return time.Year * 10000 + time.Month * 100 + time.Day + time.Hour / 100 + time.Minute / 10000 + time.Second / 1000000;
+        }
+
         public static T ParseEnum<T>(this object value)
         {
             return (T)Enum.Parse(typeof(T), value.ConvertString());
-        }
-
-        /// <summary>
-        /// Convert the input object to a string (trimmed), then process the string by the
-        /// <see cref="convertingFunction"/>. 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <param name="convertingFunction"></param>
-        /// <returns></returns>
-        public static T Process<T>(this object value, Func<string, T> convertingFunction)
-        {
-            return convertingFunction(value.ConvertString().Trim());
         }
 
         public static bool StartsWithIgnoreCase(this string value, string header)
@@ -386,24 +397,6 @@ namespace Trading.Common.Utils
                     }
                 }
             }
-        }
-
-        public async static Task<T> TimeoutAfter<T>(this Task<T> task, int delay)
-        {
-            await Task.WhenAny(task, Task.Delay(delay));
-
-            if (!task.IsCompleted)
-                throw new TimeoutException("Timeout (ms) hit: " + delay);
-
-            return await task;
-        }
-
-        public async static Task TimeoutAfter(this Task task, int delay)
-        {
-            await Task.WhenAny(task, Task.Delay(delay));
-
-            if (!task.IsCompleted)
-                throw new TimeoutException("Timeout (ms) hit: " + delay);
         }
 
         /// <summary>
@@ -573,6 +566,11 @@ namespace Trading.Common.Utils
             {
                 yield return converter(row);
             }
+        }
+
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> items)
+        {
+            return new HashSet<T>(items);
         }
     }
 }

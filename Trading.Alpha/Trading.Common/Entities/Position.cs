@@ -1,13 +1,19 @@
 ﻿using System;
+using Trading.Common.Utils;
 
 namespace Trading.Common.Entities
 {
     public class Position
     {
         public Security Security { get; set; }
-        public decimal Price { get; set; }
-        public decimal Quantity { get; set; }
-        public decimal Cost { get { return Price * Quantity; } }
+        public double Price { get; set; }
+        public double Quantity { get; set; }
+        public double Cost { get { return Price * Quantity; } }
         public DateTime Time { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("[{3}] {0}, ${1} x {2}", Security.Code, Price, Quantity, Time.IsoFormat());
+        }
     }
 }

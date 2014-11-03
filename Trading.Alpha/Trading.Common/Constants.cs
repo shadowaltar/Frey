@@ -18,5 +18,6 @@ namespace Trading.Common
         public static string CurrentDrive { get { return Path.GetPathRoot(Assembly.GetExecutingAssembly().Location); } }
         public static string PricesDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\Prices"); } }
         public static string SecurityListDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\SecurityList"); } }
+        public static string LogsDirectory { get { return Path.Combine(CurrentDrive, @"Trading\LogFiles"); } }
     }
 }

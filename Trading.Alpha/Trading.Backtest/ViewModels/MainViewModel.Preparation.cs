@@ -1,46 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
 using Trading.Backtest.Data;
+using Trading.Common.Entities;
 using Trading.Common.Utils;
 
 namespace Trading.Backtest.ViewModels
 {
     public partial class MainViewModel
     {
-        private Task GetSecurityVolumeInfo()
+        public async void Initialize()
         {
-            var results = DataCache.VolumeCache;
-            var startTime = new DateTime(SelectedStartYear, 1, 1);
-            var endTime = new DateTime(SelectedEndYear < SelectedStartYear ? SelectedStartYear : SelectedEndYear, 12, 31);
-            var currentTime = startTime;
-            var periodEndDate = startTime.AddYears(1);
-            return Task.Run(() =>
-            {
-                using (var access = DataAccessFactory.New())
-                using (var cmd = new MySqlCommand())
-                {
-                    while (currentTime < endTime)
-                    {
-                        using (ReportTime.Start("1Y time: {0}"))
-                        {
-                            var volumes = GetSecurityVolumeInfo(cmd, access, currentTime, periodEndDate);
-                            foreach (var pair in volumes)
-                            {
-                                results[pair.Key] = pair.Value;
-                            }
-                            progressIndicator.SetMessage("Year " + currentTime.Year + " is loaded.");
-                        }
-                        // to the next dates
-                        currentTime = periodEndDate.AddDays(1);
-                        periodEndDate = currentTime.AddYears(1);
-                    }
-                }
+            core = new Core { PortfolioAmount = 10000, Positions = new HashSet<Position>() };
+            endOfData = DateTime.MinValue;
+            testStart = new DateTime(SelectedStartYear, 1, 1);
+            testEnd = new DateTime(SelectedEndYear, 12, 31);
 
-                Console.WriteLine(results.Count);
-            });
+            // get prices 
+            progressIndicator = await ViewService.ShowProgress("Loading", "Loading Securities..", true);
+            await GetAllSecurities();
+
+            progressIndicator.SetMessage("Loading Prices..");
+            // get prices from db
+            await GetPrices();
+            await progressIndicator.Stop();
         }
 
         private Task GetAllSecurities()
@@ -60,43 +43,52 @@ namespace Trading.Backtest.ViewModels
             });
         }
 
-        /// <summary>
-        /// c1: the 1000 biggest volume as sec universe.
-        /// c2: check secs every tuesday.
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerable<KeyValuePair<DateTime, Dictionary<int, double>>> GetSecurityVolumeInfo(MySqlCommand cmd,
-            BacktestDataAccess access, DateTime time, DateTime time2)
+        private Task GetPrices()
         {
-            DataTable dt = access.QueryEx(cmd,
-                @"SELECT SECID, date_format(time, '%Y-%m-%d') TIME, VOLUME FROM PRICES P WHERE TIME >= '" + time.IsoFormat()
-                + @"' AND TIME <= '" + time2.IsoFormat() + "' AND VOLUME > 200000");
-
-            var ct = dt.FirstOrDefault()["TIME"].ToString();
-            var dict = new Dictionary<int, double>();
-            foreach (DataRow r in dt.Rows)
+            return Task.Run(() =>
             {
-                var t = r["TIME"].ToString();
-                if (ct != t && dict.Count > 0)
+                if (commonAccess == null)
+                    commonAccess = DataAccessFactory.New();
+                if (commonCommand == null)
+                    commonCommand = commonAccess.GetCommonCommand();
+
+                // make list of dicts first
+                prices = DataCache.PriceCache;
+                prices.Clear();
+
+                var date = testStart;
+                while (date < testEnd)
                 {
-                    yield return new KeyValuePair<DateTime, Dictionary<int, double>>(ct.ConvertDate(), dict);
-                    dict = new Dictionary<int, double>();
+                    if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                        prices[date] = new Dictionary<long, Price>();
+                    date = date.AddDays(1);
                 }
 
-                ct = t;
-                dict[r["SECID"].ConvertInt()] = r["VOLUME"].ConvertDouble();
-            }
-        }
+                using (ReportTime.Start())
+                {
+                    for (int year = SelectedStartYear; year <= SelectedEndYear; year++)
+                    {
+                        progressIndicator.SetProgress((double)(year - SelectedStartYear) /
+                                                      (SelectedEndYear - SelectedStartYear));
+                        using (ReportTime.Start(year + " used time: {0}"))
+                        {
+                            foreach (var price in commonAccess.GetOneYearPriceData(year))
+                            {
+                                var secId = price.SecId;
+                                prices[price.At][secId] = price;
+                                if (price.At > endOfData)
+                                    endOfData = price.At;
+                            }
+                        }
+                    }
+                }
 
-        private DateTime GetStartDateWithData()
-        {
-            var d = new DateTime(SelectedStartYear, 1, 1);
 
-            while (d.DayOfWeek != DayOfWeek.Tuesday)
-                d = d.AddDays(1);
-
-            
-            return d;
+                if (commonAccess != null)
+                    commonAccess.Dispose();
+                if (commonCommand != null)
+                    commonCommand.Dispose();
+            });
         }
     }
 }

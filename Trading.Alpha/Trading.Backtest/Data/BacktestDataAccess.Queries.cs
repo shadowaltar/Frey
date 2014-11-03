@@ -43,17 +43,16 @@ namespace Trading.Backtest.Data
             }
         }
 
-        public Dictionary<DateTime, Dictionary<long, Price>> GetOneYearPriceData(int year)
+        public IEnumerable<Price> GetOneYearPriceData(int year)
         {
-            var start = new DateTime(year, 1, 1);
-            var end = new DateTime(year, 12, 31);
-            var results = new Dictionary<DateTime, Dictionary<long, Price>>();
+            var start = new DateTime(year, 1, 1).ToDateInt();
+            var end = new DateTime(year, 12, 31).ToDateInt();
             MySqlCommand cmd;
             if (!preparedCommands.TryGetValue("GetOneDayTopVolumes", out cmd))
             {
-                cmd = new MySqlCommand("SELECT SECID, TIME, OPEN, HIGH, LOW, CLOSE, VOLUME FROM PRICES P WHERE TIME >= @TStart AND TIME <= @TEnd");
-                cmd.Parameters.Add("@TStart", MySqlDbType.DateTime);
-                cmd.Parameters.Add("@TEnd", MySqlDbType.DateTime);
+                cmd = new MySqlCommand("SELECT SECID, TIME, HIGH, LOW, CLOSE, ADJCLOSE, VOLUME FROM PRICES P WHERE TIME >= @TStart AND TIME <= @TEnd AND VOLUME > 0");
+                cmd.Parameters.Add("@TStart", MySqlDbType.Int32);
+                cmd.Parameters.Add("@TEnd", MySqlDbType.Int32);
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = database;
                 cmd.CommandTimeout = 30000;
@@ -68,28 +67,17 @@ namespace Trading.Backtest.Data
             {
                 da.Fill(dt);
             }
-            foreach (var r in dt.AsEnumerable())
+            return dt.To(r => new Price
             {
-                var id = r[0].ConvertLong();
-                var time = r["TIME"].ConvertDate();
-                Dictionary<long, Price> ps;
-                if (!results.TryGetValue(time, out ps))
-                {
-                    results[time] = new Dictionary<long, Price>();
-                }
-                ps = results[time];
-                var p = new Price
-                {
-                    At = r["TIME"].ConvertDate(),
-                    Open = r["OPEN"].ConvertDecimal(),
-                    High = r["HIGH"].ConvertDecimal(),
-                    Low = r["LOW"].ConvertDecimal(),
-                    Close = r["CLOSE"].ConvertDecimal(),
-                    Volume = r["VOLUME"].ConvertLong(),
-                };
-                ps[id] = p;
-            }
-            return results;
+                SecId = r[0].ConvertLong(),
+                At = r["TIME"].ConvertDate("yyyyMMdd"),
+                Open = double.NaN,
+                High = r["HIGH"].ConvertDouble(),
+                Low = r["LOW"].ConvertDouble(),
+                Close = r["CLOSE"].ConvertDouble(),
+                AdjClose = r["ADJCLOSE"].ConvertDouble(),
+                Volume = r["VOLUME"].ConvertLong(),
+            });
         }
     }
 }

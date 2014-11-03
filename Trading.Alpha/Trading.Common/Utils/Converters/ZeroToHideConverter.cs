@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Trading.Common.Utils
+namespace Trading.Common.Utils.Converters
 {
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class ZeroToHideConverter : IValueConverter

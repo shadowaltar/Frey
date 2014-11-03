@@ -88,12 +88,6 @@ namespace Trading.DataDownload.ViewModels
             return results;
         }
 
-        public void DownloadThisWeek()
-        {
-            var monday = DateTime.Today.GetMonday();
-            Download(monday);
-        }
-
         public void DownloadWholeHistory()
         {
             var start = DateTime.Parse("1900-01-01");
