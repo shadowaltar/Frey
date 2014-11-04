@@ -8,7 +8,7 @@ namespace Trading.WorkExtractor
     {
         protected override void Bind()
         {
-            BindSingleton<IDataCache, DataCache>();
+           // BindSingleton<IDataCache, DataCache>();
             Load<Module>();
         }
     }

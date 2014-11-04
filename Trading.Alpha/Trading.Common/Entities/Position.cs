@@ -8,7 +8,7 @@ namespace Trading.Common.Entities
         public Security Security { get; set; }
         public double Price { get; set; }
         public double Quantity { get; set; }
-        public double Cost { get { return Price * Quantity; } }
+        public double Value { get { return Price * Quantity; } }
         public DateTime Time { get; set; }
 
         public override string ToString()

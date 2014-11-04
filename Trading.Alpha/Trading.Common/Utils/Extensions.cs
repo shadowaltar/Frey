@@ -281,7 +281,7 @@ namespace Trading.Common.Utils
 
         public static double ToTimeDouble(this DateTime time)
         {
-            return time.Year * 10000 + time.Month * 100 + time.Day + time.Hour / 100 + time.Minute / 10000 + time.Second / 1000000;
+            return time.Year * 10000 + time.Month * 100 + time.Day + (double)time.Hour / 100 + (double)time.Minute / 10000 + (double)time.Second / 1000000;
         }
 
         public static T ParseEnum<T>(this object value)

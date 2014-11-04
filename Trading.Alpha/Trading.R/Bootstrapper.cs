@@ -8,7 +8,6 @@ namespace Trading.R
     {
         protected override void Bind()
         {
-            BindSingleton<IDataCache, DataCache>();
             Load<Module>();
         }
     }

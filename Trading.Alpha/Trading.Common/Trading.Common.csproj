@@ -82,6 +82,9 @@
     <Reference Include="Caliburn.Micro.Platform">
       <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.2.0.3\lib\net40-client\log4net.dll</HintPath>
@@ -146,6 +149,7 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Entry.cs" />
     <Compile Include="Entities\Decorators\IEffectiveTimeRange.cs" />
+    <Compile Include="Entities\ExitType.cs" />
     <Compile Include="Entities\Index.cs" />
     <Compile Include="Entities\Location.cs" />
     <Compile Include="Entities\Market.cs" />
@@ -162,9 +166,11 @@
     <Compile Include="Entities\Security.cs" />
     <Compile Include="Entities\Stock.cs" />
     <Compile Include="Entities\TimeValue.cs" />
+    <Compile Include="Entities\Trade.cs" />
     <Compile Include="Entities\VolumeValue.cs" />
     <Compile Include="ModuleBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reporting\EpplusExtensions.cs" />
     <Compile Include="SharedSettings\InfrastructureSettings.cs" />
     <Compile Include="SharedSettings\ISettings.cs" />
     <Compile Include="Technicals\Entities\MacdPoint.cs" />

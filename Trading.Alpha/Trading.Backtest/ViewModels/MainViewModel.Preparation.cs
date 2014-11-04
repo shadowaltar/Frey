@@ -11,7 +11,7 @@ namespace Trading.Backtest.ViewModels
     {
         public async void Initialize()
         {
-            core = new Core { PortfolioAmount = 10000, Positions = new HashSet<Position>() };
+            core = new Core (10000);
             endOfData = DateTime.MinValue;
             testStart = new DateTime(SelectedStartYear, 1, 1);
             testEnd = new DateTime(SelectedEndYear, 12, 31);
@@ -57,7 +57,7 @@ namespace Trading.Backtest.ViewModels
                 prices.Clear();
 
                 var date = testStart;
-                while (date < testEnd)
+                while (date <= testEnd)
                 {
                     if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
                         prices[date] = new Dictionary<long, Price>();
@@ -68,8 +68,7 @@ namespace Trading.Backtest.ViewModels
                 {
                     for (int year = SelectedStartYear; year <= SelectedEndYear; year++)
                     {
-                        progressIndicator.SetProgress((double)(year - SelectedStartYear) /
-                                                      (SelectedEndYear - SelectedStartYear));
+                        progressIndicator.SetMessage("Loading " + year);
                         using (ReportTime.Start(year + " used time: {0}"))
                         {
                             foreach (var price in commonAccess.GetOneYearPriceData(year))

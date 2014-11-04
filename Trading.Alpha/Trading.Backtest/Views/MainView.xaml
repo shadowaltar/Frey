@@ -45,6 +45,16 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Content="RUN" />
+             </Grid>
+        </TabItem>
+        <TabItem Header="MISC TEST">
+            <Grid>
+                <Button x:Name="TestExcel"
+                        Width="130"
+                        Margin="10,10,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Test Excel Reporter" />
             </Grid>
         </TabItem>
     </controls:MetroAnimatedTabControl>
