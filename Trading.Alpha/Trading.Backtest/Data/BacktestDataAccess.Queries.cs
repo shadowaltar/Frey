@@ -50,7 +50,8 @@ namespace Trading.Backtest.Data
             MySqlCommand cmd;
             if (!preparedCommands.TryGetValue("GetOneDayTopVolumes", out cmd))
             {
-                cmd = new MySqlCommand("SELECT SECID, TIME, HIGH, LOW, CLOSE, ADJCLOSE, VOLUME FROM PRICES P WHERE TIME >= @TStart AND TIME <= @TEnd AND VOLUME > 0");
+                cmd = new MySqlCommand("SELECT SECID, TIME, HIGH, LOW, CLOSE, ADJCLOSE, VOLUME FROM PRICES P WHERE TIME >= @TStart" +
+                                       " AND TIME <= @TEnd AND VOLUME > 0 AND CLOSE > 2 AND ADJCLOSE > 2");
                 cmd.Parameters.Add("@TStart", MySqlDbType.Int32);
                 cmd.Parameters.Add("@TEnd", MySqlDbType.Int32);
                 cmd.CommandType = CommandType.Text;

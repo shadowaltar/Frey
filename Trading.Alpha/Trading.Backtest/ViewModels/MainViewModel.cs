@@ -44,23 +44,16 @@ namespace Trading.Backtest.ViewModels
             core.Finish();
             core.CalculateStatistics();
 
-            var resultPath = Path.Combine(Constants.LogsDirectory,
-                "Trades[" + DateTime.Now.ToTimeDouble() + "].csv");
-            using (var writer = new StreamWriter(resultPath))
-            using (var csv = new CsvWriter(writer))
-            {
-                csv.WriteRecords(core.Trades.Select(t => new TradeReportEntry(t)));
-            }
 
-            Process.Start(resultPath);
-
-            TestExcel();
+            var reporter = new BacktestReport();
+            var path = reporter.Create(core);
+            Process.Start(path);
         }
 
         public void TestExcel()
         {
-            var reporter = new BacktestReport();
-            reporter.Create(core);
+            //var reporter = new BacktestReport(); 
+            //reporter.Create(core);
         }
     }
 
