@@ -22,13 +22,16 @@ namespace Trading.Backtest.Reporting
             var marginTop = 2;
             sheet.SetValue(1, 1, "Time");
             sheet.SetValue(1, 2, "Equity");
-            sheet.SetValue(1, 3, "S&P500");
+            sheet.SetValue(1, 3, "S&P 500 Normalized");
+            sheet.SetValue(1, 4, "S&P 500");
+            var firstSpyVal = core.PortfolioStatuses[0].Benchmark;
             for (int i = 0; i < core.PortfolioStatuses.Count; i++)
             {
                 var status = core.PortfolioStatuses[i];
                 sheet.SetValue(i + marginTop, 1, status.Time.IsoFormat());
                 sheet.SetValue(i + marginTop, 2, status.Equity);
-                sheet.SetValue(i + marginTop, 3, status.Benchmark);
+                sheet.SetValue(i + marginTop, 3, status.Benchmark / firstSpyVal * core.InitialPortfolioEquity);
+                sheet.SetValue(i + marginTop, 4, status.Benchmark);
             }
 
             sheet = xls.Sheet("Trades");
@@ -61,7 +64,7 @@ namespace Trading.Backtest.Reporting
                 var historicalPrices = core.PositionPriceHistory[id];
                 var d = trade.EnterTime.ConvertDate("yyyyMMdd");
                 d = d.AddDays(-7);
-                for (int k = 0; k < 14; k++) // two weeks 
+                for (int k = 0; k < 10; k++) // two weeks 
                 {
                     double val;
                     if (historicalPrices.TryGetValue(d, out val))

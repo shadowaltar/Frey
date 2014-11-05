@@ -80,6 +80,11 @@ namespace Trading.Common.Utils
             return string.IsNullOrWhiteSpace(s);
         }
 
+        public static bool IsWeekend(this DateTime date)
+        {
+            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+        }
+
         public static DateTime Next(this DateTime date, DayOfWeek day)
         {
             if (date.DayOfWeek == day)

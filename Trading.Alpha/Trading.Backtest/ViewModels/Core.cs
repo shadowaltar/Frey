@@ -143,7 +143,7 @@ namespace Trading.Backtest.ViewModels
                 Dictionary<DateTime, double> pricesOfSecurity;
 
                 t = t.AddDays(-7);
-                for (int i = 0; i < 14; i++) // for prev&next week prices
+                for (int i = 0; i < 10; i++) // for prev&next week prices
                 {
                     if (DataCache.PriceCache.TryGetValue(t, out pricesOfDay) && pricesOfDay.Count != 0)
                     {
@@ -156,7 +156,8 @@ namespace Trading.Backtest.ViewModels
                             positionPriceHistory[sid][t] = pricesOfDay[sid].AdjClose;
                         }
                     }
-                    t = t.AddDays(1);
+                    while (t.IsWeekend())
+                        t = t.AddDays(1);
                 }
             }
 
