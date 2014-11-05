@@ -9,28 +9,28 @@ namespace Trading.Backtest.Reporting
         {
             SecurityCode = trade.Security.Code;
             SecurityName = trade.Security.Name;
-            EnterTime = trade.EnterTime.IsoFormatDateTime();
-            ExitTime = trade.ExitTime.IsoFormatDateTime();
-            EnterPrice = trade.EnterPrice.ToString("N2");
-            ExitPrice = trade.ExitPrice.ToString("N2");
-            EnterValue = (trade.EnterPrice * trade.Quantity).ToString("N2");
-            ExitValue = (trade.ExitPrice * trade.Quantity).ToString("N2");
-            Quantity = trade.Quantity.ToString("N0");
-            Return = trade.Return.ToString("N6");
-            PnL = trade.PnL.ToString("N6");
+            EnterTime = trade.EnterTime.ToDateInt();
+            ExitTime = trade.ExitTime.ToDateInt();
+            EnterPrice = trade.EnterPrice;
+            ExitPrice = trade.ExitPrice;
+            EnterValue = trade.EnterPrice * trade.Quantity;
+            ExitValue = trade.ExitPrice * trade.Quantity;
+            Quantity = trade.Quantity;
+            Return = trade.Return;
+            PnL = trade.PnL;
         }
 
         public string SecurityCode { get; set; }
         public string SecurityName { get; set; }
-        public string EnterTime { get; set; }
-        public string ExitTime { get; set; }
-        public string EnterPrice { get; set; }
-        public string ExitPrice { get; set; }
-        public string EnterValue { get; set; }
-        public string ExitValue { get; set; }
-        public string Quantity { get; set; }
-        public string Return { get; set; }
-        public string PnL { get; set; }
+        public int EnterTime { get; set; }
+        public int ExitTime { get; set; }
+        public double EnterPrice { get; set; }
+        public double ExitPrice { get; set; }
+        public double EnterValue { get; set; }
+        public double ExitValue { get; set; }
+        public double Quantity { get; set; }
+        public double Return { get; set; }
+        public double PnL { get; set; }
 
         public override string ToString()
         {

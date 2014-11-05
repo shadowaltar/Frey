@@ -22,14 +22,7 @@ namespace Trading.WorkExtractor.ViewModels
         public MainViewModel(IDataAccessFactory<TradingDataAccess> dataAccessFactory, ISettings settings)
             : base(dataAccessFactory, settings)
         {
-            if (!Directory.Exists(Constants.PricesDirectory))
-            {
-                Directory.CreateDirectory(Constants.PricesDirectory);
-            }
-            if (!Directory.Exists(Constants.SecurityListDirectory))
-            {
-                Directory.CreateDirectory(Constants.SecurityListDirectory);
-            }
+            Constants.InitializeDirectories();
         }
 
         public override string ProgramName
@@ -42,6 +35,33 @@ namespace Trading.WorkExtractor.ViewModels
         {
             get { return resultSqls; }
             set { SetNotify(ref resultSqls, value); }
+        }
+
+        public void TestDateTimeVsInteger()
+        {
+            // prepare
+            var dates = new List<DateTime>();
+            var doubles = new List<double>();
+            var refDate = new DateTime(2000, 1, 1);
+            for (int i = 0; i < 1000000; i++)
+            {
+                var r = StaticRandom.Instance.Next(-20000, 20000);
+                var d = refDate.AddDays(r).AddSeconds(StaticRandom.Instance.Next(-20000, 20000));
+                dates.Add(d);
+                doubles.Add(d.ToTimeDouble());
+            }
+
+            // test
+            using (ReportTime.Start())
+            {
+                dates.Sort();
+            }
+            using (ReportTime.Start())
+            {
+                doubles.Sort();
+            }
+
+            // datetime vs int 160:100; vs double 160:130
         }
 
         public void GenerateIndustrySql()

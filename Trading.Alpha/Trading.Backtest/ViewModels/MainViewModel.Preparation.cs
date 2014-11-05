@@ -11,14 +11,19 @@ namespace Trading.Backtest.ViewModels
     {
         public async void Initialize()
         {
-            core = new Core (10000);
+            core = new Core(10000);
             endOfData = DateTime.MinValue;
             testStart = new DateTime(SelectedStartYear, 1, 1);
             testEnd = new DateTime(SelectedEndYear, 12, 31);
 
             // get prices 
             progressIndicator = await ViewService.ShowProgress("Loading", "Loading Securities..", true);
-            await GetAllSecurities();
+            await Task.WhenAll(GetAllSecurities(), Task.Run(() =>
+            {
+                usNonMarketDates.Clear();
+                using (var access = DataAccessFactory.New())
+                    core.Holidays.AddRange(access.GetUsMarketClosedDates());
+            }));
 
             progressIndicator.SetMessage("Loading Prices..");
             // get prices from db
@@ -29,6 +34,7 @@ namespace Trading.Backtest.ViewModels
         private Task GetAllSecurities()
         {
             var results = DataCache.SecurityCache;
+            var map = DataCache.SecurityCodeMap;
             return Task.Run(() =>
             {
                 using (ReportTime.Start("Get all securities used {0}"))
@@ -38,6 +44,7 @@ namespace Trading.Backtest.ViewModels
                     foreach (var sec in secs)
                     {
                         results[sec.Id] = sec;
+                        map[sec.Code] = sec.Id;
                     }
                 }
             });
@@ -59,13 +66,15 @@ namespace Trading.Backtest.ViewModels
                 var date = testStart;
                 while (date <= testEnd)
                 {
-                    if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                    if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday
+                        && !usNonMarketDates.Contains(date.ToDateInt()))
                         prices[date] = new Dictionary<long, Price>();
                     date = date.AddDays(1);
                 }
 
                 using (ReportTime.Start())
                 {
+                    // both end inclusive
                     for (int year = SelectedStartYear; year <= SelectedEndYear; year++)
                     {
                         progressIndicator.SetMessage("Loading " + year);

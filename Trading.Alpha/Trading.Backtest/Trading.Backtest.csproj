@@ -136,6 +136,7 @@
     <Compile Include="Data\DataCache.cs" />
     <Compile Include="Reporting\PortfolioStatus.cs" />
     <Compile Include="Reporting\PositionReportEntry.cs" />
+    <Compile Include="Reporting\PriceReportEntry.cs" />
     <Compile Include="Reporting\TradeReportEntry.cs" />
     <Compile Include="Reporting\BacktestReport.cs" />
     <Compile Include="ViewModels\Core.cs" />

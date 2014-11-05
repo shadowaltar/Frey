@@ -10,52 +10,106 @@
         <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
         <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
     </controls:MetroWindow.Resources>
-    <controls:MetroAnimatedTabControl>
-        <TabItem Header="BASICS">
-            <Grid>
-                <Button x:Name="Initialize"
-                        Width="75"
-                        Margin="10,10,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Content="Initialize" />
-                <ComboBox x:Name="StartYears"
-                          Width="120"
-                          Margin="168,10,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top" />
-                <TextBlock Margin="90,10,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Text="Start Year"
-                           TextWrapping="Wrap" />
-                <ComboBox x:Name="EndYears"
-                          Width="120"
-                          Margin="365,10,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top" />
-                <TextBlock Margin="293,10,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Text="End Year"
-                           TextWrapping="Wrap" />
-                <Button x:Name="Run"
-                        Width="75"
-                        Margin="10,44,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Content="RUN" />
-             </Grid>
-        </TabItem>
-        <TabItem Header="MISC TEST">
-            <Grid>
-                <Button x:Name="TestExcel"
-                        Width="130"
-                        Margin="10,10,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Content="Test Excel Reporter" />
-            </Grid>
-        </TabItem>
-    </controls:MetroAnimatedTabControl>
+    <Grid>
+        <controls:MetroAnimatedTabControl>
+            <TabItem Header="BASICS">
+                <Grid>
+                    <Button x:Name="Initialize"
+                            Width="75"
+                            Margin="10,10,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Initialize" />
+                    <ComboBox x:Name="StartYears"
+                              Width="120"
+                              Margin="168,10,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top" />
+                    <TextBlock Margin="90,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="Start Year"
+                               TextWrapping="Wrap" />
+                    <ComboBox x:Name="EndYears"
+                              Width="120"
+                              Margin="365,10,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top" />
+                    <TextBlock Margin="293,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="End Year"
+                               TextWrapping="Wrap" />
+                    <Button x:Name="Run"
+                            Width="75"
+                            Margin="10,44,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="RUN" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="MISC TEST">
+                <Grid>
+                    <Button x:Name="TestExcel"
+                            Width="150"
+                            Margin="10,10,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Test Excel Reporter" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="DATA CHECK">
+                <Grid>
+                    <TextBox x:Name="SecurityCodeToCheck"
+                             Width="150"
+                             Margin="10,45,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top" controls:TextboxHelper.SelectAllOnFocus="True"
+                             CharacterCasing="Upper" />
+                    <TextBlock Margin="10,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="TICKER"
+                               TextWrapping="Wrap" />
+                    <TextBox x:Name="DateToCheck"
+                             Width="150"
+                             Margin="165,45,0,0"
+                             HorizontalAlignment="Left" controls:TextboxHelper.SelectAllOnFocus="True"
+                             VerticalAlignment="Top"
+                             Text="20100101" />
+                    <TextBlock Margin="165,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="Date (int)"
+                               TextWrapping="Wrap" />
+                    <TextBox x:Name="DayRangeToCheck"
+                             Width="150"
+                             Margin="320,45,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top" controls:TextboxHelper.SelectAllOnFocus="True"
+                             Text="7" />
+                    <TextBlock Margin="320,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="Date Range (&#x00B1;, +Weekend)"
+                               TextWrapping="Wrap" />
+                    <Button x:Name="GetSecurityInfoWithDateRange"
+                            Margin="475,45,10,0"
+                            VerticalAlignment="Top"
+                            Content="Go" />
+                    <DataGrid x:Name="SecurityToCheckPrices" AutoGenerateColumns="False" Margin="10,82,10,10">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="At" Binding="{Binding At}" />
+                            <DataGridTextColumn Header="O" Binding="{Binding Open}" />
+                            <DataGridTextColumn Header="H" Binding="{Binding High}" />
+                            <DataGridTextColumn Header="L" Binding="{Binding Low}" />
+                            <DataGridTextColumn Header="C" Binding="{Binding Close}" />
+                            <DataGridTextColumn Header="VOL" Binding="{Binding Volume}" />
+                            <DataGridTextColumn Header="AC" Binding="{Binding AdjClose}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </controls:MetroAnimatedTabControl>
+    </Grid>
 </controls:MetroWindow>

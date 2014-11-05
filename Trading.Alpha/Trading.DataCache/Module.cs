@@ -14,6 +14,7 @@ namespace Trading.DataCache
             TryBindSingleton<ISettings, InfrastructureSettings>();
 
             Bind<IMainViewModel>().To<MainViewModel>();
+            Constants.InitializeDirectories();
         }
     }
 }

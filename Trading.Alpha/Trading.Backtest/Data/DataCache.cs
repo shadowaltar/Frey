@@ -11,8 +11,10 @@ namespace Trading.Backtest.Data
 
         private readonly Dictionary<DateTime, Dictionary<long, Price>> priceCache = new Dictionary<DateTime, Dictionary<long, Price>>();
         private readonly Dictionary<long, Security> securityCache = new Dictionary<long, Security>();
+        private readonly Dictionary<string, long> securityCodeMap = new Dictionary<string, long>();
 
         public static Dictionary<DateTime, Dictionary<long, Price>> PriceCache { get { return Instance.priceCache; } }
         public static Dictionary<long, Security> SecurityCache { get { return Instance.securityCache; } }
+        public static Dictionary<string, long> SecurityCodeMap { get { return Instance.securityCodeMap; } }
     }
 }

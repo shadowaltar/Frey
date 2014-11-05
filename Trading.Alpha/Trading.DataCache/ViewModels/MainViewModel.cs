@@ -53,6 +53,46 @@ namespace Trading.DataCache.ViewModels
             }
         }
 
+        public void AddCalendar()
+        {
+            using (var access = DataAccessFactory.NewTransaction())
+            {
+                try
+                {
+                    access.UseSchema(DefaultSchema);
+                    access.CreateCalendarTable();
+
+                    var fileName = Directory.GetFiles(Constants.MiscDirectory, "US_CALENDAR.csv", SearchOption.TopDirectoryOnly)
+                        .FirstOrDefault();
+                    using (new ReportTime("Read " + fileName + " used {0}"))
+                    using (var reader = File.OpenText(fileName))
+                    using (var records = new CsvReader(reader))
+                    {
+                        while (records.Read())
+                        {
+                            try
+                            {
+                                var ctry = records.GetField<string>("COUNTRY");
+                                var date = records.GetField<string>("DATE").ConvertIsoDate().ToDateInt();
+                                var holiday = records.GetField<int>("HOLIDAY");
+                                var mktClose = records.GetField<int>("MARKETCLOSE");
+                                access.AddCalendar(ctry, date, holiday, mktClose);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Warn("Failed to read symbol.", e);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Failed to add CALENDAR.", e);
+                    access.Rollback();
+                }
+            }
+        }
+
         protected void InitializeDatabase()
         {
             using (var access = DataAccessFactory.New())

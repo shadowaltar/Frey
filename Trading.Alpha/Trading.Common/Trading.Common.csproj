@@ -191,6 +191,7 @@
     <Compile Include="Utils\IHasViewService.cs" />
     <Compile Include="Utils\Converters\InvertMultiBooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\Singularizer.cs" />
+    <Compile Include="Utils\StaticRandom.cs" />
     <Compile Include="Utils\ViewService.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\IViewService.cs" />

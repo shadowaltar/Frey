@@ -15,6 +15,12 @@ namespace Trading.DataCache.Data
             Execute(@"INSERT INTO SECURITIES (CODE,NAME) VALUES ('{0}','{1}')", code, name);
         }
 
+        public void AddCalendar(string country, int date, int holiday, int mktClose)
+        {
+            Execute(@"INSERT INTO CALENDAR (COUNTRY,DATE,HOLIDAY,MARKET_CLOSED) VALUES ('{0}',{1},{2},{3})",
+                country, date, holiday, mktClose);
+        }
+
         public void AddPrice(long securityId, DateTime time, double open, double high, double low, double close, double volume, double adjClose)
         {
             var sb = new StringBuilder();

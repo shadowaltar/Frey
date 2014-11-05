@@ -43,6 +43,22 @@ namespace Trading.Backtest.Data
             }
         }
 
+        public IEnumerable<int> GetUsMarketClosedDates()
+        {
+            using (var cmd = new MySqlCommand
+            {
+                CommandText = "SELECT DATE FROM CALENDAR WHERE COUNTRY = 'USA'",
+                Connection = database
+            })
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    yield return reader["DATE"].ConvertInt();
+                }
+            }
+        }
+
         public IEnumerable<Price> GetOneYearPriceData(int year)
         {
             var start = new DateTime(year, 1, 1).ToDateInt();

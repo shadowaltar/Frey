@@ -33,7 +33,7 @@ namespace Trading.Common.Data
         public DataTable Query(string query, params object[] args)
         {
             var result = new DataTable();
-            using (new ReportTime())
+            using (ReportTime.Start())
             using (var cmd = new MySqlCommand())
             {
                 cmd.CommandText = string.Format(query, args);
@@ -47,7 +47,7 @@ namespace Trading.Common.Data
 
         public IEnumerable<T> YieldQuery<T>(Func<IDataReader, T> converter, string query, params object[] args)
         {
-            using (ReportTime.ReportSql(true, GetSqlCount(), query))
+            using (ReportTime.Start())
             using (var cmd = new MySqlCommand())
             {
                 cmd.CommandText = string.Format(query, args);

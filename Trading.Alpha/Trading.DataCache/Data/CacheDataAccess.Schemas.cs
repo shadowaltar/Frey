@@ -23,7 +23,30 @@
     INDEX CODE (`CODE`)
 ) ENGINE=MyISAM"
 );
+        }
 
+        public void CreateCalendarTable()
+        {
+            if (!CheckSchemaExists("TRADING"))
+            {
+                CreateSchema("TRADING");
+            }
+            if (CheckTableExists("TRADING", "CALENDAR"))
+            {
+                DropTable("CALENDAR");
+            }
+            CreateTable(
+@"CREATE TABLE IF NOT EXISTS CALENDAR (
+	ID INT NOT NULL AUTO_INCREMENT,
+	COUNTRY CHAR(3) NOT NULL,
+    DATE INT NOT NULL,
+	HOLIDAY BOOL DEFAULT 0,
+    MARKET_CLOSED BOOL DEFAULT 0,
+    CREATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATE_TIME DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`ID`,`COUNTRY`)
+) ENGINE=MyISAM"
+);
         }
 
         public void CreateSecurityPriceTable()
@@ -73,11 +96,14 @@ PARTITION BY RANGE COLUMNS (TIME)  (
         public void CreatePriceTableConstraint()
         {
             ExecuteLongRun(@"
-CREATE INDEX UQ_PRICE_TIME
-ON PRICES (TIME);");
+CREATE INDEX IX_PRICE_TIME
+ON PRICES (TIME)");
+            ExecuteLongRun(@"
+CREATE INDEX IX_PRICE_SEC
+ON PRICES (SECID)");
             ExecuteLongRun(@"
 CREATE UNIQUE INDEX UQ_PRICE_SEC_TIME
-ON PRICES (SECID, TIME);");
+ON PRICES (SECID, TIME)");
         }
     }
 }

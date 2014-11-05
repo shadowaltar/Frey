@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using OfficeOpenXml;
+using Trading.Backtest.Data;
 using Trading.Backtest.ViewModels;
 using Trading.Common;
 using Trading.Common.Reporting;
@@ -31,17 +32,48 @@ namespace Trading.Backtest.Reporting
             sheet = xls.Sheet("Trades");
             var props = typeof(TradeReportEntry).GetProperties();
             var trades = core.Trades.Select(t => new TradeReportEntry(t)).ToList();
+
+            // headers
             for (int i = 0; i < props.Length; i++)
             {
                 var info = props[i];
                 sheet.SetValue(1, i + 1, info.Name);
-                for (int j = 0; j < trades.Count; j++)
+                var t = info.PropertyType;
+                if (t == typeof(DateTime))
                 {
-                    var trade = trades[j];
-                    sheet.SetValue(j + 2, i + 1, info.GetValue(trade, null));
+                    sheet.Column(i).Style.Numberformat.Format = "yyyymmdd";
                 }
+                //else if (t == typeof(double))
+                //{
+                //    sheet.Column(i).Style.Numberformat.Format = "0.0000";
+                //}
             }
 
+            for (int j = 0; j < trades.Count; j++)
+            {
+                var trade = trades[j];
+                var cols = props.Length;
+                for (int i = 1; i <= cols; i++)
+                {
+                    var info = props[i - 1];
+                    sheet.SetValue(j + 2, i, info.GetValue(trade, null));
+                }
+
+                var id = DataCache.SecurityCodeMap[trade.SecurityCode];
+                var historicalPrices = core.PositionPriceHistory[id];
+                var d = trade.EnterTime.ConvertDate("yyyyMMdd");
+                d = d.AddDays(-7);
+                for (int k = 0; k < 14; k++) // two weeks 
+                {
+                    double val;
+                    if (historicalPrices.TryGetValue(d, out val))
+                    {
+                        sheet.SetValue(j + 2, k + cols + 1, val);
+                    }
+                    d = d.AddDays(1);
+                }
+            }
+            sheet.View.FreezePanes(2, 2);
             xls.Save();
             return resultPath;
         }

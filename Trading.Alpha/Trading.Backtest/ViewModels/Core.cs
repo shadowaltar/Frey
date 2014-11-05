@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using CsvHelper;
 using MathNet.Numerics.Statistics;
 using Trading.Backtest.Data;
 using Trading.Backtest.Reporting;
-using Trading.Common;
 using Trading.Common.Entities;
 using Trading.Common.Utils;
 
@@ -23,9 +19,6 @@ namespace Trading.Backtest.ViewModels
         public double InitialPortfolioEquity { get; set; }
         public double RemainingCash { get; set; }
 
-        public int LongPositionCount { get; private set; }
-        public int ShortPositionCount { get; private set; }
-
         public DateTime TestStart { get; private set; }
         public DateTime TestEnd { get; private set; }
         public DateTime EndOfData { get; private set; }
@@ -34,6 +27,10 @@ namespace Trading.Backtest.ViewModels
         public double AnnualizedReturn { get; private set; }
         public double AnnualizedVolatility { get; private set; }
         public double AnnualizedSharpeRatio { get; private set; }
+        public HashSet<int> Holidays { get; private set; }
+
+        private Dictionary<long, Dictionary<DateTime, double>> positionPriceHistory = new Dictionary<long, Dictionary<DateTime, double>>();
+        public Dictionary<long, Dictionary<DateTime, double>> PositionPriceHistory { get { return positionPriceHistory; } }
 
         public Core(double money)
         {
@@ -43,19 +40,37 @@ namespace Trading.Backtest.ViewModels
             PositionReportItems = new List<PositionReportEntry>();
             PortfolioStatuses = new List<PortfolioStatus>();
             Trades = new List<Trade>();
+            Holidays = new HashSet<int>();
 
             AnnualizedReturn = double.NaN;
             AnnualizedVolatility = double.NaN;
             AnnualizedSharpeRatio = double.NaN;
         }
 
-        public void SetDays(DateTime testStart, DateTime testEnd, DateTime endOfData)
+        public void Initialize(DateTime testStart, DateTime testEnd, DateTime endOfData)
         {
             TestStart = testStart;
             TestEnd = testEnd;
             EndOfData = endOfData;
             CurrentDate = TestStart.Next(DayOfWeek.Tuesday).Next(DayOfWeek.Tuesday);
             PortfolioStatuses.Add(new PortfolioStatus(TestStart, PortfolioEquity));
+            positionPriceHistory = new Dictionary<long, Dictionary<DateTime, double>>();
+        }
+
+        public void Run()
+        {
+            do
+            {
+                if (Positions.Count != 0)
+                    ExitPositions();
+                if (!NextTuesday())
+                    return;
+
+                if (!EnterPositions())
+                    break;
+            } while (Next());
+            Finish();
+            CalculateStatistics();
         }
 
         public bool EnterPositions()
@@ -63,40 +78,20 @@ namespace Trading.Backtest.ViewModels
             return EnterPositions(CurrentDate);
         }
 
-        public bool EnterPositions(DateTime start)
+        public bool EnterPositions(DateTime tradeDate)
         {
-            var prices = DataCache.PriceCache;
+            var start = tradeDate.Previous(DayOfWeek.Tuesday);
 
-            start = start.Previous(DayOfWeek.Tuesday);
-
-            var dateOnePrices = prices[start];
-            var shiftCounter = 0;
-            while (dateOnePrices.Count == 0)
-            {
-                //     Console.WriteLine("No security has price on #1 " + start.IsoFormat() + " so use next date.");
-                start = start.AddDays(-1);
-                shiftCounter++;
-                if (prices.ContainsKey(start))
-                    dateOnePrices = prices[start];
-                if (shiftCounter > 7)
-                    return false;
-            }
+            var dateOnePrices = SkipNoPriceDates(start);
+            if (dateOnePrices == null)
+                return false;
             var excludedDateOnePrices = dateOnePrices.Where(p => !SatisfyBuySell(p.Value))
                 .Select(p => p.Key).ToHashSet();
 
-            var tradeDate = start.Next(DayOfWeek.Tuesday);
-            var dateTwoPrices = prices[tradeDate];
-            shiftCounter = 0;
-            while (dateTwoPrices.Count == 0)
-            {
-                //      Console.WriteLine("No security has price on #2 " + tradeDate.IsoFormat() + " so use next date.");
-                tradeDate = tradeDate.AddDays(1);
-                shiftCounter++;
-                if (prices.ContainsKey(tradeDate))
-                    dateTwoPrices = prices[tradeDate];
-                if (shiftCounter > 7)
-                    return false;
-            }
+
+            var dateTwoPrices = SkipNoPriceDates(tradeDate);
+            if (dateTwoPrices == null)
+                return false;
 
             if (tradeDate >= EndOfData || tradeDate >= TestEnd)
                 return false;
@@ -115,7 +110,6 @@ namespace Trading.Backtest.ViewModels
                 returns[sid] = Math.Log(dateTwoPrices[sid].AdjClose / dateOnePrices[sid].AdjClose);
             }
 
-            var top10 = returns.OrderByDescending(pair => pair.Value).Take(10).ToList();
             var bottom10 = returns.OrderBy(pair => pair.Value).Take(10);
 
             foreach (var pair in bottom10)
@@ -133,12 +127,38 @@ namespace Trading.Backtest.ViewModels
                 PortfolioEquity -= newPosition.Value;
             }
 
+            // mark down the price history for these positions
+            foreach (var p in Positions)
+            {
+                var t = p.Time;
+                var sid = p.Security.Id;
+                Dictionary<long, Price> pricesOfDay;
+                Dictionary<DateTime, double> pricesOfSecurity;
+
+                t = t.AddDays(-7);
+                for (int i = 0; i < 14; i++) // for prev&next week prices
+                {
+                    if (DataCache.PriceCache.TryGetValue(t, out pricesOfDay) && pricesOfDay.Count != 0)
+                    {
+                        if (!positionPriceHistory.TryGetValue(sid, out pricesOfSecurity))
+                        {
+                            positionPriceHistory[sid] = new Dictionary<DateTime, double>();
+                        }
+                        if (pricesOfDay.ContainsKey(sid))
+                        {
+                            positionPriceHistory[sid][t] = pricesOfDay[sid].AdjClose;
+                        }
+                    }
+                    t = t.AddDays(1);
+                }
+            }
+
             // report
             PositionReportItems.AddRange(Positions.Select(p => new PositionReportEntry
             {
-                Price = p.Price.ToString("N2"),
-                Quantity = p.Quantity.ToString("N0"),
-                Time = p.Time.IsoFormat(),
+                Price = p.Price,
+                Quantity = (int)p.Quantity,
+                Time = p.Time.ToDateInt(),
                 SecurityCode = p.Security.Code,
                 SecurityName = p.Security.Name,
             }));
@@ -161,25 +181,27 @@ namespace Trading.Backtest.ViewModels
 
         public bool ExitPositions(DateTime time)
         {
+            var close = time.Next(DayOfWeek.Tuesday);
+            if (close > TestEnd || close > EndOfData)
+            {
+                close = EndOfData > TestEnd ? TestEnd : EndOfData;
+                if (Positions.Count == 0 || Positions.Any(p => p.Time == close))
+                {
+                    Positions.Clear();
+                    return true;
+                }
+            }
+
             foreach (var position in Positions)
             {
-                if (!DataCache.PriceCache.ContainsKey(time))
+                if (!DataCache.PriceCache.ContainsKey(close))
                     throw new InvalidOperationException();
-                if (position.Time >= time)
+                if (position.Time >= close)
                     throw new InvalidOperationException();
 
-                var prices = DataCache.PriceCache[time];
-                var shiftCounter = 0;
-                while (prices.Count == 0)
-                {
-                    //   Console.WriteLine("No security has price on # " + time.IsoFormat() + " so use next date.");
-                    time = time.AddDays(1);
-                    shiftCounter++;
-                    if (DataCache.PriceCache.ContainsKey(time))
-                        prices = DataCache.PriceCache[time];
-                    if (shiftCounter > 7)
-                        return false;
-                }
+                var prices = SkipNoPriceDates(close);
+                if (prices == null)
+                    return false;
 
                 if (!prices.ContainsKey(position.Security.Id))
                     throw new InvalidOperationException();
@@ -189,7 +211,7 @@ namespace Trading.Backtest.ViewModels
                 {
                     Security = position.Security,
                     EnterTime = position.Time,
-                    ExitTime = time,
+                    ExitTime = close,
                     EnterPrice = position.Price,
                     ExitPrice = price,
                     Quantity = position.Quantity,
@@ -199,9 +221,29 @@ namespace Trading.Backtest.ViewModels
                 PortfolioEquity += trade.Value;
             }
             Positions.Clear();
-            PortfolioStatuses.Add(new PortfolioStatus(time, PortfolioEquity));
-            Console.WriteLine(time + "  " + PortfolioEquity);
+            PortfolioStatuses.Add(new PortfolioStatus(close, PortfolioEquity));
             return true;
+        }
+
+        private Dictionary<long, Price> SkipNoPriceDates(DateTime close)
+        {
+            var prices = DataCache.PriceCache[close];
+            var shiftCounter = 0;
+            while (prices.Count == 0)
+            {
+                close = close.AddDays(1);
+                shiftCounter++;
+                if (DataCache.PriceCache.ContainsKey(close))
+                {
+                    prices = DataCache.PriceCache[close];
+                    break;
+                }
+                if (shiftCounter > 7)
+                {
+                    return null;
+                }
+            }
+            return prices;
         }
 
         private bool SatisfyBuySell(Price p)
@@ -210,6 +252,12 @@ namespace Trading.Backtest.ViewModels
         }
 
         public bool Next()
+        {
+            CurrentDate = CurrentDate.AddDays(1);
+            return CurrentDate <= TestEnd || CurrentDate <= EndOfData;
+        }
+
+        public bool NextTuesday()
         {
             CurrentDate = CurrentDate.Next(DayOfWeek.Tuesday);
             return CurrentDate <= TestEnd || CurrentDate <= EndOfData;
