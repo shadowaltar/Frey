@@ -22,11 +22,13 @@ namespace Trading.Backtest.Reporting
             var marginTop = 2;
             sheet.SetValue(1, 1, "Time");
             sheet.SetValue(1, 2, "Equity");
+            sheet.SetValue(1, 3, "S&P500");
             for (int i = 0; i < core.PortfolioStatuses.Count; i++)
             {
                 var status = core.PortfolioStatuses[i];
                 sheet.SetValue(i + marginTop, 1, status.Time.IsoFormat());
                 sheet.SetValue(i + marginTop, 2, status.Equity);
+                sheet.SetValue(i + marginTop, 3, status.Benchmark);
             }
 
             sheet = xls.Sheet("Trades");
@@ -43,10 +45,6 @@ namespace Trading.Backtest.Reporting
                 {
                     sheet.Column(i).Style.Numberformat.Format = "yyyymmdd";
                 }
-                //else if (t == typeof(double))
-                //{
-                //    sheet.Column(i).Style.Numberformat.Format = "0.0000";
-                //}
             }
 
             for (int j = 0; j < trades.Count; j++)

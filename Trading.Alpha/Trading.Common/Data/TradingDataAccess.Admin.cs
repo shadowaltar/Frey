@@ -17,7 +17,7 @@ namespace Trading.Common.Data
                 return false;
             }
 
-            var dt = Query("SHOW TABLES LIKE '{0}'", schemaName);
+            var dt = Query("SHOW TABLES LIKE '{0}'", tableName);
             return !string.IsNullOrEmpty(dt.FirstOrDefaultValue<string>());
         }
 

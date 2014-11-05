@@ -32,6 +32,8 @@ namespace Trading.Backtest.ViewModels
         private Dictionary<long, Dictionary<DateTime, double>> positionPriceHistory = new Dictionary<long, Dictionary<DateTime, double>>();
         public Dictionary<long, Dictionary<DateTime, double>> PositionPriceHistory { get { return positionPriceHistory; } }
 
+        private long spySecid;
+
         public Core(double money)
         {
             PortfolioEquity = money;
@@ -53,7 +55,12 @@ namespace Trading.Backtest.ViewModels
             TestEnd = testEnd;
             EndOfData = endOfData;
             CurrentDate = TestStart.Next(DayOfWeek.Tuesday).Next(DayOfWeek.Tuesday);
-            PortfolioStatuses.Add(new PortfolioStatus(TestStart, PortfolioEquity));
+            spySecid = DataCache.SecurityCache[DataCache.SecurityCodeMap["^GSPC"]].Id;
+
+            var firstPriceDate = TestStart;
+            var prices = SkipNoPriceDates(ref firstPriceDate);
+            var spyPrice = prices[spySecid].AdjClose;
+            PortfolioStatuses.Add(new PortfolioStatus(firstPriceDate, PortfolioEquity, spyPrice));
             positionPriceHistory = new Dictionary<long, Dictionary<DateTime, double>>();
         }
 
@@ -82,14 +89,14 @@ namespace Trading.Backtest.ViewModels
         {
             var start = tradeDate.Previous(DayOfWeek.Tuesday);
 
-            var dateOnePrices = SkipNoPriceDates(start);
+            var dateOnePrices = SkipNoPriceDates(ref start);
             if (dateOnePrices == null)
                 return false;
             var excludedDateOnePrices = dateOnePrices.Where(p => !SatisfyBuySell(p.Value))
                 .Select(p => p.Key).ToHashSet();
 
 
-            var dateTwoPrices = SkipNoPriceDates(tradeDate);
+            var dateTwoPrices = SkipNoPriceDates(ref tradeDate);
             if (dateTwoPrices == null)
                 return false;
 
@@ -110,7 +117,7 @@ namespace Trading.Backtest.ViewModels
                 returns[sid] = Math.Log(dateTwoPrices[sid].AdjClose / dateOnePrices[sid].AdjClose);
             }
 
-            var bottom10 = returns.OrderBy(pair => pair.Value).Take(10);
+            var bottom10 = returns.OrderBy(pair => pair.Value).Take(20);
 
             foreach (var pair in bottom10)
             {
@@ -118,7 +125,7 @@ namespace Trading.Backtest.ViewModels
                 var newPosition = new Position();
                 newPosition.Price = dateTwoPrices[sid].AdjClose;
                 newPosition.Time = tradeDate;
-                var q = Math.Floor(PortfolioEquity / 10 / newPosition.Price);
+                var q = Math.Floor(PortfolioEquity / 20 / newPosition.Price);
                 if (q < 1)
                     continue;
                 newPosition.Quantity = q;
@@ -199,7 +206,7 @@ namespace Trading.Backtest.ViewModels
                 if (position.Time >= close)
                     throw new InvalidOperationException();
 
-                var prices = SkipNoPriceDates(close);
+                var prices = SkipNoPriceDates(ref close);
                 if (prices == null)
                     return false;
 
@@ -221,11 +228,12 @@ namespace Trading.Backtest.ViewModels
                 PortfolioEquity += trade.Value;
             }
             Positions.Clear();
-            PortfolioStatuses.Add(new PortfolioStatus(close, PortfolioEquity));
+            var spyPrice = DataCache.PriceCache[close][spySecid].AdjClose;
+            PortfolioStatuses.Add(new PortfolioStatus(close, PortfolioEquity, spyPrice));
             return true;
         }
 
-        private Dictionary<long, Price> SkipNoPriceDates(DateTime close)
+        private Dictionary<long, Price> SkipNoPriceDates(ref DateTime close)
         {
             var prices = DataCache.PriceCache[close];
             var shiftCounter = 0;
