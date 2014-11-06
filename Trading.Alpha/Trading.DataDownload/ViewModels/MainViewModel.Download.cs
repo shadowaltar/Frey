@@ -60,7 +60,6 @@ namespace Trading.DataDownload.ViewModels
                             var symbol = records.GetField<string>("Symbol");
                             if (string.IsNullOrWhiteSpace(symbol))
                                 continue;
-
                             results.Add(symbol);
                         }
                         catch (Exception e)
@@ -83,7 +82,7 @@ namespace Trading.DataDownload.ViewModels
 
         public void DownloadWholeHistory()
         {
-            var start = DateTime.Parse("1900-01-01");
+            var start = DateTime.Parse("1999-01-01");
             Download(start);
         }
 

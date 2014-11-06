@@ -42,7 +42,14 @@ namespace Trading.DataDownload.ViewModels
                             else if (line.Contains(signature1) && line.Contains(signature2)) // line 1, code
                             {
                                 code = line.SubstringBetween(signature1, signature2).SimpleUnescape();
-                                searchForName = true;
+                                if (code.Contains(" PR"))
+                                {
+                                    code = "";
+                                }
+                                else
+                                {
+                                    searchForName = true;
+                                }
                             }
                         }
                     }
@@ -61,7 +68,7 @@ namespace Trading.DataDownload.ViewModels
                 try
                 {
                     var lines = pairs.Select(a => a.Key + "," + a.Value).ToList();
-                    lines.Insert(0, "SYMBOL,NAME");
+                    lines.Insert(0, "Symbol,Name");
                     File.WriteAllLines(Path.Combine(Constants.SecurityListDirectory, "US_ALL_NonShortable.csv"), lines);
                 }
                 catch (Exception)
@@ -104,6 +111,11 @@ namespace Trading.DataDownload.ViewModels
                             if (searchForCode)
                             {
                                 code = line.SubstringBetween(signature1, signature2).SimpleUnescape();
+                                if (code.Contains(" PR"))
+                                {
+                                    searchForName = false;
+                                    code = "";
+                                }
                                 searchForCode = false;
                             }
                             else if (searchForName) // line 2, name
@@ -133,7 +145,7 @@ namespace Trading.DataDownload.ViewModels
                 try
                 {
                     var lines = pairs.Select(a => a.Key + "," + a.Value).ToList();
-                    lines.Insert(0, "SYMBOL,NAME");
+                    lines.Insert(0, "Symbol,Name");
                     File.WriteAllLines(Path.Combine(Constants.SecurityListDirectory, "US_ALL_Shortable.csv"), lines);
                 }
                 catch (Exception)
