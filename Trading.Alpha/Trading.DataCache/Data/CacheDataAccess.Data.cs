@@ -21,12 +21,12 @@ namespace Trading.DataCache.Data
                 country, date, holiday, mktClose);
         }
 
-        public void AddPrice(long securityId, DateTime time, double open, double high, double low, double close, double volume, double adjClose)
+        public void AddPrice(long securityId, int time, double open, double high, double low, double close, double volume, double adjClose)
         {
             var sb = new StringBuilder();
             sb.Append("INSERT INTO PRICES (SECID,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ADJCLOSE) VALUES (")
                 .Append(securityId).Append(',')
-                .Append(time.Year * 10000 + time.Month * 100 + time.Day).Append(',')
+                .Append(time).Append(',')
                 .Append(open).Append(',')
                 .Append(high).Append(',')
                 .Append(low).Append(',')

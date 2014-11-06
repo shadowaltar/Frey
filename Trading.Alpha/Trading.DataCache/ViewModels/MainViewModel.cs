@@ -83,7 +83,7 @@ namespace Trading.DataCache.ViewModels
                                 try
                                 {
                                     var time = records.GetField<string>("Date")
-                                        .ConvertDate("yyyy-MM-dd");
+                                        .ConvertDate("yyyy-MM-dd").ToDateInt();
                                     var open = records.GetField<double>("Open");
                                     var high = records.GetField<double>("High");
                                     var low = records.GetField<double>("Low");
@@ -108,6 +108,131 @@ namespace Trading.DataCache.ViewModels
                 catch (Exception e)
                 {
                     Log.Error(e);
+                }
+            });
+            await p.Stop();
+        }
+
+        public async void InsertIfNotExists()
+        {
+            Dictionary<string, Security> allSecurities = null;
+            var p = await ViewService.ShowProgress("Loading", "Reading security files..");
+            await Task.Run(() =>
+            {
+                var files = Directory.GetFiles(Constants.SecurityListDirectory);
+                var missingSecurities = new HashSet<string>();
+                using (var access = DataAccessFactory.New())
+                {
+                    allSecurities = access.GetSecurities().ToDictionary(s => s.Code, s => s);
+                }
+                foreach (var fileName in files)
+                {
+                    try
+                    {
+                        using (var access = DataAccessFactory.NewTransaction())
+                        using (new ReportTime("Read " + fileName + " used {0}"))
+                        using (var reader = File.OpenText(fileName))
+                        using (var records = new CsvReader(reader))
+                        {
+                            while (records.Read())
+                            {
+                                try
+                                {
+                                    var symbol = records.GetField<string>("Symbol");
+                                    var name = records.GetField<string>("Name");
+                                    if (allSecurities.ContainsKey(symbol))
+                                        continue;
+
+                                    access.AddSecurity(symbol, name);
+                                    missingSecurities.Add(symbol);
+                                }
+                                catch (Exception e)
+                                {
+                                    Log.Warn("Failed to read symbol.", e);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e);
+                    }
+                }
+                using (var access = DataAccessFactory.New())
+                {
+                    allSecurities = access.GetSecurities().ToDictionary(s => s.Code, s => s);
+                }
+            });
+
+            if (allSecurities == null)
+            {
+                await ViewService.ShowError("Cannot add prices as security list is not ready.");
+                return;
+            }
+
+            await Task.Run(() =>
+            {
+                var folders = Directory.GetDirectories(Constants.PricesDirectory);
+                foreach (var folder in folders)
+                {
+                    using (ReportTime.Start(folder + " prices loaded used: {0}"))
+                    {
+
+                        using (var access = DataAccessFactory.NewTransaction())
+                        using (new ReportTime("Read " + folder + " used {0}"))
+                        {
+                            try
+                            {
+                                var files = Directory.GetFiles(folder);
+                                double cnt = 0;
+                                var n = files.Count();
+
+                                foreach (var fileName in files)
+                                {
+                                    var code = Path.GetFileNameWithoutExtension(fileName);
+
+                                    if (!allSecurities.ContainsKey(code))
+                                    {
+                                        Console.WriteLine("Failed insert price for file: " + fileName);
+                                        continue;
+                                    }
+
+                                    var sid = allSecurities[code].Id;
+                                    var t = access.Query("SELECT MAX(TIME) FROM PRICES WHERE SECID = {0}", sid).FirstOrDefaultValue<int>();
+                                    p.SetMessage("Reading " + fileName + " (" + (cnt / n).ToString("P") + ")");
+
+                                    using (var reader = File.OpenText(fileName))
+                                    using (var records = new CsvReader(reader))
+                                    {
+                                        while (records.Read())
+                                        {
+                                            var time = records.GetField<string>("Date")
+                                                .ConvertDate("yyyy-MM-dd").ToDateInt();
+
+                                            if (time <= t) // already inserted this date.
+                                                break; // all the other rows must be smaller, so break.
+
+                                            var open = records.GetField<double>("Open");
+                                            var high = records.GetField<double>("High");
+                                            var low = records.GetField<double>("Low");
+                                            var close = records.GetField<double>("Close");
+                                            var volume = records.GetField<double>("Volume");
+                                            var adjClose = records.GetField<double>("Adj Close");
+                                            access.AddPrice(sid, time, open, high, low, close, volume, adjClose);
+                                        }
+                                    }
+                                    cnt++;
+                                    Console.WriteLine(cnt / n);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error("Error occurred when inserting prices: folder " + folder, e);
+                                access.Rollback();
+                            }
+                        }
+
+                    }
                 }
             });
             await p.Stop();
@@ -272,7 +397,7 @@ namespace Trading.DataCache.ViewModels
                                                 try
                                                 {
                                                     var time = records.GetField<string>("Date")
-                                                        .ConvertDate("yyyy-MM-dd");
+                                                        .ConvertDate("yyyy-MM-dd").ToDateInt();
                                                     var open = records.GetField<double>("Open");
                                                     var high = records.GetField<double>("High");
                                                     var low = records.GetField<double>("Low");
