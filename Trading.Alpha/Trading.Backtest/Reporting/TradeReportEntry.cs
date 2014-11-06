@@ -11,6 +11,7 @@ namespace Trading.Backtest.Reporting
             SecurityName = trade.Security.Name;
             EnterTime = trade.EnterTime.ToDateInt();
             ExitTime = trade.ExitTime.ToDateInt();
+            Parameter = trade.Parameter;
             EnterPrice = trade.EnterPrice;
             ExitPrice = trade.ExitPrice;
             EnterValue = trade.EnterPrice * trade.Quantity;
@@ -24,6 +25,7 @@ namespace Trading.Backtest.Reporting
         public string SecurityName { get; set; }
         public int EnterTime { get; set; }
         public int ExitTime { get; set; }
+        public double Parameter { get; set; }
         public double EnterPrice { get; set; }
         public double ExitPrice { get; set; }
         public double EnterValue { get; set; }

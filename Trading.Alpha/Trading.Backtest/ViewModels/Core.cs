@@ -55,11 +55,11 @@ namespace Trading.Backtest.ViewModels
             TestEnd = testEnd;
             EndOfData = endOfData;
             CurrentDate = TestStart.Next(DayOfWeek.Tuesday).Next(DayOfWeek.Tuesday);
-            spySecid = DataCache.SecurityCache[DataCache.SecurityCodeMap["^GSPC"]].Id;
+            spySecid = DataCache.SecurityCache[DataCache.SecurityCodeMap["SPY"]].Id;
 
             var firstPriceDate = TestStart;
             var prices = SkipNoPriceDates(ref firstPriceDate);
-            var spyPrice = prices[spySecid].AdjClose;
+            var spyPrice = 10000;// prices[spySecid].AdjClose;
             PortfolioStatuses.Add(new PortfolioStatus(firstPriceDate, PortfolioEquity, spyPrice));
             positionPriceHistory = new Dictionary<long, Dictionary<DateTime, double>>();
         }
@@ -123,6 +123,7 @@ namespace Trading.Backtest.ViewModels
             {
                 var sid = pair.Key;
                 var newPosition = new Position();
+                newPosition.Parameter = returns[sid];
                 newPosition.Price = dateTwoPrices[sid].AdjClose;
                 newPosition.Time = tradeDate;
                 var q = Math.Floor(PortfolioEquity / 20 / newPosition.Price);
@@ -224,12 +225,13 @@ namespace Trading.Backtest.ViewModels
                     ExitPrice = price,
                     Quantity = position.Quantity,
                     ExitType = ExitType.Close,
+                    Parameter = position.Parameter
                 };
                 Trades.Add(trade);
                 PortfolioEquity += trade.Value;
             }
             Positions.Clear();
-            var spyPrice = DataCache.PriceCache[close][spySecid].AdjClose;
+            var spyPrice = 10000;//DataCache.PriceCache[close][spySecid].AdjClose;
             PortfolioStatuses.Add(new PortfolioStatus(close, PortfolioEquity, spyPrice));
             return true;
         }

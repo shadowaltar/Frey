@@ -21,15 +21,8 @@ namespace Trading.DataDownload.ViewModels
         public MainViewModel(IDataAccessFactory<LoaderDataAccess> dataAccessFactory, ISettings settings)
             : base(dataAccessFactory, settings)
         {
+            Constants.InitializeDirectories();
             Initalize();
-            if (!Directory.Exists(Constants.PricesDirectory))
-            {
-                Directory.CreateDirectory(Constants.PricesDirectory);
-            }
-            if (!Directory.Exists(Constants.SecurityListDirectory))
-            {
-                Directory.CreateDirectory(Constants.SecurityListDirectory);
-            }
         }
 
         public override string ProgramName { get { return "Data Loader"; } }
@@ -72,6 +65,8 @@ namespace Trading.DataDownload.ViewModels
                 pathSymbol = pathSymbol.Replace('/', '[');
             if (pathSymbol.Contains('\\'))
                 pathSymbol = pathSymbol.Replace('\\', ']');
+            if (pathSymbol.Contains('^'))
+                pathSymbol = pathSymbol.Replace("^", "%5E");
             downloader.Download(symbol, Path.Combine(dir, pathSymbol + ".csv"));
         }
 

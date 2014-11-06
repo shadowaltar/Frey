@@ -197,6 +197,7 @@
     <Compile Include="Utils\IViewService.cs" />
     <Compile Include="Utils\ReportTime.cs" />
     <Compile Include="Utils\Converters\ZeroToHideConverter.cs" />
+    <Compile Include="Utils\Websites.cs" />
     <Compile Include="ViewModels\VolumeValueViewModel.cs" />
     <Compile Include="ViewModels\FilterViewModelBase.cs" />
     <Compile Include="ViewModels\MainViewModelBase.cs" />

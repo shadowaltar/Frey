@@ -61,13 +61,6 @@ namespace Trading.DataDownload.ViewModels
                             if (string.IsNullOrWhiteSpace(symbol))
                                 continue;
 
-                            if (symbol.Contains("^"))
-                            {
-                                failedAndInvalidCount++;
-                                failedAndInvalids.Add(symbol);
-                                continue;
-                            }
-
                             results.Add(symbol);
                         }
                         catch (Exception e)

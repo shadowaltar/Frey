@@ -111,6 +111,7 @@
     <Compile Include="LoaderDataAccess.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Utils\Exchanges.cs" />
+    <Compile Include="ViewModels\MainViewModel.IB.cs" />
     <Compile Include="ViewModels\MainViewModel.Download.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="YahooDailyPriceWorker.cs" />

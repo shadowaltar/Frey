@@ -1,6 +1,5 @@
 ﻿using Trading.Backtest.ViewModels;
 using Trading.Common;
-using Trading.Common.Data;
 
 namespace Trading.Backtest
 {

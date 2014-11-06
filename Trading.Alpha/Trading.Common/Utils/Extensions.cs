@@ -4,7 +4,6 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
@@ -73,6 +72,23 @@ namespace Trading.Common.Utils
         public static bool ContainsIgnoreCase(this string value, string substring)
         {
             return value.IndexOf(substring, StringComparison.InvariantCultureIgnoreCase) != -1;
+        }
+
+        public static string SimpleUnescape(this string source)
+        {
+            return source.Replace("&amp;", "&").Replace("&nbsp;", " ");
+        }
+
+        public static int IndexOfSubstringEnd(this string source, string substring)
+        {
+            return source.IndexOf(substring, 0, StringComparison.InvariantCulture) + substring.Length;
+        }
+
+        public static string SubstringBetween(this string line, string subOne, string subTwo)
+        {
+            var idx1 = line.IndexOfSubstringEnd(subOne);
+            var idx2 = line.IndexOf(subTwo);
+            return line.Substring(idx1, idx2 - idx1);
         }
 
         public static bool IsNullOrWhitespace(this string s)
