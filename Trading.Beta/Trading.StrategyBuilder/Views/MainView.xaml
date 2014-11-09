@@ -1,0 +1,60 @@
+<controls:MetroWindow x:Class="Trading.StrategyBuilder.Views.MainView"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:cal="http://www.caliburnproject.org"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Title="MainView"
+                      Width="600"
+                      Height="350"
+                      GlowBrush="{DynamicResource AccentColorBrush}">
+    <controls:MetroWindow.Resources>
+        <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
+        <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
+    </controls:MetroWindow.Resources>
+    <Grid>
+        <controls:MetroAnimatedSingleRowTabControl>
+            <TabItem Header="SCOPE">
+                <Grid>
+                    <TextBlock Margin="10,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="StartTime" />
+                    <TextBox Width="120"
+                             Margin="10,45,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Text="20040101"
+                             TextWrapping="Wrap" />
+                    <TextBlock Margin="135,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="EndTime" />
+                    <TextBox Width="120"
+                             Margin="135,45,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Text="20140101"
+                             TextWrapping="Wrap" />
+                    <TextBlock Margin="10,82,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="Init Cash" />
+                    <TextBox Width="120"
+                             Margin="10,117,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Text="10000"
+                             TextWrapping="Wrap" />
+                    <TextBlock Margin="10,154,0,0"
+                    	HorizontalAlignment="Left"
+                    	VerticalAlignment="Top"
+                    	Text="Benchmark" />
+                    <ListBox x:Name="Benchmarks" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" HorizontalAlignment="Left" Margin="10,189,0,10" Width="120"/>
+                    <Button x:Name="Test" Content="Button" HorizontalAlignment="Left" Margin="310,184,0,0" VerticalAlignment="Top" Width="75"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="ENTER" />
+            <TabItem Header="EXIT" />
+        </controls:MetroAnimatedSingleRowTabControl>
+    </Grid>
+</controls:MetroWindow>

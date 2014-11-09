@@ -1,0 +1,26 @@
+﻿<Application x:Class="Trading.StrategyBuilder.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:this="clr-namespace:Trading.StrategyBuilder">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/cobalt.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Clean/CleanWindow.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Trading.Common;component/Resources/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Trading.Common;component/Resources/Icons.xaml" />
+                <ResourceDictionary>
+                    <this:Bootstrapper x:Key="Bo" />
+                </ResourceDictionary>
+                <!--<ResourceDictionary>
+                    <Style  BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox">
+                </Style></ResourceDictionary>-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

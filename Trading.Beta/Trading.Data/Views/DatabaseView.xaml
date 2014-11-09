@@ -1,0 +1,82 @@
+<UserControl x:Class="Trading.Data.Views.DatabaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="300"
+             d:DesignWidth="661"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
+        <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Button x:Name="CreateAndInsertAllSecuritiesAndPrices"
+                Height="29"
+                Margin="10,10,10,0"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Create and insert data for Securities and Prices" />
+        <Button x:Name="AddUniqueIndexToPrices"
+                Height="29"
+                Margin="10,44,10,0"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Add constraints to Prices table" />
+        <Button x:Name="AddCalendar"
+                Height="29"
+                Margin="10,0,10,44"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Create US Holiday Calendar" />
+        <Button x:Name="InsertSinglePriceFile"
+                Grid.Column="1"
+                Height="29"
+                Margin="10,0,10,10"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Insert Single Price File" />
+        <Button x:Name="InsertIfNotExists"
+                Height="29"
+                Margin="10,0,10,10"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Insert securities and prices if not exist" />
+        <TextBox x:Name="PriceFilePath"
+                 Grid.Column="1"
+                 Margin="85,0,10,44"
+                 VerticalAlignment="Bottom"
+                 TextWrapping="Wrap" />
+        <TextBlock Grid.Column="1"
+                   Width="59"
+                   Height="30"
+                   Margin="10,0,0,44"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Text="FilePath"
+                   TextWrapping="Wrap" />
+        <TextBlock Grid.Column="1"
+                   Width="70"
+                   Height="30"
+                   Margin="10,0,0,81"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Text="SecName"
+                   TextWrapping="Wrap" />
+        <TextBox x:Name="PriceFileSecurityName"
+                 Grid.Column="1"
+                 Margin="85,0,10,81"
+                 VerticalAlignment="Bottom"
+                 TextWrapping="Wrap" />
+    </Grid>
+
+</UserControl>
