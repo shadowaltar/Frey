@@ -80,7 +80,7 @@ namespace Trading.Backtest.ViewModels
                         progressIndicator.SetMessage("Loading " + year);
                         using (ReportTime.Start(year + " used time: {0}"))
                         {
-                            foreach (var price in commonAccess.GetOneYearPriceData(year))
+                            foreach (var price in commonAccess.GetOneYearPriceData(year, core.GetDataCriteriaInSql()))
                             {
                                 var secId = price.SecId;
                                 prices[price.At][secId] = price;

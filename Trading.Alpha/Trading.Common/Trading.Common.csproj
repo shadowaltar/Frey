@@ -178,6 +178,8 @@
     <Compile Include="Technicals\MovingAverage.cs" />
     <Compile Include="Texts.cs" />
     <Compile Include="Utils\AesEncryption.cs" />
+    <Compile Include="Utils\DualDictionary.cs" />
+    <Compile Include="Utils\PeriodicTask.cs" />
     <Compile Include="Utils\Converters\BoolToValueConverter.cs" />
     <Compile Include="Utils\Dummies.cs" />
     <Compile Include="Utils\FileHelper.cs" />

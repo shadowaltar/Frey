@@ -20,6 +20,7 @@ namespace Trading.Common.Entities
         public double PnL { get { return (ExitPrice - EnterPrice) * Quantity; } }
 
         public ExitType ExitType { get; set; }
-        public double Parameter { get; set; }
+
+        public double[] Parameters { get; set; }
     }
 }

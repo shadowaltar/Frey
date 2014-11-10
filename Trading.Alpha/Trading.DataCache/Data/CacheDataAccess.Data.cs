@@ -50,7 +50,7 @@ namespace Trading.DataCache.Data
         {
             return new Security
             {
-                Id = r["ID"].ConvertLong(),
+                Id = r["ID"].Long(),
                 Code = r["CODE"].ConvertString(),
                 Name = r["NAME"].ConvertString(),
             };

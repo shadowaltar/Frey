@@ -42,7 +42,7 @@ namespace Trading.DataDownload.ViewModels
                             else if (line.Contains(signature1) && line.Contains(signature2)) // line 1, code
                             {
                                 code = line.SubstringBetween(signature1, signature2).SimpleUnescape();
-                                if (code.Contains(" PR"))
+                                if (code.Contains(" PR") || code.Contains(".OLD") || code.Contains("/"))
                                 {
                                     code = "";
                                 }

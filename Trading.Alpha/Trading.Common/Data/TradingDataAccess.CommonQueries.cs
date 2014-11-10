@@ -15,13 +15,33 @@ namespace Trading.Common.Data
                 Security = security,
                 At = r["Time"].ConvertDate(),
                 Span = span,
-                Open = r["Open"].ConvertDouble(),
-                High = r["High"].ConvertDouble(),
-                Low = r["Low"].ConvertDouble(),
-                Close = r["Close"].ConvertDouble(),
-                Volume = r["Volume"].ConvertLong(),
+                Open = r["Open"].Double(),
+                High = r["High"].Double(),
+                Low = r["Low"].Double(),
+                Close = r["Close"].Double(),
+                Volume = r["Volume"].Long(),
             }, "Select * from Instruments.Prices Where SecurityId = {0} and Time >= '{1}' and Time <= '{2}' ORDER BY Time",
             security.Id, from.IsoFormat(), to.IsoFormat());
+        }
+
+        public Price GetPrice(long sid, int time)
+        {
+            var table = Query("SELECT OPEN, HIGH, LOW, CLOSE, VOLUME, ADJCLOSE FROM PRICES WHERE TIME = {0} AND SECID = {1}",
+                  time, sid);
+            if (table.Rows.Count == 0)
+                return null;
+            var row = table.FirstOrDefault();
+            return new Price
+            {
+                SecId = sid,
+                At = time.ConvertDate("yyyyMMdd"),
+                Open = row["OPEN"].Double(),
+                High = row["HIGH"].Double(),
+                Low = row["LOW"].Double(),
+                Close = row["CLOSE"].Double(),
+                Volume = row["Volume"].Long(),
+                AdjClose = row["ADJCLOSE"].Double(),
+            };
         }
 
         public List<Price> GetPrices(Security security, TimeSpan span, DateTime from, DateTime to)
@@ -36,11 +56,11 @@ namespace Trading.Common.Data
                     Security = security,
                     At = r["Time"].ConvertDate(),
                     Span = span,
-                    Open = r["Open"].ConvertDouble(),
-                    High = r["High"].ConvertDouble(),
-                    Low = r["Low"].ConvertDouble(),
-                    Close = r["Close"].ConvertDouble(),
-                    Volume = r["Volume"].ConvertLong(),
+                    Open = r["Open"].Double(),
+                    High = r["High"].Double(),
+                    Low = r["Low"].Double(),
+                    Close = r["Close"].Double(),
+                    Volume = r["Volume"].Long(),
                 };
                 results.Add(p);
             }
@@ -57,11 +77,11 @@ namespace Trading.Common.Data
                 var p = new PriceBar
                 {
                     DateTime = r["DateTime"].ConvertDate(),
-                    Open = r["Open"].ConvertDouble(),
-                    High = r["High"].ConvertDouble(),
-                    Low = r["Low"].ConvertDouble(),
-                    Close = r["Close"].ConvertDouble(),
-                    Volume = r["Volume"].ConvertLong(),
+                    Open = r["Open"].Double(),
+                    High = r["High"].Double(),
+                    Low = r["Low"].Double(),
+                    Close = r["Close"].Double(),
+                    Volume = r["Volume"].Long(),
                 };
                 results.Add(p);
             }
@@ -80,7 +100,7 @@ Join ReferenceData.Markets m on m.Id = s.MarketId
 WHERE s.Code = '{0}' and m.Symbol = '{1}'", securityCode, marketCode);
             try
             {
-                return table.Rows[0][0].ConvertInt(-1);
+                return table.Rows[0][0].Int(-1);
             }
             catch
             {

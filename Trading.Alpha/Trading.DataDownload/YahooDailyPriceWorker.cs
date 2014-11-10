@@ -37,12 +37,14 @@ namespace Trading.DataDownload
                         if (File.Exists(saveFilePath))
                             File.Delete(saveFilePath);
                         File.WriteAllText(saveFilePath, content);
+                        Console.WriteLine("SUCCESS");
                         Log.InfoFormat("Saved {0} ({1} - {2}) to {3}", yahooStockSymbol, @from, to, saveFilePath);
                     }
                 }
             }
             catch (Exception e)
             {
+                Console.WriteLine("FAILED");
                 Log.Error(e);
             }
         }

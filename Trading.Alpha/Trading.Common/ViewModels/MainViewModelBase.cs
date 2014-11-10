@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using Caliburn.Micro;
 using MahApps.Metro.Controls;
 using Trading.Common.Data;
@@ -13,7 +15,12 @@ namespace Trading.Common.ViewModels
         IHasDataAccessFactory<TDA>
         where TDA : DataAccess
     {
+        public virtual Process CurrentProcess { get { return Process.GetCurrentProcess(); } }
         public abstract string ProgramName { get; }
+
+        private int k = (int)Math.Pow(2, 10);
+        private int m = (int)Math.Pow(2, 20);
+        private int g = (int)Math.Pow(2, 30);
 
         protected MainViewModelBase(IDataAccessFactory<TDA> factory, ISettings settings)
         {
@@ -26,7 +33,8 @@ namespace Trading.Common.ViewModels
             base.OnViewLoaded(view);
             ViewService.Window = view as MetroWindow;
             ViewService.ToFront();
-            DisplayName = string.Format("{0} ({1})", ProgramName, environment);
+            SetWindowTitle();
+            PeriodicTask.Run(SetWindowTitle, TimeSpan.FromSeconds(2));
         }
 
         protected string environment;
@@ -56,8 +64,31 @@ namespace Trading.Common.ViewModels
             {
                 environment = value;
                 DataAccessFactory.Environment = environment;
-                DisplayName = string.Format("{0} ({1})", ProgramName, environment);
+                SetWindowTitle();
             }
+        }
+
+        public virtual void SetWindowTitle()
+        {
+            var mem = CurrentProcess.PrivateMemorySize64;
+            string str;
+            if (mem > g)
+            {
+                str = ((double)mem / g).ToString("N2") + "G";
+            }
+            else if (mem > m)
+            {
+                str = ((double)mem / m).ToString("N2") + "M";
+            }
+            else if (mem > k)
+            {
+                str = ((double)mem / k).ToString("N2") + "K";
+            }
+            else
+            {
+                str = mem.ToString("N2");
+            }
+            DisplayName = string.Format("{0} ({1})", ProgramName, str);
         }
     }
 }

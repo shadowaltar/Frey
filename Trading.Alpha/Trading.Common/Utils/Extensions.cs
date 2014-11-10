@@ -206,22 +206,22 @@ namespace Trading.Common.Utils
             return table == null || table.Rows.Count == 0;
         }
 
-        public static int ConvertInt(this object value, int defaultValue = 0)
+        public static int Int(this object value, int defaultValue = 0)
         {
             return value.IsNullOrDBNull() ? defaultValue : Convert.ToInt32(value);
         }
 
-        public static long ConvertLong(this object value, long defaultValue = 0L)
+        public static long Long(this object value, long defaultValue = 0L)
         {
             return value.IsNullOrDBNull() ? defaultValue : Convert.ToInt64(value);
         }
 
-        public static decimal ConvertDecimal(this object value, decimal defaultValue = 0M)
+        public static decimal Decimal(this object value, decimal defaultValue = 0M)
         {
             return value.IsNullOrDBNull() ? defaultValue : Convert.ToDecimal(value);
         }
 
-        public static double ConvertDouble(this object value, double defaultValue = 0d)
+        public static double Double(this object value, double defaultValue = 0d)
         {
             return value.IsNullOrDBNull() ? defaultValue : Convert.ToDouble(value);
         }

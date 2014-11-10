@@ -25,18 +25,39 @@
                                VerticalAlignment="Top"
                                Text="Markets"
                                TextWrapping="Wrap" />
-                    <Button x:Name="DownloadWholeHistory"
+                    <Button x:Name="DownloadByCode"
                             Width="183"
-                            Margin="0,0,10,10"
+                            Margin="0,0,10,78"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
-                            Content="Download Whole History" />
+                            Content="Download By Code" />
                     <Button x:Name="DownloadThisWeek"
                             Width="183"
                             Margin="0,0,10,44"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Content="Download This Week" />
+                    <Button x:Name="DownloadWholeHistory"
+                            Width="183"
+                            Margin="0,0,10,10"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Content="Download Whole History" />
+                    <TextBox x:Name="SingleDownloadCode"
+                             Width="183"
+                             Margin="0,0,10,112"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Bottom"
+                             CharacterCasing="Upper"
+                             Text=""
+                             TextWrapping="Wrap"
+                             controls:TextboxHelper.SelectAllOnFocus="True" />
+                    <TextBlock Width="79"
+                               Margin="0,0,114,149"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Bottom"
+                               Text="Code"
+                               TextWrapping="Wrap" />
                 </Grid>
             </TabItem>
             <TabItem Header="INTERACTIVE-BROKERS">
@@ -48,11 +69,11 @@
                             VerticalAlignment="Top"
                             Content="Parse Non-shortable Security List" />
                     <Button x:Name="ParseShortableSecurityListInteractiveBrokers"
-                    	Width="255"
-                    	Margin="10,44,0,0"
-                    	HorizontalAlignment="Left"
-                    	VerticalAlignment="Top"
-                    	Content="Parse Shortable Security List" />
+                            Width="255"
+                            Margin="10,44,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Parse Shortable Security List" />
                 </Grid>
             </TabItem>
             <TabItem Header="ORIGINAL">

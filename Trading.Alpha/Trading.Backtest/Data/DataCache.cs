@@ -16,5 +16,7 @@ namespace Trading.Backtest.Data
         public static Dictionary<DateTime, Dictionary<long, Price>> PriceCache { get { return Instance.priceCache; } }
         public static Dictionary<long, Security> SecurityCache { get { return Instance.securityCache; } }
         public static Dictionary<string, long> SecurityCodeMap { get { return Instance.securityCodeMap; } }
+
+        public static string CommonBenchmarkCode { get { return "^GSPC"; } }
     }
 }

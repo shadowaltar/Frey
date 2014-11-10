@@ -23,6 +23,13 @@ namespace Trading.DataDownload.ViewModels
             set { SetNotify(ref selectedMarket, value); }
         }
 
+        private string singleDownloadCode;
+        public string SingleDownloadCode
+        {
+            get { return singleDownloadCode; }
+            set { SetNotify(ref singleDownloadCode, value); }
+        }
+
         public BindableCollection<string> Markets { get; private set; }
 
         private void Initalize()
@@ -86,6 +93,38 @@ namespace Trading.DataDownload.ViewModels
             Download(start);
         }
 
+        public async void DownloadByCode()
+        {
+            SelectedMarket = null;
+            var mkt = "US";
+            var start = DateTime.Parse("1999-01-01");
+
+            var dir = Path.Combine(Constants.PricesDirectory, mkt);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            try
+            {
+                var p = await ViewService.ShowProgress("Downloading", "MARKET: " + mkt);
+                await Task.Run(() =>
+                {
+                    var downloader = new YahooDailyPriceWorker();
+                    var filePath = SingleDownloadCode.Trim().Replace('/', '[').Replace('\\', ']').Replace(" ", "-");
+                    filePath = Path.Combine(dir, filePath + ".csv");
+
+                    using (var rt = ReportTime.Start(string.Format("Download {0}", SingleDownloadCode) + " used {0}"))
+                    {
+                        downloader.Download(SingleDownloadCode, start, filePath);
+                        p.AppendMessageForLoading(rt.Message);
+                    }
+                });
+                await p.Stop();
+            }
+            catch (Exception e)
+            {
+                Log.Error("Failed to download prices from yahoo for a week where market is " + SelectedMarket, e);
+            }
+        }
         public async void Download(DateTime start)
         {
             if (SelectedMarket.IsNullOrWhitespace())
@@ -119,7 +158,7 @@ namespace Trading.DataDownload.ViewModels
                     var total = results.Count();
                     foreach (var symbol in results)
                     {
-                        var filePath = symbol.Trim().Replace('/', '[').Replace('\\', ']');
+                        var filePath = symbol.Trim().Replace('/', '[').Replace('\\', ']').Replace(" ", "-");
                         filePath = Path.Combine(dir, filePath + ".csv");
 
                         using (var rt = ReportTime.Start(string.Format("Download {0} ({1}/{2})", symbol, cnt, total)

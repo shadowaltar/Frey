@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using OfficeOpenXml;
-using Trading.Backtest.Data;
 using Trading.Backtest.ViewModels;
 using Trading.Common;
 using Trading.Common.Reporting;
@@ -57,21 +56,16 @@ namespace Trading.Backtest.Reporting
                 for (int i = 1; i <= cols; i++)
                 {
                     var info = props[i - 1];
-                    sheet.SetValue(j + 2, i, info.GetValue(trade, null));
-                }
-
-                var id = DataCache.SecurityCodeMap[trade.SecurityCode];
-                var historicalPrices = core.PositionPriceHistory[id];
-                var d = trade.EnterTime.ConvertDate("yyyyMMdd");
-                d = d.AddDays(-7);
-                for (int k = 0; k < 10; k++) // two weeks 
-                {
-                    double val;
-                    if (historicalPrices.TryGetValue(d, out val))
+                    if (info.Name == "Parameters")
                     {
-                        sheet.SetValue(j + 2, k + cols + 1, val);
+                        var parameters = (double[])info.GetValue(trade, null);
+                        string str = parameters.Aggregate("", (current, parameter) => current + (parameter + "|"));
+                        sheet.SetValue(j + 2, i, str.Trim('|'));
                     }
-                    d = d.AddDays(1);
+                    else
+                    {
+                        sheet.SetValue(j + 2, i, info.GetValue(trade, null));
+                    }
                 }
             }
             sheet.View.FreezePanes(2, 2);

@@ -11,7 +11,7 @@ namespace Trading.Common.Entities
         public double Value { get { return Price * Quantity; } }
         public DateTime Time { get; set; }
 
-        public double Parameter { get; set; }
+        public double[] Parameters { get; set; }
 
         public override string ToString()
         {

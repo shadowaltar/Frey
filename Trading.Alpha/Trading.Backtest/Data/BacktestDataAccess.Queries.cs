@@ -27,7 +27,7 @@ namespace Trading.Backtest.Data
                 {
                     var s = new Security
                     {
-                        Id = reader["ID"].ConvertInt(),
+                        Id = reader["ID"].Int(),
                         Code = reader["Code"].ToString(),
                         Name = reader["NAME"].ToString()
                     };
@@ -54,20 +54,22 @@ namespace Trading.Backtest.Data
             {
                 while (reader.Read())
                 {
-                    yield return reader["DATE"].ConvertInt();
+                    yield return reader["DATE"].Int();
                 }
             }
         }
 
-        public IEnumerable<Price> GetOneYearPriceData(int year)
+        public IEnumerable<Price> GetOneYearPriceData(int year, string additionalCriteria = "")
         {
             var start = new DateTime(year, 1, 1).ToDateInt();
             var end = new DateTime(year, 12, 31).ToDateInt();
             MySqlCommand cmd;
             if (!preparedCommands.TryGetValue("GetOneDayTopVolumes", out cmd))
             {
+                if (additionalCriteria != "")
+                    additionalCriteria = " AND " + additionalCriteria;
                 cmd = new MySqlCommand("SELECT SECID, TIME, HIGH, LOW, CLOSE, ADJCLOSE, VOLUME FROM PRICES P WHERE TIME >= @TStart" +
-                                       " AND TIME <= @TEnd AND VOLUME > 0 AND CLOSE > 2 AND ADJCLOSE > 2");
+                                       " AND TIME <= @TEnd" + additionalCriteria);
                 cmd.Parameters.Add("@TStart", MySqlDbType.Int32);
                 cmd.Parameters.Add("@TEnd", MySqlDbType.Int32);
                 cmd.CommandType = CommandType.Text;
@@ -86,14 +88,14 @@ namespace Trading.Backtest.Data
             }
             return dt.To(r => new Price
             {
-                SecId = r[0].ConvertLong(),
+                SecId = r[0].Long(),
                 At = r["TIME"].ConvertDate("yyyyMMdd"),
                 Open = double.NaN,
-                High = r["HIGH"].ConvertDouble(),
-                Low = r["LOW"].ConvertDouble(),
-                Close = r["CLOSE"].ConvertDouble(),
-                AdjClose = r["ADJCLOSE"].ConvertDouble(),
-                Volume = r["VOLUME"].ConvertLong(),
+                High = r["HIGH"].Double(),
+                Low = r["LOW"].Double(),
+                Close = r["CLOSE"].Double(),
+                AdjClose = r["ADJCLOSE"].Double(),
+                Volume = r["VOLUME"].Long(),
             });
         }
     }

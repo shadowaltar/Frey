@@ -177,7 +177,6 @@ namespace Trading.DataCache.ViewModels
                 {
                     using (ReportTime.Start(folder + " prices loaded used: {0}"))
                     {
-
                         using (var access = DataAccessFactory.NewTransaction())
                         using (new ReportTime("Read " + folder + " used {0}"))
                         {

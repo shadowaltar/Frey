@@ -252,7 +252,7 @@ namespace Trading.DataDownload.ViewModels
             {
                 var mktDir = Path.Combine(Constants.PricesDirectory, marketCode);
                 var files = Directory.GetFiles(mktDir);
-                var totalCount = files.Length.ConvertDouble();
+                var totalCount = files.Length.Double();
                 var progressCount = 0;
                 await Task.Run(() =>
                 {

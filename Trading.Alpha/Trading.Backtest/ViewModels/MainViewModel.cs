@@ -32,9 +32,11 @@ namespace Trading.Backtest.ViewModels
 
         public void Run()
         {
-            core.Initialize(testStart, testEnd, endOfData);
-            core.Run();
-
+            using (var access = DataAccessFactory.New())
+            {
+                core.Initialize(testStart, testEnd, endOfData, access);
+                core.Run();
+            }
             var reporter = new BacktestReport();
             string path;
             using (ReportTime.Start())
@@ -55,12 +57,12 @@ namespace Trading.Backtest.ViewModels
                 x = access.YieldQuery(r => new PriceReportEntry
                 {
                     At = r["Time"].ConvertDate("yyyyMMdd"),
-                    Open = r["Open"].ConvertDouble(),
-                    High = r["High"].ConvertDouble(),
-                    Low = r["Low"].ConvertDouble(),
-                    Close = r["Close"].ConvertDouble(),
-                    AdjClose = r["AdjClose"].ConvertDouble(),
-                    Volume = r["Volume"].ConvertLong(),
+                    Open = r["Open"].Double(),
+                    High = r["High"].Double(),
+                    Low = r["Low"].Double(),
+                    Close = r["Close"].Double(),
+                    AdjClose = r["AdjClose"].Double(),
+                    Volume = r["Volume"].Long(),
                 }, @"SELECT P.* FROM PRICES P JOIN SECURITIES S ON P.SECID = S.ID
 WHERE P.TIME >= {0} AND P.TIME <= {1} AND S.CODE = '{2}'", d.AddDays(-DayRangeToCheck).ToDateInt(),
                                                          d.AddDays(DayRangeToCheck).ToDateInt(),
