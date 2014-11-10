@@ -171,8 +171,8 @@ ON PRICES (SECID, TIME)");
             return new Security
             {
                 Id = r["ID"].Long(),
-                Code = r["CODE"].ConvertString(),
-                Name = r["NAME"].ConvertString(),
+                Code = r["CODE"].String(),
+                Name = r["NAME"].String(),
             };
         }
     }

@@ -1,21 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reflection;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using MahApps.Metro.Controls;
+using Ninject;
+using System;
+using System.Diagnostics;
 using Trading.Common.Data;
 using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
-using Ninject;
 
 namespace Trading.Common.ViewModels
 {
     public abstract class MainViewModelBase<TDA> :
-        ViewModelBase, IHasViewService, IHasEnvironment,
+        ViewModelBase, IHasViewService,
         IHasDataAccessFactory<TDA>
         where TDA : DataAccess
     {
-        public virtual Process CurrentProcess { get { return Process.GetCurrentProcess(); } }
+        public Process CurrentProcess { get { return Process.GetCurrentProcess(); } }
         public abstract string ProgramName { get; }
 
         private int k = (int)Math.Pow(2, 10);
@@ -37,7 +36,6 @@ namespace Trading.Common.ViewModels
             PeriodicTask.Run(SetWindowTitle, TimeSpan.FromSeconds(2));
         }
 
-        protected string environment;
         private IEventAggregator eventAggregator;
 
         [Inject]
@@ -54,17 +52,6 @@ namespace Trading.Common.ViewModels
             {
                 eventAggregator = value;
                 EventAggregator.Subscribe(this);
-            }
-        }
-
-        public string Environment
-        {
-            get { return environment; }
-            set
-            {
-                environment = value;
-                DataAccessFactory.Environment = environment;
-                SetWindowTitle();
             }
         }
 

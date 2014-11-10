@@ -246,7 +246,7 @@ namespace Trading.Common.Utils
             return defaultValue;
         }
 
-        public static string ConvertString(this object value, string defaultValue = "")
+        public static string String(this object value, string defaultValue = "")
         {
             return value.IsNullOrDBNull() ? defaultValue : value.ToString();
         }
@@ -307,7 +307,7 @@ namespace Trading.Common.Utils
 
         public static T ParseEnum<T>(this object value)
         {
-            return (T)Enum.Parse(typeof(T), value.ConvertString());
+            return (T)Enum.Parse(typeof(T), value.String());
         }
 
         public static bool StartsWithIgnoreCase(this string value, string header)

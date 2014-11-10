@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using log4net;
-using Trading.Common.Utils;
-using System;
-using System.Data;
+﻿using log4net;
 using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Reflection;
+using Trading.Common.Utils;
 
 namespace Trading.Common.Data
 {

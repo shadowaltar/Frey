@@ -4,11 +4,12 @@
                       xmlns:cal="http://www.caliburnproject.org"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       Title="MainView"
-                      Width="600"
-                      Height="350"
+                      Width="588"
+                      Height="405"
                       GlowBrush="{DynamicResource AccentColorBrush}">
     <controls:MetroWindow.Resources>
         <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
+        <Style BasedOn="{StaticResource LabelTextStyle}" TargetType="Label" />
         <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
     </controls:MetroWindow.Resources>
     <Grid>
@@ -35,22 +36,73 @@
                              VerticalAlignment="Top"
                              Text="20140101"
                              TextWrapping="Wrap" />
-                    <TextBlock Margin="10,82,0,0"
+                    <TextBlock Margin="260,10,0,0"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Top"
                                Text="Init Cash" />
                     <TextBox Width="120"
-                             Margin="10,117,0,0"
+                             Margin="260,45,0,0"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
                              Text="10000"
                              TextWrapping="Wrap" />
-                    <TextBlock Margin="10,154,0,0"
-                    	HorizontalAlignment="Left"
-                    	VerticalAlignment="Top"
-                    	Text="Benchmark" />
-                    <ListBox x:Name="Benchmarks" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" HorizontalAlignment="Left" Margin="10,189,0,10" Width="120"/>
-                    <Button x:Name="Test" Content="Button" HorizontalAlignment="Left" Margin="310,184,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBlock Margin="385,10,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="Benchmark" />
+                    <ListBox x:Name="Benchmarks"
+                             Margin="385,45,7,10"
+                             BorderBrush="{DynamicResource AccentColorBrush}"
+                             BorderThickness="1" />
+                    <TextBlock Width="126"
+                               Margin="10,82,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Text="Security Universe" />
+                    <ComboBox x:Name="SecurityUniverseTypes"
+                              Width="177"
+                              Margin="10,117,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top" />
+                    <ComboBox x:Name="Markets"
+                              Width="177"
+                              Margin="10,183,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              IsEnabled="{Binding IsTradingSelectedMarket}" />
+                    <Label x:Name="SelectedMarketLabel"
+                           Width="119"
+                           Margin="10,148,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Content="Selected Market"
+                           IsEnabled="{Binding IsTradingSelectedMarket}" />
+                    <ListBox x:Name="SelectedSecurities"
+                             Width="188"
+                             Margin="192,117,0,10"
+                             HorizontalAlignment="Left"
+                             BorderBrush="{DynamicResource AccentColorBrush}"
+                             BorderThickness="1"
+                             IsEnabled="{Binding IsTradingSelectiveSecurities}" />
+                    <Label x:Name="SelectedSecuritiesLabel"
+                           Margin="192,82,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Content="Selected Securities"
+                           IsEnabled="{Binding IsTradingSelectiveSecurities}" />
+                    <Label x:Name="SearchBySecurityCodeLabel"
+                           Margin="10,214,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Content="Search By Security Code"
+                           IsEnabled="{Binding IsTradingSelectiveSecurities}" />
+                    <TextBox x:Name="PartialSecurityInfo"
+                             Width="177"
+                             Margin="10,249,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsEnabled="{Binding IsTradingSelectiveSecurities}"
+                             cal:Message.Attach="[Event KeyDown]=[Action SearchBySecurityCode($executionContext)]" />
                 </Grid>
             </TabItem>
             <TabItem Header="ENTER" />

@@ -188,7 +188,6 @@
     <Compile Include="Utils\FilterOptions.cs" />
     <Compile Include="Utils\ActivityType.cs" />
     <Compile Include="Utils\ActivityMessage.cs" />
-    <Compile Include="Utils\IHasEnvironment.cs" />
     <Compile Include="Utils\IHasEventAggregator.cs" />
     <Compile Include="Utils\IHasViewService.cs" />
     <Compile Include="Utils\Converters\InvertMultiBooleanToVisibilityConverter.cs" />

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Windows.Controls;
+using Caliburn.Micro;
 using Ninject;
 using Ninject.Modules;
 using System;
@@ -41,29 +42,33 @@ namespace Trading.Common
 
         protected virtual void ConfigureCaliburnMicro()
         {
-            ConventionManager.AddElementConvention<FrameworkElement>(
-                UIElement.IsEnabledProperty, "IsEnabled", "IsEnabledChanged");
+            ConventionManager.AddElementConvention<FrameworkElement>(UIElement.IsEnabledProperty, "IsEnabled", "IsEnabledChanged");
 
             var baseBindProperties = ViewModelBinder.BindProperties;
-            ViewModelBinder.BindProperties =
-                (frameWorkElements, viewModels) =>
-                {
-                    foreach (var frameworkElement in frameWorkElements)
-                    {
-                        var propertyName = "Is" + frameworkElement.Name + "Enabled";
-                        var property = viewModels.GetPropertyCaseInsensitive(propertyName);
-                        if (property != null)
-                        {
-                            var convention = ConventionManager
-                                .GetElementConvention(typeof(FrameworkElement));
-                            ConventionManager.SetBindingWithoutBindingOverwrite(
-                                viewModels, propertyName, property, frameworkElement, convention,
-                                convention.GetBindableProperty(frameworkElement));
-                        }
-                    }
-                    return baseBindProperties(frameWorkElements, viewModels);
-                };
+            ViewModelBinder.BindProperties = (frameWorkElements, viewModel) =>
+            {
+                BindEnabledProperties(frameWorkElements, viewModel);
+                return baseBindProperties(frameWorkElements, viewModel);
+            };
+
             ConventionManager.Singularize = Singularizer.Singularize;
+        }
+
+        private static void BindEnabledProperties(IEnumerable<FrameworkElement> items, Type viewModel)
+        {
+            foreach (var frameworkElement in items)
+            {
+                var propertyName = "Is" + frameworkElement.Name + "Enabled";
+                var property = viewModel.GetPropertyCaseInsensitive(propertyName);
+                if (property != null)
+                {
+                    var convention = ConventionManager
+                        .GetElementConvention(typeof(FrameworkElement));
+                    ConventionManager.SetBindingWithoutBindingOverwrite(
+                        viewModel, propertyName, property, frameworkElement, convention,
+                        convention.GetBindableProperty(frameworkElement));
+                }
+            }
         }
 
         protected virtual void BindCaliburnMicro()
