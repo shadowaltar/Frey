@@ -8,36 +8,30 @@ namespace Trading.StrategyBuilder.ViewModels
     [ImplementPropertyChanged]
     public class SelectViewModel : ViewModelBase
     {
-        public BindableCollection<SecurityViewModel> Securities { get; private set; }
+        public BindableCollection<Security> Securities { get; private set; }
+
+        public Security SelectedSecurity { get; set; }
 
         public SelectViewModel()
         {
-            Securities = new BindableCollection<SecurityViewModel>();
+            Securities = new BindableCollection<Security>();
             DisplayName = "Pick one security";
         }
 
-        public void Add(params Security[] securities)
+        public void Initialize(params Security[] securities)
         {
             foreach (var security in securities)
             {
-                Securities.Add(new SecurityViewModel(security));
+                Securities.Add(security);
             }
         }
-    }
 
-    [ImplementPropertyChanged]
-    public class SecurityViewModel : Security
-    {
-        public SecurityViewModel()
+        public void OnDoubleClick()
         {
-
-        }
-
-        public SecurityViewModel(Security security)
-        {
-            Code = security.Code;
-            Name = security.Name;
-            Id = security.Id;
+            if (SelectedSecurity != null)
+            {
+                TryClose(true);
+            }
         }
     }
 }

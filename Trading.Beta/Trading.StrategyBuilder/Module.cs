@@ -14,6 +14,9 @@ namespace Trading.StrategyBuilder
             TryBindSingleton<ISettings, InfrastructureSettings>();
 
             Bind<IMainViewModel>().To<MainViewModel>();
+            Bind<IEnterSetupViewModel>().To<EnterSetupViewModel>();
+            Bind<IRuleViewModel>().To<RuleViewModel>();
+
             Constants.InitializeDirectories();
         }
     }

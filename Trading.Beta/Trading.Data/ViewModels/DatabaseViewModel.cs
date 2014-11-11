@@ -303,8 +303,8 @@ namespace Trading.Data.ViewModels
                         {
                             try
                             {
-                                var code = records.GetField<string>("CODE");
-                                var name = records.GetField<string>("NAME");
+                                var code = records.GetField<string>("Code");
+                                var name = records.GetField<string>("Name");
                                 access.AddCountry(code, name);
                             }
                             catch (Exception e)

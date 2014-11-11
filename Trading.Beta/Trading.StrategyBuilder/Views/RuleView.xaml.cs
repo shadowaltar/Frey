@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Trading.StrategyBuilder.Views
 {
     /// <summary>
-    /// Interaction logic for StartRuleControlView.xaml
+    /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class StartRuleControlView : UserControl
+    public partial class RuleView : UserControl
     {
-        public StartRuleControlView()
+        public RuleView()
         {
             InitializeComponent();
         }
