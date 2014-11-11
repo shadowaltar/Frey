@@ -284,6 +284,44 @@ namespace Trading.Data.ViewModels
             }
         }
 
+        public void AddCountries()
+        {
+            using (var access = DataAccessFactory.NewTransaction())
+            {
+                try
+                {
+                    access.UseSchema(DefaultSchema);
+                    access.CreateCountryTable();
+
+                    var fileName = Directory.GetFiles(Constants.OtherDataDirectory, "COUNTRIES.csv", SearchOption.TopDirectoryOnly)
+                        .FirstOrDefault();
+                    using (new ReportTime("Read " + fileName + " used {0}"))
+                    using (var reader = File.OpenText(fileName))
+                    using (var records = new CsvReader(reader))
+                    {
+                        while (records.Read())
+                        {
+                            try
+                            {
+                                var code = records.GetField<string>("CODE");
+                                var name = records.GetField<string>("NAME");
+                                access.AddCountry(code, name);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Warn("Failed to read symbol.", e);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Failed to add CALENDAR.", e);
+                    access.Rollback();
+                }
+            }
+        }
+
         protected void InitializeDatabase()
         {
             using (var access = DataAccessFactory.New())

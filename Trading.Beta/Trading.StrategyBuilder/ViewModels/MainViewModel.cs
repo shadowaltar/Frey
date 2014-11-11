@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Caliburn.Micro;
 using MahApps.Metro.Controls;
+using Ninject;
 using PropertyChanged;
 using Trading.Common;
 using Trading.Common.Data;
@@ -22,6 +24,9 @@ namespace Trading.StrategyBuilder.ViewModels
         public string SelectedBenchmark { get; set; }
         public string PartialSecurityInfo { get; set; }
 
+        [Inject]
+        public SelectViewModel SelectViewModel { get; set; }
+
         private string selectedSecurityUniverseType;
         public string SelectedSecurityUniverseType
         {
@@ -39,14 +44,18 @@ namespace Trading.StrategyBuilder.ViewModels
         public BindableCollection<string> Benchmarks { get; private set; }
         public BindableCollection<string> SecurityUniverseTypes { get; private set; }
         public BindableCollection<string> Markets { get; private set; }
+        public BindableCollection<string> SelectedSecurities { get; private set; }
 
         public MainViewModel(IDataAccessFactory<Access> dataAccessFactory, ISettings settings)
             : base(dataAccessFactory, settings)
         {
             Benchmarks = new BindableCollection<string> { "S&P", "RUSSELL 2000" };
-            SecurityUniverseTypes = new BindableCollection<string> { "Whole Market", "Selected Securities" };
+            SecurityUniverseTypes = new BindableCollection<string> { "Selected Securities", "Whole Market"};
             Markets = new BindableCollection<string> { "US" };
+            SelectedSecurities = new BindableCollection<string>();
             Constants.InitializeDirectories();
+
+            SelectedSecurityUniverseType = SecurityUniverseTypes[0];
         }
 
         protected override void OnLoaded(MetroWindow view)
@@ -81,11 +90,22 @@ namespace Trading.StrategyBuilder.ViewModels
                     {
                         securities = access.FindSecurity(PartialSecurityInfo);
                     }
+                    if (securities.Count == 1)
+                    {
 
+                    }
+                    else if (securities.Count > 0)
+                    {
+                        ViewService.ShowDialog(SelectViewModel);
+                        SelectViewModel.Add(securities.ToArray());
+                    }
+                    else
+                    {
+                        ViewService.ShowWarning("No security is found.");
+                    }
                 }
                 catch (Exception e)
                 {
-                    
                     Log.Error(e);
                 }
             }

@@ -24,6 +24,8 @@ namespace Trading.Data.ViewModels
         {
             Filters = new BindableCollection<PriceEntryFilter>
             {
+                new PriceEntryFilter{StartTime = 20040101},
+                new PriceEntryFilter{EndTime = 20141231},
                 new PriceEntryFilter("VOLUME > 200000"),
                 new PriceEntryFilter("CLOSE > 10"),
                 new PriceEntryFilter("ADJCLOSE > 10"),
@@ -32,52 +34,72 @@ namespace Trading.Data.ViewModels
 
         public void LoadPrices()
         {
-            return Task.Run(() =>
+            //var criteria = BuildCriteria();
+            //return Task.Run(() =>
+            //{
+            //    using (var access = DataAccessFactory.New())
+            //    using (var command = access.GetCommonCommand())
+            //    {
+            //        access.GetCalendar("USA");
+            //        // make list of dicts first
+            //        var prices = DataCache.PriceCache;
+
+            //        var date = testStart;
+            //        while (date <= testEnd)
+            //        {
+            //            if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday
+            //                && !usNonMarketDates.Contains(date.ToDateInt()))
+            //                prices[date] = new Dictionary<long, Price>();
+            //            date = date.AddDays(1);
+            //        }
+
+            //        using (ReportTime.Start())
+            //        {
+            //            // both end inclusive
+            //            for (int year = SelectedStartYear; year <= SelectedEndYear; year++)
+            //            {
+            //                progressIndicator.SetMessage("Loading " + year);
+            //                using (ReportTime.Start(year + " used time: {0}"))
+            //                {
+            //                    foreach (
+            //                        var price in access.GetPrices(year, criteria))
+            //                    {
+            //                        var secId = price.SecId;
+            //                        prices[price.At][secId] = price;
+            //                        if (price.At > endOfData)
+            //                            endOfData = price.At;
+            //                    }
+            //                }
+            //            }
+            //        }
+
+
+
+            //        if (command != null)
+            //            command.Dispose();
+            //    }
+            //});
+        }
+
+        private string BuildCriteria()
+        {
+            var result = "";
+            foreach (var filter in Filters)
             {
-                Access commonAccess =null;
-                if (commonAccess == null)
-                    commonAccess = DataAccessFactory.New();
-                if (commonCommand == null)
-                    commonCommand = commonAccess.GetCommonCommand();
-
-                // make list of dicts first
-                prices = DataCache.PriceCache;
-                prices.Clear();
-
-                var date = testStart;
-                while (date <= testEnd)
+                if (filter.Expression != null)
                 {
-                    if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday
-                        && !usNonMarketDates.Contains(date.ToDateInt()))
-                        prices[date] = new Dictionary<long, Price>();
-                    date = date.AddDays(1);
+                    result += filter.Expression + " AND ";
                 }
-
-                using (ReportTime.Start())
+                else if (filter.StartTime != 0)
                 {
-                    // both end inclusive
-                    for (int year = SelectedStartYear; year <= SelectedEndYear; year++)
-                    {
-                        progressIndicator.SetMessage("Loading " + year);
-                        using (ReportTime.Start(year + " used time: {0}"))
-                        {
-                            foreach (var price in commonAccess.GetOneYearPriceData(year, core.GetDataCriteriaInSql()))
-                            {
-                                var secId = price.SecId;
-                                prices[price.At][secId] = price;
-                                if (price.At > endOfData)
-                                    endOfData = price.At;
-                            }
-                        }
-                    }
+                    result += "TIME >= " + filter.StartTime + " AND ";
                 }
-
-
-                if (commonAccess != null)
-                    commonAccess.Dispose();
-                if (commonCommand != null)
-                    commonCommand.Dispose();
-            });
+                else if (filter.EndTime != 0)
+                {
+                    result += "TIME <= " + filter.EndTime + " AND ";
+                }
+            }
+            return result.Trim(" AND ");
         }
 
         public Task LoadSecurities()
@@ -112,6 +134,9 @@ namespace Trading.Data.ViewModels
         }
 
         public string Expression { get; set; }
+
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
     }
 
     public interface IDataCacheViewModel : IHasViewService, IHasDataAccessFactory<Access>

@@ -17,9 +17,6 @@
                 <ResourceDictionary>
                     <this:Bootstrapper x:Key="Bo" />
                 </ResourceDictionary>
-                <!--<ResourceDictionary>
-                    <Style  BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox">
-                </Style></ResourceDictionary>-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

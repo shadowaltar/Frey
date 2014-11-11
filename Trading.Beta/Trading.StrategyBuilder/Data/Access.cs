@@ -18,15 +18,5 @@ namespace Trading.StrategyBuilder.Data
             var table = Query("SELECT * FROM SECURITIES WHERE CODE LIKE '%{0}%' OR UPPER(NAME) LIKE '%{0}%'", partialSecurityInfo);
             return table.To(SecurityConvert).OrderBy(s => s.Code).ToList();
         }
-
-        private Security SecurityConvert(DataRow r)
-        {
-            return new Security
-            {
-                Id = r["ID"].Long(),
-                Code = r["CODE"].String(),
-                Name = r["NAME"].String(),
-            };
-        }
     }
 }

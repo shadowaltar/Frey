@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Trading.StrategyBuilder
+namespace Trading.StrategyBuilder.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for StartRuleControlView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class StartRuleControlView : UserControl
     {
-        public MainWindow()
+        public StartRuleControlView()
         {
             InitializeComponent();
         }

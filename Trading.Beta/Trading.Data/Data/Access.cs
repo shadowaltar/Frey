@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
@@ -38,6 +37,11 @@ namespace Trading.Data.Data
             Execute(sb.ToString());
         }
 
+        public void AddCountry(string code, string name)
+        {
+            Execute(@"INSERT INTO COUNTRIES (CODE,NAME) VALUES ('{0}','{1}')", code, name);
+        }
+
         public Security GetSecurity(string code)
         {
             return Query("SELECT * FROM SECURITIES WHERE CODE = '{0}'", code).FirstOrDefault(SecurityConvert);
@@ -66,7 +70,7 @@ namespace Trading.Data.Data
     CREATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP,
     UPDATE_TIME DATETIME ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`ID`),
-    INDEX CODE (`CODE`)
+    INDEX IX_SECURITIES_CODE (`CODE`)
 ) ENGINE=MyISAM"
 );
         }
@@ -91,6 +95,27 @@ namespace Trading.Data.Data
     CREATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP,
     UPDATE_TIME DATETIME ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`ID`,`COUNTRY`)
+) ENGINE=MyISAM"
+);
+        }
+
+        public void CreateCountryTable()
+        {
+            if (!CheckSchemaExists("TRADING"))
+            {
+                CreateSchema("TRADING");
+            }
+            if (CheckTableExists("TRADING", "COUNTRIES"))
+            {
+                DropTable("COUNTRIES");
+            }
+            CreateTable(
+@"CREATE TABLE IF NOT EXISTS COUNTRIES (
+	ID INT NOT NULL AUTO_INCREMENT,
+	CODE CHAR(3) NOT NULL,
+    NAME VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`ID`,`CODE`),    
+    INDEX IX_COUNTRIES_CODE (`CODE`)
 ) ENGINE=MyISAM"
 );
         }
@@ -166,14 +191,16 @@ ON PRICES (SECID, TIME)");
             }
         }
 
-        private Security SecurityConvert(DataRow r)
+        public MySqlCommand GetCommonCommand()
         {
-            return new Security
-            {
-                Id = r["ID"].Long(),
-                Code = r["CODE"].String(),
-                Name = r["NAME"].String(),
-            };
+            var cmd = new MySqlCommand { Connection = database };
+            return cmd;
+        }
+
+        public List<int> GetCalendar(string country)
+        {
+            var table = Query("SELECT DATE FROM CALENDAR WHERE COUNTRY = '{0}' AND (HOLIDAY > 0 OR MARKET_CLOSED > 0)", country);
+            return table.To(r => r["DATE"].Int()).ToList();
         }
     }
 }

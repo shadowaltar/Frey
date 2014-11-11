@@ -226,7 +226,7 @@ namespace Trading.Common.Utils
             return value.IsNullOrDBNull() ? defaultValue : Convert.ToDouble(value);
         }
 
-        public static bool? ConvertBoolean(this object value)
+        public static bool? Bool(this object value)
         {
             bool result;
             if (bool.TryParse(value.ToString(), out result))
@@ -236,7 +236,7 @@ namespace Trading.Common.Utils
             return null;
         }
 
-        public static bool ConvertBoolean(this object value, bool defaultValue)
+        public static bool Bool(this object value, bool defaultValue)
         {
             bool result;
             if (bool.TryParse(value.ToString(), out result))
@@ -254,6 +254,19 @@ namespace Trading.Common.Utils
         public static string Trim(this object value)
         {
             return value.ToString().Trim();
+        }
+
+        public static string Trim(this string value, string startOrEndWith)
+        {
+            if (value.StartsWith(startOrEndWith))
+            {
+                value = value.Remove(0, startOrEndWith.Length);
+            }
+            if (value.EndsWith(startOrEndWith))
+            {
+                value = value.Remove(value.Length - startOrEndWith.Length, startOrEndWith.Length);
+            }
+            return value;
         }
 
         public static string TrimOrDefault(this string value, string defaultValue = null)

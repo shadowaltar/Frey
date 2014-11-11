@@ -77,6 +77,13 @@
                  Margin="85,0,10,81"
                  VerticalAlignment="Bottom"
                  TextWrapping="Wrap" />
+        <Button x:Name="AddCountries"
+                Height="29"
+                Margin="10,0,10,78"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="Create and add countries" />
     </Grid>
 
 </UserControl>
