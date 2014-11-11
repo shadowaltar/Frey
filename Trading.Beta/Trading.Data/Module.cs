@@ -13,6 +13,7 @@ namespace Trading.Data
             TryBind<IDataAccessFactory<Access>, AccessFactory<Access>>();
             TryBindSingleton<ISettings, InfrastructureSettings>();
 
+            Bind<IDataCacheViewModel>().To<DataCacheViewModel>();
             Bind<IDatabaseViewModel>().To<DatabaseViewModel>();
             Bind<IDownloadViewModel>().To<DownloadViewModel>();
             Bind<IInteractiveBrokersViewModel>().To<InteractiveBrokersViewModel>();

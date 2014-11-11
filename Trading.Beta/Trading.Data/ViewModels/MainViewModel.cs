@@ -15,8 +15,10 @@ namespace Trading.Data.ViewModels
         public IDatabaseViewModel DatabaseViewModel { get; set; }
         public IDownloadViewModel DownloadViewModel { get; set; }
         public IInteractiveBrokersViewModel IBViewModel { get; set; }
+        public IDataCacheViewModel DataCacheViewModel { get; set; }
 
         public MainViewModel(
+            IDataCacheViewModel dataCacheViewModel,
             IDatabaseViewModel databaseViewModel,
             IDownloadViewModel downloadViewModel,
             IInteractiveBrokersViewModel interactiveBrokersViewModel,
@@ -25,6 +27,7 @@ namespace Trading.Data.ViewModels
         {
             Constants.InitializeDirectories();
 
+            DataCacheViewModel = dataCacheViewModel;
             DatabaseViewModel = databaseViewModel;
             DownloadViewModel = downloadViewModel;
             IBViewModel = interactiveBrokersViewModel;
@@ -34,10 +37,12 @@ namespace Trading.Data.ViewModels
         {
             ViewService.Window = view;
 
+            DataCacheViewModel.ViewService = ViewService;
             DatabaseViewModel.ViewService = ViewService;
             DownloadViewModel.ViewService = ViewService;
             IBViewModel.ViewService = ViewService;
 
+            DataCacheViewModel.DataAccessFactory = DataAccessFactory;
             DatabaseViewModel.DataAccessFactory = DataAccessFactory;
 
             DownloadViewModel.Initalize();
