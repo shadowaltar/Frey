@@ -25,14 +25,23 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public async void CreateSecurityRules()
         {
-            await ViewService.ShowDialog(CreateCondition as ViewModelBase);
-            if (isGood)
+            var isGood = await ViewService.ShowDialog(CreateCondition as ViewModelBase);
+            if (isGood.HasValue && (bool)isGood)
             {
-                
+                var condition = new Condition(CreateCondition.SourceValue, CreateCondition.Operator,
+                    CreateCondition.TargetValue);
+
+                var i = Interlocked.Increment(ref ruleIndex);
+                if (Rules.Count == 0)
+                {
+                    var conds = new FilterSecurityConditions { condition };
+                    Rules.Add(new RuleViewModel(conds) { RuleIndex = i });
+                }
+                else
+                {
+                    Rules[0].Conditions.Add(condition);
+                }
             }
-            var i = Interlocked.Increment(ref ruleIndex);
-            var conds = new FilterSecurityConditions();
-            Rules.Add(new RuleViewModel(conds));
         }
     }
 

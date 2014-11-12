@@ -24,19 +24,15 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
                  AutoWordSelection="True"
+                 CharacterCasing="Upper"
                  Text="Volume"
                  TextAlignment="Center" />
         <Label Margin="127,10,0,0"
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
                Content="Is" />
-        <Button x:Name="Ok"
-                Width="75"
-                Margin="0,0,10,10"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Content="OK" />
-        <TextBox Width="36" x:Name="Operator"
+        <TextBox x:Name="Operator"
+                 Width="36"
                  Margin="127,45,0,0"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
@@ -53,13 +49,15 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
                  AutoWordSelection="True"
+                 CharacterCasing="Upper"
                  Text="200000"
                  TextAlignment="Center" />
-        <Button x:Name="AddMore"
-                Margin="0,0,90,10"
+
+        <Button x:Name="Ok"
+                Width="75"
+                Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Content="Add More" />
-
+                Content="OK" />
     </Grid>
 </controls:MetroWindow>

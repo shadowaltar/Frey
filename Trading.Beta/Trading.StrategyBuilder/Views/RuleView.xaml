@@ -14,22 +14,26 @@
         <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
     </controls:Tile.Resources>
     <Grid Width="140">
-        <TextBlock Margin="10,10,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Text="RULE" />
-        <TextBlock x:Name="RuleIndex"
-                   Margin="42,10,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Text="00" />
-        <ListBox x:Name="Rules" Margin="10,31,10,10">
+        <StackPanel Margin="10,10,10,114" Orientation="Horizontal">
+            <TextBlock HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Text="RULE" />
+            <TextBlock x:Name="RuleIndex"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Text="00" />
+            <TextBlock x:Name="Type"
+                       Margin="5,0,0,0"
+                       Text="SECURITY" />
+        </StackPanel>
+        <ListBox x:Name="Conditions" Margin="10,31,10,10">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Field}" />
+                        <TextBlock Text="{Binding SourceValue}" />
                         <TextBlock Text="{Binding Operator}" />
-                        <TextBlock Text="{Binding Value}" />
+                        <TextBlock Text="{Binding TargetValue}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -9,13 +9,13 @@ namespace Trading.StrategyBuilder.ViewModels
     public class RuleViewModel : ViewModelBaseSlim, IRuleViewModel
     {
         public int RuleIndex { get; set; }
-        public BindableCollection<Condition> Rules { get; private set; }
+        public BindableCollection<Condition> Conditions { get; private set; }
         public string For { get; set; }
 
         public RuleViewModel(IConditions conditions)
         {
-            Rules = new BindableCollection<Condition>();
-            Rules.AddRange(conditions);
+            Conditions = new BindableCollection<Condition>();
+            Conditions.AddRange(conditions);
         }
     }
 
