@@ -102,8 +102,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\FilterSecurityConditions.cs" />
+    <Compile Include="Core\IConditions.cs" />
+    <Compile Include="Core\RuleFactory.cs" />
+    <Compile Include="Core\Condition.cs" />
     <Compile Include="Data\Access.cs" />
     <Compile Include="Data\AccessFactory.cs" />
+    <Compile Include="ViewModels\CreateConditionViewModel.cs" />
     <Compile Include="ViewModels\EnterSetupViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="App.xaml.cs">
@@ -113,9 +118,16 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="ViewModels\RuleViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
+    <Compile Include="Views\CreateConditionView.xaml.cs">
+      <DependentUpon>CreateConditionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RuleView.xaml.cs">
       <DependentUpon>RuleView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\CreateConditionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EnterSetupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

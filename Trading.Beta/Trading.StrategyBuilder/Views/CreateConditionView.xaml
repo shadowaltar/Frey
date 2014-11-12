@@ -1,0 +1,65 @@
+﻿<controls:MetroWindow x:Class="Trading.StrategyBuilder.Views.CreateConditionView"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Title="ConditionView"
+                      Width="303.505"
+                      Height="165"
+                      ResizeMode="NoResize"
+                      Style="{DynamicResource GlowingWindowStyle}">
+    <controls:MetroWindow.Resources>
+        <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
+        <Style BasedOn="{StaticResource LabelTextStyle}" TargetType="Label" />
+        <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
+        <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
+    </controls:MetroWindow.Resources>
+    <Grid>
+        <Label Margin="10,10,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Field / Indicator" />
+        <TextBox x:Name="SourceValue"
+                 Width="112"
+                 Margin="10,45,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 AutoWordSelection="True"
+                 Text="Volume"
+                 TextAlignment="Center" />
+        <Label Margin="127,10,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Is" />
+        <Button x:Name="Ok"
+                Width="75"
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Content="OK" />
+        <TextBox Width="36" x:Name="Operator"
+                 Margin="127,45,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 AutoWordSelection="True"
+                 Text="&gt;"
+                 TextAlignment="Center" />
+        <Label Margin="168,10,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Field / Indicator" />
+        <TextBox x:Name="TargetValue"
+                 Width="112"
+                 Margin="168,45,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 AutoWordSelection="True"
+                 Text="200000"
+                 TextAlignment="Center" />
+        <Button x:Name="AddMore"
+                Margin="0,0,90,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Content="Add More" />
+
+    </Grid>
+</controls:MetroWindow>

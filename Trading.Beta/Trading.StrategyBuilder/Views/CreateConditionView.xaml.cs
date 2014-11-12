@@ -10,18 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MahApps.Metro.Controls;
 
 namespace Trading.StrategyBuilder.Views
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// Interaction logic for CreateConditionView.xaml
     /// </summary>
-    public partial class RuleView : Tile
+    public partial class CreateConditionView
     {
-        public RuleView()
+        public CreateConditionView()
         {
             InitializeComponent();
         }

@@ -1,20 +1,19 @@
-﻿<UserControl x:Class="Trading.StrategyBuilder.Views.RuleView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             Width="140"
-             Height="140"
-             mc:Ignorable="d">
-    <UserControl.Resources>
+﻿<controls:Tile x:Class="Trading.StrategyBuilder.Views.RuleView"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               HorizontalContentAlignment="Stretch"
+               VerticalContentAlignment="Stretch"
+               mc:Ignorable="d">
+    <controls:Tile.Resources>
         <Style BasedOn="{StaticResource SmallTextStyle}" TargetType="TextBlock" />
         <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
         <Style BasedOn="{StaticResource LabelTextStyle}" TargetType="Label" />
         <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
-    </UserControl.Resources>
-    <Grid Width="135" Height="135" Margin="0,0,5,5"
-             Background="Orange">
+    </controls:Tile.Resources>
+    <Grid Width="140">
         <TextBlock Margin="10,10,0,0"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
@@ -24,6 +23,16 @@
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
                    Text="00" />
-        <ListBox x:Name="Rules" Margin="10,31,15,15" />
+        <ListBox x:Name="Rules" Margin="10,31,10,10">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Field}" />
+                        <TextBlock Text="{Binding Operator}" />
+                        <TextBlock Text="{Binding Value}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
-</UserControl>
+</controls:Tile>

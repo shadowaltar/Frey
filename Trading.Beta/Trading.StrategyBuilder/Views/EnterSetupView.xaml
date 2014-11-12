@@ -1,24 +1,44 @@
 ﻿<UserControl x:Class="Trading.StrategyBuilder.Views.EnterSetupView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cal="http://www.caliburnproject.org"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:Trading.StrategyBuilder.Views"
              d:DesignHeight="320"
-             d:DesignWidth="320"
+             d:DesignWidth="640"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
         <Style BasedOn="{StaticResource LabelTextStyle}" TargetType="Label" />
         <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
     </UserControl.Resources>
-    <Grid Margin="10">
-        <views:RuleView Width="140"
-                        Height="140"
-                        Margin="45,72,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top" />
-        <views:RuleView />
+    <Grid>
+        <Button x:Name="CreateSecurityRules"
+                Margin="10,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Content="Create Security Rules" />
+
+        <Button Margin="173,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Content="Re" />
+
+        <ListBox x:Name="Rules"
+                 Margin="10,44,10,10"
+                 ScrollViewer.HorizontalScrollBarVisibility="Visible">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl cal:View.Model="{Binding}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
     </Grid>
 </UserControl>

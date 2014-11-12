@@ -160,6 +160,10 @@
         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
         <Setter Property="Visibility" Value="{Binding IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVis}}" />
     </Style>
+    <Style x:Key="ListBoxStyle" TargetType="{x:Type ListBox}">
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentColorBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
 
     <!--  Flyout Styles  -->
     <Style x:Key="NormalFlyoutStyle" TargetType="{x:Type controls:Flyout}">
