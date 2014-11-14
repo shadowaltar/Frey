@@ -107,7 +107,7 @@
         <Setter Property="FontFamily" Value="Segoe UI Semilight" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Height" Value="32" />
-        <Setter Property="Foreground" Value="{StaticResource IdealForegroundColorBrush}" />
+        <!--  <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}" />  -->
     </Style>
     <Style x:Key="ToggleSwitchTextStyle"
            BasedOn="{StaticResource MetroToggleSwitch}"

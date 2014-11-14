@@ -142,6 +142,7 @@
             </TabItem>
             <TabItem Header="EXIT" />
             <TabItem Header="RUN" />
+            <TabItem Header="REPORT" />
         </controls:MetroAnimatedSingleRowTabControl>
     </Grid>
 </controls:MetroWindow>
