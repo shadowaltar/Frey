@@ -1,6 +1,5 @@
-﻿using Trading.Common;
-using Trading.Common.SharedSettings;
-using Ninject;
+﻿using Ninject;
+using Trading.Common;
 
 namespace Trading.Portal
 {
@@ -13,7 +12,6 @@ namespace Trading.Portal
             Kernel = base.Kernel;
 
             Bind<IPortalViewModel, PortalViewModel>();
-            BindSingleton<ISettings, InfrastructureSettings>();
         }
     }
 }

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using MahApps.Metro.Controls;
 using Ninject;
 using PropertyChanged;
-using Trading.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
 using Trading.Common.Data;
 using Trading.Common.Entities;
-using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.StrategyBuilder.Data;
@@ -50,8 +48,8 @@ namespace Trading.StrategyBuilder.ViewModels
         public IEnterSetupViewModel EnterSetup { get; set; }
 
         public MainViewModel(IEnterSetupViewModel enterSetup,
-            IDataAccessFactory<Access> dataAccessFactory, ISettings settings)
-            : base(dataAccessFactory, settings)
+            IDataAccessFactory<Access> dataAccessFactory)
+            : base(dataAccessFactory)
         {
             Benchmarks = new BindableCollection<string> { "S&P", "RUSSELL 2000" };
             SecurityUniverseTypes = new BindableCollection<string> { "Selected Securities", "Whole Market" };

@@ -4,7 +4,6 @@ using Ninject;
 using System;
 using System.Diagnostics;
 using Trading.Common.Data;
-using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
 
 namespace Trading.Common.ViewModels
@@ -21,10 +20,9 @@ namespace Trading.Common.ViewModels
         private int m = (int)Math.Pow(2, 20);
         private int g = (int)Math.Pow(2, 30);
 
-        protected MainViewModelBase(IDataAccessFactory<TDA> factory, ISettings settings)
+        protected MainViewModelBase(IDataAccessFactory<TDA> factory)
         {
             DataAccessFactory = factory;
-            Settings = settings;
         }
 
         protected override void OnViewLoaded(object view)
@@ -42,8 +40,6 @@ namespace Trading.Common.ViewModels
         public IViewService ViewService { get; set; }
 
         public IDataAccessFactory<TDA> DataAccessFactory { get; set; }
-
-        public ISettings Settings { get; set; }
 
         public override IEventAggregator EventAggregator
         {

@@ -113,7 +113,6 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Data\Access.cs" />
-    <Compile Include="Data\AccessFactory.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ViewModels\DatabaseViewModel.cs" />
     <Compile Include="ViewModels\DataCacheViewModel.cs" />

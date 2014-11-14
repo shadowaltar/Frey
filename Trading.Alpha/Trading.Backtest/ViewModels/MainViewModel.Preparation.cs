@@ -17,12 +17,12 @@ namespace Trading.Backtest.ViewModels
             testEnd = new DateTime(SelectedEndYear, 12, 31);
 
             // get prices 
-            progressIndicator = await ViewService.ShowProgress("Loading", "Loading Securities..", true);
+            progressIndicator = await ViewService.ShowProgress("Loading", "Loading Data..", true);
             await Task.WhenAll(GetAllSecurities(), Task.Run(() =>
             {
                 usNonMarketDates.Clear();
                 using (var access = DataAccessFactory.New())
-                    core.Holidays.AddRange(access.GetUsMarketClosedDates());
+                usNonMarketDates.AddRange(access.GetUsMarketClosedDates());
             }));
 
             progressIndicator.SetMessage("Loading Prices..");
@@ -83,6 +83,10 @@ namespace Trading.Backtest.ViewModels
                             foreach (var price in commonAccess.GetOneYearPriceData(year, core.GetDataCriteriaInSql()))
                             {
                                 var secId = price.SecId;
+                                if (!prices.ContainsKey(price.At))
+                                {
+                                    prices[price.At] = new Dictionary<long, Price>();
+                                }
                                 prices[price.At][secId] = price;
                                 if (price.At > endOfData)
                                     endOfData = price.At;

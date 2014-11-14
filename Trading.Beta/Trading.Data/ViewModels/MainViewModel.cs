@@ -1,16 +1,14 @@
 ﻿using System.Diagnostics;
 using MahApps.Metro.Controls;
-using Ninject;
 using Trading.Common;
 using Trading.Common.Data;
-using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.Data.Data;
 
 namespace Trading.Data.ViewModels
 {
-    public partial class MainViewModel : MainViewModelBase<Access>, IMainViewModel
+    public class MainViewModel : MainViewModelBase<Access>, IMainViewModel
     {
         public IDatabaseViewModel DatabaseViewModel { get; set; }
         public IDownloadViewModel DownloadViewModel { get; set; }
@@ -22,8 +20,8 @@ namespace Trading.Data.ViewModels
             IDatabaseViewModel databaseViewModel,
             IDownloadViewModel downloadViewModel,
             IInteractiveBrokersViewModel interactiveBrokersViewModel,
-            IDataAccessFactory<Access> dataAccessFactory, ISettings settings)
-            : base(dataAccessFactory, settings)
+            IDataAccessFactory<Access> dataAccessFactory)
+            : base(dataAccessFactory)
         {
             Constants.InitializeDirectories();
 

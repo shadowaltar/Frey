@@ -33,6 +33,7 @@ namespace Trading.Common
         public static string PricesDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\Prices"); } }
         public static string SecurityListDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\SecurityList"); } }
         public static string OtherDataDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\OtherData"); } }
+        public static string BloombergDataDirectory { get { return Path.Combine(CurrentDrive, @"Trading\DataFiles\BloombergData"); } }
         public static string LogsDirectory { get { return Path.Combine(CurrentDrive, @"Trading\LogFiles"); } }
     }
 }

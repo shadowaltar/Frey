@@ -5,7 +5,7 @@ namespace Trading.Common.Data
 {
     public class TradingDataAccessFactory<T> : IDataAccessFactory<T> where T : TradingDataAccess, new()
     {
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public T New()
         {
@@ -41,7 +41,7 @@ namespace Trading.Common.Data
         protected string CreateConnectionString()
         {
             const string connectionString
-                = @"Server=127.0.0.1;Database=References;Uid=trading;Pwd=trading;ConvertZeroDatetime=True;
+              = @"Server=127.0.0.1;Database=trading;Uid=trading;Pwd=trading;ConvertZeroDatetime=True;
 UseUsageAdvisor=True;Minimum Pool Size=10;maximum pool size=50;Connection Timeout=5;default command timeout=20";
             return connectionString;
         }

@@ -1,6 +1,5 @@
 ﻿using Trading.Common;
 using Trading.Common.Data;
-using Trading.Common.SharedSettings;
 using Trading.Data.Data;
 using Trading.Data.ViewModels;
 
@@ -10,8 +9,7 @@ namespace Trading.Data
     {
         public override void Load()
         {
-            TryBind<IDataAccessFactory<Access>, AccessFactory<Access>>();
-            TryBindSingleton<ISettings, InfrastructureSettings>();
+            TryBind<IDataAccessFactory<Access>, TradingDataAccessFactory<Access>>();
 
             Bind<IDataCacheViewModel>().To<DataCacheViewModel>();
             Bind<IDatabaseViewModel>().To<DatabaseViewModel>();

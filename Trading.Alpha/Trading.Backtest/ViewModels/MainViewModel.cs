@@ -32,9 +32,10 @@ namespace Trading.Backtest.ViewModels
 
         public void Run()
         {
+            core = new Core(10000);
             using (var access = DataAccessFactory.New())
             {
-                core.Initialize(testStart, testEnd, endOfData, access);
+                core.Initialize(testStart, testEnd, endOfData,usNonMarketDates, access);
                 core.Run();
             }
             var reporter = new BacktestReport();

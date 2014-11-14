@@ -1,13 +1,12 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CsvHelper;
 using Trading.Common;
 using Trading.Common.Data;
 using Trading.Common.Entities;
-using Trading.Common.SharedSettings;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.Data.Data;

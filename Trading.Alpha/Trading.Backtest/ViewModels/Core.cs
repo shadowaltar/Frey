@@ -30,10 +30,10 @@ namespace Trading.Backtest.ViewModels
         public double AnnualizedSharpeRatio { get; private set; }
         public HashSet<int> Holidays { get; private set; }
 
-        public DayOfWeek WeeklyTradeDay { get { return DayOfWeek.Thursday; } }
+        public DayOfWeek WeeklyTradeDay { get { return DayOfWeek.Wednesday; } }
         public int OneSidePositionCount { get { return 30; } }
         public int MovingAverageDays { get { return 10; } }
-        public int SnpMovingAverageDays { get { return 200; } }
+        public bool IsStopLossEnabled { get { return true; } }
 
         private long snpSid;
         private BacktestDataAccess access;
@@ -53,15 +53,17 @@ namespace Trading.Backtest.ViewModels
             AnnualizedSharpeRatio = double.NaN;
         }
 
-        public void Initialize(DateTime testStart, DateTime testEnd, DateTime endOfData, BacktestDataAccess access)
+        public void Initialize(DateTime testStart, DateTime testEnd, DateTime endOfData, HashSet<int> usNonMarketDates, BacktestDataAccess bda)
         {
+            Holidays = usNonMarketDates;
+
             TestStart = testStart;
             TestEnd = testEnd;
             EndOfData = endOfData;
             CurrentDate = TestStart.Next(WeeklyTradeDay).Next(WeeklyTradeDay);
             snpSid = DataCache.SecurityCache[DataCache.SecurityCodeMap[DataCache.CommonBenchmarkCode]].Id;
 
-            this.access = access;
+            access = bda;
             var firstPriceDate = TestStart;
             var prices = SkipNoPriceDates(ref firstPriceDate);
             var snpPrice = prices[snpSid].AdjClose;
@@ -146,16 +148,6 @@ namespace Trading.Backtest.ViewModels
                 mas[p.Key] = p.Value.Average();
             }
 
-            var maPrices2 = DataCache.PriceCache.Where(p => p.Key <= tradeDate && p.Value.Count > 0)
-                .OrderBy(p => p.Key).Take(SnpMovingAverageDays);
-            var snpMaPrices = new List<double>();
-            foreach (var map in maPrices2)
-            {
-                snpMaPrices.Add(map.Value[snpSid].AdjClose);
-            }
-            var snpPrice = dateTwoPrices[snpSid].AdjClose;
-            var snpMaPrice = snpMaPrices.Count > 80 ? snpMaPrices.Average() : snpPrice;
-
             var aboveMa = new HashSet<long>();
             var belowMa = new HashSet<long>();
             foreach (var p in mas)
@@ -169,9 +161,6 @@ namespace Trading.Backtest.ViewModels
             var positionCount = OneSidePositionCount;
             var allLosers = returns.Where(rp => aboveMa.Contains(rp.Key) && !nonTradeables.Contains(rp.Key) && rp.Value < 0).OrderBy(pair => pair.Value);
             var bottoms = allLosers.Take(positionCount);
-
-            var allWinners = returns.Where(rp => belowMa.Contains(rp.Key) && !nonTradeables.Contains(rp.Key) && rp.Value > 0).OrderByDescending(pair => pair.Value);
-            var tops = allWinners.Take(positionCount);
 
             var cash = PortfolioEquity;
             // long bottoms
@@ -189,29 +178,6 @@ namespace Trading.Backtest.ViewModels
                 if (q < 1)
                     continue;
                 newPosition.Quantity = q;
-                newPosition.Security = DataCache.SecurityCache[sid];
-                Positions.Add(newPosition);
-                PortfolioEquity -= newPosition.Value;
-            }
-            //if (snpMaPrice < snpPrice)
-            //{
-            //    return true;
-            //}
-            // short tops
-            foreach (var pair in tops)
-            {
-                var sid = pair.Key;
-                var newPosition = new Position
-                {
-                    Parameters = new[] { returns[sid], double.NaN },
-                    Price = dateTwoPrices[sid].AdjClose,
-                    Time = tradeDate
-                };
-
-                var q = Math.Floor(cash / positionCount / newPosition.Price);
-                if (q < 1)
-                    continue;
-                newPosition.Quantity = -q;
                 newPosition.Security = DataCache.SecurityCache[sid];
                 Positions.Add(newPosition);
                 PortfolioEquity -= newPosition.Value;
@@ -248,43 +214,46 @@ namespace Trading.Backtest.ViewModels
         public bool ExitPositions(DateTime time)
         {
             // stop loss logic
-            DateTime checkStopLossDay = time;
-            if (time.IsWeekend()) // if nonweekend, already added 1 day
+            if (IsStopLossEnabled)
             {
-                checkStopLossDay = time.Next(DayOfWeek.Monday);
-            }
-
-            var checkStopLossPrices = SkipNoPriceDates(ref checkStopLossDay);
-            var stopLossPositions = new List<Position>();
-            foreach (var position in Positions)
-            {
-                if (!checkStopLossPrices.ContainsKey(position.Security.Id))
-                    continue;
-
-                var priceToCheck = checkStopLossPrices[position.Security.Id].AdjClose;
-                var rate = (priceToCheck - position.Price) / position.Price * Math.Sign(position.Quantity);
-                if (rate < -0.02)
+                DateTime checkStopLossDay = time;
+                if (time.IsWeekend()) // if nonweekend, already added 1 day
                 {
-                    // stop loss
-                    stopLossPositions.Add(position);
-                    var trade = new Trade
-                    {
-                        Security = position.Security,
-                        EnterTime = position.Time,
-                        ExitTime = checkStopLossDay,
-                        EnterPrice = position.Price,
-                        ExitPrice = priceToCheck,
-                        Quantity = position.Quantity,
-                        ExitType = ExitType.Close,
-                        Parameters = position.Parameters
-                    };
-                    Trades.Add(trade);
-                    PortfolioEquity += trade.Value;
+                    checkStopLossDay = time.Next(DayOfWeek.Monday);
                 }
-            }
-            foreach (var stopLossPosition in stopLossPositions)
-            {
-                Positions.Remove(stopLossPosition);
+
+                var checkStopLossPrices = SkipNoPriceDates(ref checkStopLossDay);
+                var stopLossPositions = new List<Position>();
+                foreach (var position in Positions)
+                {
+                    if (!checkStopLossPrices.ContainsKey(position.Security.Id))
+                        continue;
+
+                    var priceToCheck = checkStopLossPrices[position.Security.Id].AdjClose;
+                    var rate = (priceToCheck - position.Price)/position.Price*Math.Sign(position.Quantity);
+                    if (rate < -0.02)
+                    {
+                        // stop loss
+                        stopLossPositions.Add(position);
+                        var trade = new Trade
+                        {
+                            Security = position.Security,
+                            EnterTime = position.Time,
+                            ExitTime = checkStopLossDay,
+                            EnterPrice = position.Price,
+                            ExitPrice = priceToCheck,
+                            Quantity = position.Quantity,
+                            ExitType = ExitType.Close,
+                            Parameters = position.Parameters
+                        };
+                        Trades.Add(trade);
+                        PortfolioEquity += trade.Value;
+                    }
+                }
+                foreach (var stopLossPosition in stopLossPositions)
+                {
+                    Positions.Remove(stopLossPosition);
+                }
             }
 
             // normal close position
@@ -301,14 +270,14 @@ namespace Trading.Backtest.ViewModels
 
             foreach (var position in Positions)
             {
+                var prices = SkipNoPriceDates(ref closeDate);
+                if (prices == null)
+                    return false;
+
                 if (!DataCache.PriceCache.ContainsKey(closeDate))
                     throw new InvalidOperationException();
                 if (position.Time >= closeDate)
                     throw new InvalidOperationException();
-
-                var prices = SkipNoPriceDates(ref closeDate);
-                if (prices == null)
-                    return false;
 
                 var sid = position.Security.Id;
                 var closeDateWithPrice = closeDate;
@@ -381,23 +350,26 @@ namespace Trading.Backtest.ViewModels
 
         private Dictionary<long, Price> SkipNoPriceDates(ref DateTime close)
         {
-            var prices = DataCache.PriceCache[close];
             var shiftCounter = 0;
-            while (prices.Count == 0)
+            while (true)
             {
-                close = close.AddDays(1);
-                shiftCounter++;
                 if (DataCache.PriceCache.ContainsKey(close))
                 {
-                    prices = DataCache.PriceCache[close];
-                    break;
+                    return DataCache.PriceCache[close];
                 }
+                close = close.AddDays(1);
+
+                // shift one more day if on holiday
+                if (Holidays.Contains(close.ToDateInt()))
+                {
+                    close = close.AddDays(1);
+                }
+                shiftCounter++;
                 if (shiftCounter > 7)
                 {
                     return null;
                 }
             }
-            return prices;
         }
 
         public string GetDataCriteriaInSql()

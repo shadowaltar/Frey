@@ -172,8 +172,6 @@
     <Compile Include="ModuleBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reporting\EpplusExtensions.cs" />
-    <Compile Include="SharedSettings\InfrastructureSettings.cs" />
-    <Compile Include="SharedSettings\ISettings.cs" />
     <Compile Include="Technicals\Entities\MacdPoint.cs" />
     <Compile Include="Technicals\Extensions.cs" />
     <Compile Include="Technicals\MovingAverage.cs" />

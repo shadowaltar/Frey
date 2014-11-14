@@ -13,9 +13,11 @@
     </controls:MetroWindow.Resources>
     <Grid>
         <controls:MetroAnimatedTabControl>
-            <TabItem Header="CACHE">
+            <!--
+                <TabItem Header="CACHE">
                 <ContentControl cal:View.Model="{Binding DataCacheViewModel}" />
-            </TabItem>
+                </TabItem>
+            -->
             <TabItem Header="DOWNLOAD">
                 <ContentControl cal:View.Model="{Binding DownloadViewModel}" />
             </TabItem>

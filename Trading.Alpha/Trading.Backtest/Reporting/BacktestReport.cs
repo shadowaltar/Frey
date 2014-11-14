@@ -14,7 +14,7 @@ namespace Trading.Backtest.Reporting
         public string Create(Core core)
         {
             var resultPath = Path.Combine(Constants.LogsDirectory,
-                "BacktestReport[" + DateTime.Now.ToTimeDouble() + "].xlsx");
+                "BacktestReport_" + DateTime.Now.ToTimeDouble() + ".xlsx");
             var xls = new ExcelPackage(new FileInfo(resultPath));
             var sheet = xls.Sheet("Portfolio");
 
