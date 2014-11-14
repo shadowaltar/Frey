@@ -10,7 +10,7 @@
             }
             if (CheckTableExists("TRADING", "SECURITIES"))
             {
-                DropTable("SECURITIES");
+                //      DropTable("SECURITIES");
             }
             CreateTable(
 @"CREATE TABLE IF NOT EXISTS SECURITIES (
@@ -56,7 +56,9 @@
                 CreateSchema("TRADING");
             }
             if (CheckTableExists("TRADING", "PRICES"))
-                DropTable("PRICES");
+            {
+                //DropTable("PRICES");
+            }
             CreateTable(
 @"CREATE TABLE IF NOT EXISTS PRICES (
 	ID INT NOT NULL AUTO_INCREMENT,

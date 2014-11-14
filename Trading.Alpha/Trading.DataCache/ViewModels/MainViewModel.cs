@@ -352,10 +352,20 @@ namespace Trading.DataCache.ViewModels
             await Task.Run(() =>
             {
                 var folders = Directory.GetDirectories(Constants.PricesDirectory);
-                Dictionary<string, Security> securities;
+                var securities = new Dictionary<string, Security>();
                 using (var access = DataAccessFactory.New())
                 {
-                    securities = access.GetSecurities().ToDictionary(s => s.Code, s => s);
+                    foreach (var security in access.GetSecurities())
+                    {
+                        if (!securities.ContainsKey(security.Code))
+                        {
+                            securities[security.Code] = security;
+                        }
+                        else
+                        {
+                            Log.WarnFormat("Duplicated security found in file, code: " + security.Code);
+                        }
+                    }
                     access.Clear("PRICES");
                 }
                 foreach (var folder in folders)
