@@ -1,0 +1,29 @@
+Field,Description
+PX_LAST,Last price
+PX_HIGH,Highest price
+PX_LOW,Lowest price
+PX_YEST_CLOSE,"Close price, adjusted CA except cash dividend"
+PX_OPEN,Opening price
+VWAP,Average price for the time
+VWAP_VOLUME,VWAP Volume
+PE_RATIO,P/E ratio
+CASH_RATIO,Cash Ratio
+QUICK_RATIO,Quick Ratio
+CUR_RATIO,Current Ratio
+DVD_PAYOUT_RATIO,Dividend Payout Ratio
+PX_TO_BOOK_RATIO,Price to Book Ratio
+PX_TO_SALES_RATIO,Price to Sales Ratio
+ROC_WACC_RATIO,ROIC/WACC Ratio
+INTEREST_COVERAGE_RATIO,Interest Coverage Ratio
+PX_TO_FFO_RATIO,Price to FFO Ratio
+ACCOUNTS_PAYABLE_TURNOVER,Accounts Payable Turnover
+TOT_DEBT_TO_COM_EQY,Tot Debt to Common Equity
+PX_TO_EBITDA,Price/EBITDA
+VOLATILITY_90D,90 days vol
+VOLATILITY_60D,60 days vol
+VOLATILITY_30D,30 days vol
+INDUSTRY_SECTOR,industry sector
+INDUSTRY_GROUP,industry group
+INDUSTRY_SUBGROUP,industry subgroup
+GICS_SECTOR_NAME,GICS sector
+GICS_INDUSTRY_NAME,GICS industry
