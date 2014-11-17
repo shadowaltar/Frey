@@ -61,6 +61,10 @@
     <Reference Include="Caliburn.Micro.Platform">
       <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="Equals">
+      <HintPath>..\packages\Equals.Fody.1.4.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Equals.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -117,12 +121,16 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="ViewModels\RuleViewModel.cs" />
+    <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RuleView.xaml.cs">
       <DependentUpon>RuleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RunTestView.xaml.cs">
+      <DependentUpon>RunTestView.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\CreateConditionView.xaml">
       <SubType>Designer</SubType>
@@ -135,6 +143,10 @@
     <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RunTestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SelectView.xaml">
       <SubType>Designer</SubType>
@@ -180,7 +192,6 @@
       <Name>Trading.Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>

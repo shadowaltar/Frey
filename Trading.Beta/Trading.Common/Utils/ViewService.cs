@@ -108,6 +108,14 @@ namespace Trading.Common.Utils
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
+        public Task<bool?> ShowDialog(object viewModel)
+        {
+            var vmb = viewModel as ViewModelBase;
+            if (vmb != null)
+                return ShowDialog(vmb);
+            throw new InvalidOperationException("A dialog / window must implement " + typeof(ViewModelBase));
+        }
+
         public Task<bool?> ShowDialog(ViewModelBase viewModel)
         {
             CheckMetroWindowExists();

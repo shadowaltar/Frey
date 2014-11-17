@@ -10,6 +10,8 @@ namespace Trading.Common.Entities
         public string Currency { get; set; }
         public bool IsShortSellable { get; set; }
 
+        public SecurityIdentifiers Identifiers { get; set; }
+
         public Market Market { get; set; }
 
         public string CurrencySymbol

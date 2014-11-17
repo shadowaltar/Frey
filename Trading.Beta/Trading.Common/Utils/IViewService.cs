@@ -62,6 +62,8 @@ namespace Trading.Common.Utils
         /// <param name="viewModel"></param>
         Task<bool?> ShowDialog(ViewModelBase viewModel);
 
+        Task<bool?> ShowDialog(object viewModel);
+
         /// <summary>
         /// Dim the window.
         /// </summary>

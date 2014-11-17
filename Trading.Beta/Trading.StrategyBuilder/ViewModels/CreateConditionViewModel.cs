@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using Caliburn.Micro;
+using PropertyChanged;
 using Trading.Common.ViewModels;
 using Trading.StrategyBuilder.Core;
 
@@ -8,24 +9,34 @@ namespace Trading.StrategyBuilder.ViewModels
     public class CreateConditionViewModel : ViewModelBase, ICreateConditionViewModel
     {
         public string SourceValue { get; set; }
-        public string Operator { get; set; }
         public string TargetValue { get; set; }
+        public string SelectedOperator { get; set; }
+        public BindableCollection<string> Operators { get; private set; }
 
         public CreateConditionViewModel()
         {
-
+            Operators = new BindableCollection<string> { ">", "<", "=", ">=", "<=", "<>" };
+            SelectedOperator = Operators[0];
         }
 
         public CreateConditionViewModel(string sourceValue, string @operator, string targetValue)
+            : this()
         {
             SourceValue = sourceValue;
-            Operator = @operator;
+            SelectedOperator = @operator;
             TargetValue = targetValue;
         }
 
         public void Ok()
         {
             TryClose(true);
+        }
+
+        public void Reset()
+        {
+            SourceValue = "";
+            SelectedOperator = Operators[0];
+            TargetValue = "";
         }
 
         public static CreateConditionViewModel From(Condition condition)
@@ -35,14 +46,14 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public Condition To()
         {
-            return new Condition(SourceValue, Operator, TargetValue);
+            return new Condition(SourceValue, SelectedOperator, TargetValue);
         }
     }
 
     public interface ICreateConditionViewModel
     {
         string SourceValue { get; set; }
-        string Operator { get; set; }
+        string SelectedOperator { get; set; }
         string TargetValue { get; set; }
         Condition To();
     }

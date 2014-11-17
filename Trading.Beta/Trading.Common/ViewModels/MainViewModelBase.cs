@@ -37,7 +37,7 @@ namespace Trading.Common.ViewModels
         private IEventAggregator eventAggregator;
 
         [Inject]
-        public IViewService ViewService { get; set; }
+        public virtual IViewService ViewService { get; set; }
 
         public IDataAccessFactory<TDA> DataAccessFactory { get; set; }
 

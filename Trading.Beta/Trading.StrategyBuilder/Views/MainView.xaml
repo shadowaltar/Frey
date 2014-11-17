@@ -21,17 +21,18 @@
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Content="StartTime" />
-                    <TextBox Width="120"
+                    <TextBox x:Name="StartTime"
+                             Width="120"
                              Margin="10,45,0,0"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
-                             Text="20040101"
-                             TextWrapping="Wrap" />
+                             Text="20040101" />
                     <Label Margin="135,10,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Content="EndTime" />
-                    <TextBox Width="120"
+                    <TextBox x:Name="EndTime"
+                             Width="120"
                              Margin="135,45,0,0"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
@@ -41,12 +42,12 @@
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Content="Init Cash" />
-                    <TextBox Width="120"
+                    <TextBox x:Name="InitialCash"
+                             Width="120"
                              Margin="260,45,0,0"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
-                             Text="10000"
-                             TextWrapping="Wrap" />
+                             Text="10000" />
                     <Label Width="126"
                            Margin="10,82,0,0"
                            HorizontalAlignment="Left"
@@ -116,16 +117,24 @@
                              HorizontalAlignment="Left"
                              BorderBrush="{DynamicResource AccentColorBrush}"
                              BorderThickness="1"
-                             IsEnabled="{Binding IsTradingWholeMarketSecurities}"
-                             ItemTemplate="{StaticResource CodeNameItemDataTemplate}" />
-                    <Button x:Name="AddSecurityFilter"
-                            Width="30"
-                            Height="30"
-                            Margin="538,154,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            IsEnabled="{Binding IsTradingWholeMarketSecurities}"
-                            Style="{StaticResource CircleAddButtonStyle}" />
+                             IsEnabled="{Binding IsTradingWholeMarketSecurities}">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Add" cal:Message.Attach="AddSecurityFilter" />
+                                <MenuItem Header="Remove" cal:Message.Attach="RemoveSecurityFilter" />
+                                <MenuItem Header="Remove All" cal:Message.Attach="RemoveAllSecurityFilters" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock Text="{Binding SourceValue}" />
+                                    <TextBlock Text="{Binding Operator}" />
+                                    <TextBlock Text="{Binding TargetValue}" />
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                     <Label Margin="10,154,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
@@ -141,7 +150,9 @@
                 <ContentControl cal:View.Model="{Binding EnterSetup}" />
             </TabItem>
             <TabItem Header="EXIT" />
-            <TabItem Header="RUN" />
+            <TabItem Header="RUN">
+                <ContentControl cal:View.Model="{Binding RunTest}" />
+            </TabItem>
             <TabItem Header="REPORT" />
         </controls:MetroAnimatedSingleRowTabControl>
     </Grid>
