@@ -71,6 +71,7 @@
     <Reference Include="MahApps.Metro">
       <HintPath>..\..\Libs\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data, Version=6.9.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
@@ -106,12 +107,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\Context.cs" />
+    <Compile Include="Core\EnterTrigger.cs" />
+    <Compile Include="Core\ExitTrigger.cs" />
+    <Compile Include="Core\Filter.cs" />
     <Compile Include="Core\FilterSecurityConditions.cs" />
     <Compile Include="Core\IConditions.cs" />
+    <Compile Include="Core\PositionSizingRule.cs" />
     <Compile Include="Core\RuleFactory.cs" />
     <Compile Include="Core\Condition.cs" />
+    <Compile Include="Core\Trigger.cs" />
+    <Compile Include="Core\TriggerTime.cs" />
     <Compile Include="Data\Access.cs" />
     <Compile Include="Data\AccessFactory.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Models\LogicOperator.cs" />
     <Compile Include="ViewModels\CreateConditionViewModel.cs" />
     <Compile Include="ViewModels\EnterSetupViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System.Data.Common;
+using log4net;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,11 @@ namespace Trading.Common.Data
                 result.Load(reader);
             }
             return result;
+        }
+
+        public DbCommand GetCommand()
+        {
+            return new MySqlCommand { Connection = database };
         }
 
         public IEnumerable<T> YieldQuery<T>(Func<IDataReader, T> converter, string query, params object[] args)

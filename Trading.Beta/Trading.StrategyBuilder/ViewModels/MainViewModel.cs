@@ -33,7 +33,7 @@ namespace Trading.StrategyBuilder.ViewModels
         public double InitialCash { get; set; }
         public string SelectedSecurityUniverseType { get; set; }
         public string SelectedMarket { get; set; }
-        public Condition SelectedMarketSecuritiesFilter { get; set; }
+        public Condition SelectedMarketSecuritiesCondition { get; set; }
 
         public bool IsTradingWholeMarketSecurities { get; set; }
         public bool IsTradingPickedSecurities { get; set; }
@@ -157,8 +157,8 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public void RemoveSecurityFilter()
         {
-            if (SelectedMarketSecuritiesFilter != null)
-                MarketSecuritiesFilters.Remove(SelectedMarketSecuritiesFilter);
+            if (SelectedMarketSecuritiesCondition != null)
+                MarketSecuritiesFilters.Remove(SelectedMarketSecuritiesCondition);
         }
 
         public void RemoveAllSecurityFilters()

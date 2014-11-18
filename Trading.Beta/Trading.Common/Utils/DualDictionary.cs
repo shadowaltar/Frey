@@ -1,205 +1,317 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO.Pipes;
 
 namespace Trading.Common.Utils
 {
-    public class DualDictionary<TKey1, TKey2, TValue> : IEnumerable<KeyValuePair<Tuple<TKey1, TKey2>, TValue>>
+    public class DualDictionary<TK1, TK2, TV>
     {
-        Dictionary<TKey1, KeyValuePair<TKey2, TValue>> _firstKeys;
-        Dictionary<TKey2, KeyValuePair<TKey1, TValue>> _secondKeys;
+        private Dictionary<TK1, Dictionary<TK2, TV>> primaryKeyDictionary = new Dictionary<TK1, Dictionary<TK2, TV>>();
+        private Dictionary<TK2, Dictionary<TK1, TV>> secondaryKeyDictionary = new Dictionary<TK2, Dictionary<TK1, TV>>();
+        private HashSet<Tuple<TK1, TK2>> keys = new HashSet<Tuple<TK1, TK2>>();
 
-        public int Count
+        public DualDictionary()
         {
-            get
-            {
-                if (_firstKeys.Count != _secondKeys.Count)
-                    throw new Exception("somewhere logic went wrong and your data got corrupt");
+            if (typeof(TK1) == typeof(TK2))
+                throw new ArgumentException("Cannot use keys of the same type");
+        }
 
-                return _firstKeys.Count;
+        public void Add(TK1 key1, TK2 key2, TV value)
+        {
+            if (!primaryKeyDictionary.ContainsKey(key1))
+            {
+                primaryKeyDictionary[key1] = new Dictionary<TK2, TV>();
+                keys.Add(new Tuple<TK1, TK2>(key1, key2));
+            }
+            if (!secondaryKeyDictionary.ContainsKey(key2))
+            {
+                secondaryKeyDictionary[key2] = new Dictionary<TK1, TV>();
+            }
+
+            primaryKeyDictionary[key1][key2] = value;
+            secondaryKeyDictionary[key2][key1] = value;
+        }
+
+        public void AddValues(TK1 key1, Dictionary<TK2, TV> dictionary)
+        {
+            if (!primaryKeyDictionary.ContainsKey(key1))
+            {
+                primaryKeyDictionary[key1] = new Dictionary<TK2, TV>();
+            }
+            var d = primaryKeyDictionary[key1];
+            foreach (var dic in dictionary)
+            {
+                var key2 = dic.Key;
+                d[key2] = dic.Value;
+
+                if (!secondaryKeyDictionary.ContainsKey(key2))
+                {
+                    secondaryKeyDictionary[key2] = new Dictionary<TK1, TV>();
+                }
+                secondaryKeyDictionary[key2][key1] = dic.Value;
             }
         }
 
-        public ICollection<TKey1> Key1s
+        public void AddValues(TK2 key2, Dictionary<TK1, TV> dictionary)
         {
-            get { return _firstKeys.Keys; }
+            if (!secondaryKeyDictionary.ContainsKey(key2))
+            {
+                secondaryKeyDictionary[key2] = new Dictionary<TK1, TV>();
+            }
+            var d = secondaryKeyDictionary[key2];
+            foreach (var dic in dictionary)
+            {
+                var key1 = dic.Key;
+                d[key1] = dic.Value;
+
+                if (!primaryKeyDictionary.ContainsKey(key1))
+                {
+                    primaryKeyDictionary[key1] = new Dictionary<TK2, TV>();
+                }
+                primaryKeyDictionary[key1][key2] = dic.Value;
+            }
         }
 
-        public ICollection<TKey2> Key2s
+        public void Remove(TK1 key1)
         {
-            get { return _secondKeys.Keys; }
+            if (!primaryKeyDictionary.ContainsKey(key1))
+                return;
+
+            primaryKeyDictionary[key1].Clear();
+            foreach (var pair in secondaryKeyDictionary)
+            {
+                pair.Value.Remove(key1);
+            }
         }
 
-        public IEnumerable<TValue> Values
+        public void Remove(TK1 key1, TK2 key2, TV value)
         {
-            get { return this.Select(kvp => kvp.Value); }
+            if (!primaryKeyDictionary.ContainsKey(key1))
+                return;
+            if (!secondaryKeyDictionary.ContainsKey(key2))
+                return;
+
+            primaryKeyDictionary[key1].Remove(key2);
+            secondaryKeyDictionary[key2].Remove(key1);
         }
 
-        public DualDictionary(IEqualityComparer<TKey1> comparer1 = null, IEqualityComparer<TKey2> comparer2 = null)
+        public TV this[TK1 key1, TK2 key2]
         {
-            _firstKeys = new Dictionary<TKey1, KeyValuePair<TKey2, TValue>>(comparer1);
-            _secondKeys = new Dictionary<TKey2, KeyValuePair<TKey1, TValue>>(comparer2);
+            get { return primaryKeyDictionary[key1][key2]; }
+            set
+            {
+                primaryKeyDictionary[key1][key2] = value;
+                secondaryKeyDictionary[key2][key1] = value;
+            }
         }
 
-        public bool ContainsKey1(TKey1 key)
+        public Dictionary<TK2, TV> this[TK1 key]
         {
-            return ContainsKey(key, _firstKeys);
+            get { return primaryKeyDictionary[key]; }
         }
 
-        private static bool ContainsKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict)
+        public Dictionary<TK1, TV> this[TK2 key]
         {
-            return dict.ContainsKey(key);
-        }
-
-        public bool ContainsKey2(TKey2 key)
-        {
-            return ContainsKey(key, _secondKeys);
-        }
-
-        public TValue GetValueByKey1(TKey1 key)
-        {
-            return GetValueByKey(key, _firstKeys);
-        }
-
-        private static TValue GetValueByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict)
-        {
-            return dict[key].Value;
-        }
-
-        public TValue GetValueByKey2(TKey2 key)
-        {
-            return GetValueByKey(key, _secondKeys);
-        }
-
-        public bool TryGetValueByKey1(TKey1 key, out TValue value)
-        {
-            return TryGetValueByKey(key, _firstKeys, out value);
-        }
-
-        private static bool TryGetValueByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict, out TValue value)
-        {
-            KeyValuePair<T, TValue> otherPairing;
-            bool b = TryGetValue(key, dict, out otherPairing);
-            value = otherPairing.Value;
-            return b;
-        }
-
-        private static bool TryGetValue<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict,
-                                              out KeyValuePair<T, TValue> otherPairing)
-        {
-            return dict.TryGetValue(key, out otherPairing);
-        }
-
-        public bool TryGetValueByKey2(TKey2 key, out TValue value)
-        {
-            return TryGetValueByKey(key, _secondKeys, out value);
-        }
-
-        public bool Add(TKey1 key1, TKey2 key2, TValue value)
-        {
-            if (ContainsKey1(key1) || ContainsKey2(key2))   // very important
-                return false;
-
-            AddOrUpdate(key1, key2, value);
-            return true;
-        }
-
-        // dont make this public; a dangerous method used cautiously in this class
-        private void AddOrUpdate(TKey1 key1, TKey2 key2, TValue value)
-        {
-            _firstKeys[key1] = new KeyValuePair<TKey2, TValue>(key2, value);
-            _secondKeys[key2] = new KeyValuePair<TKey1, TValue>(key1, value);
-        }
-
-        public bool UpdateKey1(TKey1 oldKey, TKey1 newKey)
-        {
-            return UpdateKey(oldKey, _firstKeys, newKey, (key1, key2, value) => AddOrUpdate(key1, key2, value));
-        }
-
-        private static bool UpdateKey<S, T>(S oldKey, Dictionary<S, KeyValuePair<T, TValue>> dict, S newKey,
-                                            Action<S, T, TValue> updater)
-        {
-            KeyValuePair<T, TValue> otherPairing;
-            if (!TryGetValue(oldKey, dict, out otherPairing) || ContainsKey(newKey, dict))
-                return false;
-
-            Remove(oldKey, dict);
-            updater(newKey, otherPairing.Key, otherPairing.Value);
-            return true;
-        }
-
-        public bool UpdateKey2(TKey2 oldKey, TKey2 newKey)
-        {
-            return UpdateKey(oldKey, _secondKeys, newKey, (key1, key2, value) => AddOrUpdate(key2, key1, value));
-        }
-
-        public bool UpdateByKey1(TKey1 key, TValue value)
-        {
-            return UpdateByKey(key, _firstKeys, (key1, key2) => AddOrUpdate(key1, key2, value));
-        }
-
-        private static bool UpdateByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict, Action<S, T> updater)
-        {
-            KeyValuePair<T, TValue> otherPairing;
-            if (!TryGetValue(key, dict, out otherPairing))
-                return false;
-
-            updater(key, otherPairing.Key);
-            return true;
-        }
-
-        public bool UpdateByKey2(TKey2 key, TValue value)
-        {
-            return UpdateByKey(key, _secondKeys, (key1, key2) => AddOrUpdate(key2, key1, value));
-        }
-
-        public bool RemoveByKey1(TKey1 key)
-        {
-            return RemoveByKey(key, _firstKeys, _secondKeys);
-        }
-
-        private static bool RemoveByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> keyDict,
-                                              Dictionary<T, KeyValuePair<S, TValue>> valueDict)
-        {
-            KeyValuePair<T, TValue> otherPairing;
-            if (!TryGetValue(key, keyDict, out otherPairing))
-                return false;
-
-            if (!Remove(key, keyDict) || !Remove(otherPairing.Key, valueDict))
-                throw new Exception("somewhere logic went wrong and your data got corrupt");
-
-            return true;
-        }
-
-        private static bool Remove<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict)
-        {
-            return dict.Remove(key);
-        }
-
-        public bool RemoveByKey2(TKey2 key)
-        {
-            return RemoveByKey(key, _secondKeys, _firstKeys);
-        }
-
-        public void Clear()
-        {
-            _firstKeys.Clear();
-            _secondKeys.Clear();
-        }
-
-        public IEnumerator<KeyValuePair<Tuple<TKey1, TKey2>, TValue>> GetEnumerator()
-        {
-            if (_firstKeys.Count != _secondKeys.Count)
-                throw new Exception("somewhere logic went wrong and your data got corrupt");
-
-            return _firstKeys.Select(kvp => new KeyValuePair<Tuple<TKey1, TKey2>, TValue>(Tuple.Create(kvp.Key, kvp.Value.Key),
-                                                                                          kvp.Value.Value)).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            get { return secondaryKeyDictionary[key]; }
         }
     }
+
+    //public class DualDictionary<TKey1, TKey2, TValue> : IEnumerable<KeyValuePair<Tuple<TKey1, TKey2>, TValue>>
+    //{
+    //    Dictionary<TKey1, KeyValuePair<TKey2, TValue>> _firstKeys;
+    //    Dictionary<TKey2, KeyValuePair<TKey1, TValue>> _secondKeys;
+
+    //    public int Count
+    //    {
+    //        get
+    //        {
+    //            if (_firstKeys.Count != _secondKeys.Count)
+    //                throw new Exception("somewhere logic went wrong and your data got corrupt");
+
+    //            return _firstKeys.Count;
+    //        }
+    //    }
+
+    //    public ICollection<TKey1> Key1s
+    //    {
+    //        get { return _firstKeys.Keys; }
+    //    }
+
+    //    public ICollection<TKey2> Key2s
+    //    {
+    //        get { return _secondKeys.Keys; }
+    //    }
+
+    //    public IEnumerable<TValue> Values
+    //    {
+    //        get { return this.Select(kvp => kvp.Value); }
+    //    }
+
+    //    public DualDictionary(IEqualityComparer<TKey1> comparer1 = null, IEqualityComparer<TKey2> comparer2 = null)
+    //    {
+    //        _firstKeys = new Dictionary<TKey1, KeyValuePair<TKey2, TValue>>(comparer1);
+    //        _secondKeys = new Dictionary<TKey2, KeyValuePair<TKey1, TValue>>(comparer2);
+    //    }
+
+    //    public bool ContainsKey1(TKey1 key)
+    //    {
+    //        return ContainsKey(key, _firstKeys);
+    //    }
+
+    //    private static bool ContainsKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict)
+    //    {
+    //        return dict.ContainsKey(key);
+    //    }
+
+    //    public bool ContainsKey2(TKey2 key)
+    //    {
+    //        return ContainsKey(key, _secondKeys);
+    //    }
+
+    //    public TValue GetValueByKey1(TKey1 key)
+    //    {
+    //        return GetValueByKey(key, _firstKeys);
+    //    }
+
+    //    private static TValue GetValueByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict)
+    //    {
+    //        return dict[key].Value;
+    //    }
+
+    //    public TValue GetValueByKey2(TKey2 key)
+    //    {
+    //        return GetValueByKey(key, _secondKeys);
+    //    }
+
+    //    public bool TryGetValueByKey1(TKey1 key, out TValue value)
+    //    {
+    //        return TryGetValueByKey(key, _firstKeys, out value);
+    //    }
+
+    //    private static bool TryGetValueByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict, out TValue value)
+    //    {
+    //        KeyValuePair<T, TValue> otherPairing;
+    //        bool b = TryGetValue(key, dict, out otherPairing);
+    //        value = otherPairing.Value;
+    //        return b;
+    //    }
+
+    //    private static bool TryGetValue<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict,
+    //                                          out KeyValuePair<T, TValue> otherPairing)
+    //    {
+    //        return dict.TryGetValue(key, out otherPairing);
+    //    }
+
+    //    public bool TryGetValueByKey2(TKey2 key, out TValue value)
+    //    {
+    //        return TryGetValueByKey(key, _secondKeys, out value);
+    //    }
+
+    //    public bool Add(TKey1 key1, TKey2 key2, TValue value)
+    //    {
+    //        if (ContainsKey1(key1) || ContainsKey2(key2))   // very important
+    //            return false;
+
+    //        AddOrUpdate(key1, key2, value);
+    //        return true;
+    //    }
+
+    //    // dont make this public; a dangerous method used cautiously in this class
+    //    private void AddOrUpdate(TKey1 key1, TKey2 key2, TValue value)
+    //    {
+    //        _firstKeys[key1] = new KeyValuePair<TKey2, TValue>(key2, value);
+    //        _secondKeys[key2] = new KeyValuePair<TKey1, TValue>(key1, value);
+    //    }
+
+    //    public bool UpdateKey1(TKey1 oldKey, TKey1 newKey)
+    //    {
+    //        return UpdateKey(oldKey, _firstKeys, newKey, (key1, key2, value) => AddOrUpdate(key1, key2, value));
+    //    }
+
+    //    private static bool UpdateKey<S, T>(S oldKey, Dictionary<S, KeyValuePair<T, TValue>> dict, S newKey,
+    //                                        Action<S, T, TValue> updater)
+    //    {
+    //        KeyValuePair<T, TValue> otherPairing;
+    //        if (!TryGetValue(oldKey, dict, out otherPairing) || ContainsKey(newKey, dict))
+    //            return false;
+
+    //        Remove(oldKey, dict);
+    //        updater(newKey, otherPairing.Key, otherPairing.Value);
+    //        return true;
+    //    }
+
+    //    public bool UpdateKey2(TKey2 oldKey, TKey2 newKey)
+    //    {
+    //        return UpdateKey(oldKey, _secondKeys, newKey, (key1, key2, value) => AddOrUpdate(key2, key1, value));
+    //    }
+
+    //    public bool UpdateByKey1(TKey1 key, TValue value)
+    //    {
+    //        return UpdateByKey(key, _firstKeys, (key1, key2) => AddOrUpdate(key1, key2, value));
+    //    }
+
+    //    private static bool UpdateByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict, Action<S, T> updater)
+    //    {
+    //        KeyValuePair<T, TValue> otherPairing;
+    //        if (!TryGetValue(key, dict, out otherPairing))
+    //            return false;
+
+    //        updater(key, otherPairing.Key);
+    //        return true;
+    //    }
+
+    //    public bool UpdateByKey2(TKey2 key, TValue value)
+    //    {
+    //        return UpdateByKey(key, _secondKeys, (key1, key2) => AddOrUpdate(key2, key1, value));
+    //    }
+
+    //    public bool RemoveByKey1(TKey1 key)
+    //    {
+    //        return RemoveByKey(key, _firstKeys, _secondKeys);
+    //    }
+
+    //    private static bool RemoveByKey<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> keyDict,
+    //                                          Dictionary<T, KeyValuePair<S, TValue>> valueDict)
+    //    {
+    //        KeyValuePair<T, TValue> otherPairing;
+    //        if (!TryGetValue(key, keyDict, out otherPairing))
+    //            return false;
+
+    //        if (!Remove(key, keyDict) || !Remove(otherPairing.Key, valueDict))
+    //            throw new Exception("somewhere logic went wrong and your data got corrupt");
+
+    //        return true;
+    //    }
+
+    //    private static bool Remove<S, T>(S key, Dictionary<S, KeyValuePair<T, TValue>> dict)
+    //    {
+    //        return dict.Remove(key);
+    //    }
+
+    //    public bool RemoveByKey2(TKey2 key)
+    //    {
+    //        return RemoveByKey(key, _secondKeys, _firstKeys);
+    //    }
+
+    //    public void Clear()
+    //    {
+    //        _firstKeys.Clear();
+    //        _secondKeys.Clear();
+    //    }
+
+    //    public IEnumerator<KeyValuePair<Tuple<TKey1, TKey2>, TValue>> GetEnumerator()
+    //    {
+    //        if (_firstKeys.Count != _secondKeys.Count)
+    //            throw new Exception("somewhere logic went wrong and your data got corrupt");
+
+    //        return _firstKeys.Select(kvp => new KeyValuePair<Tuple<TKey1, TKey2>, TValue>(Tuple.Create(kvp.Key, kvp.Value.Key),
+    //                                                                                      kvp.Value.Value)).GetEnumerator();
+    //    }
+
+    //    IEnumerator IEnumerable.GetEnumerator()
+    //    {
+    //        return GetEnumerator();
+    //    }
+    //}
 }

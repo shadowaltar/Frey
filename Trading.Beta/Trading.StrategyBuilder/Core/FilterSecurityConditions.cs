@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Trading.StrategyBuilder.Core
 {
+    [Obsolete]
     public class FilterSecurityConditions : List<Condition>, IConditions
     {
         public FilterSecurityConditions()
