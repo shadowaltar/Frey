@@ -6,9 +6,7 @@ namespace Trading.Common.Entities
     {
         public long SecId { get; set; }
 
-        public Security Security { get; set; }
-        public DateTime At { get; set; }
-        public TimeSpan Span { get; set; }
+        public DateTime Time { get; set; }
 
         public double Open { get; set; }
         public double High { get; set; }

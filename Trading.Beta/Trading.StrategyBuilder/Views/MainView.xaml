@@ -150,10 +150,9 @@
                 <ContentControl cal:View.Model="{Binding EnterSetup}" />
             </TabItem>
             <TabItem Header="EXIT" />
-            <TabItem Header="RUN">
+            <TabItem Header="RUN" IsSelected="{Binding IsRunTestViewActive}">
                 <ContentControl cal:View.Model="{Binding RunTest}" />
             </TabItem>
-            <TabItem Header="REPORT" />
         </controls:MetroAnimatedSingleRowTabControl>
     </Grid>
 </controls:MetroWindow>

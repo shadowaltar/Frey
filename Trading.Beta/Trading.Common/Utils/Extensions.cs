@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -311,6 +312,13 @@ namespace Trading.Common.Utils
         public static int ToDateInt(this DateTime time)
         {
             return time.Year * 10000 + time.Month * 100 + time.Day;
+        }
+
+        public static DateTime FromDateInt(this int time)
+        {
+            int y = time / 10000;
+            int m = (time - y * 10000) / 100;
+            return new DateTime(y, m, time - y * 10000 - m * 100);
         }
 
         public static double ToTimeDouble(this DateTime time)

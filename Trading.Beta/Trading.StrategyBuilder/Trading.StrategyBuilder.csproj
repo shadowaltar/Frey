@@ -116,6 +116,7 @@
     <Compile Include="Core\PositionSizingRule.cs" />
     <Compile Include="Core\RuleFactory.cs" />
     <Compile Include="Core\Condition.cs" />
+    <Compile Include="Core\SettingManager.cs" />
     <Compile Include="Core\Trigger.cs" />
     <Compile Include="Core\TriggerTime.cs" />
     <Compile Include="Data\Access.cs" />
@@ -138,9 +139,6 @@
     </Compile>
     <Compile Include="Views\RuleView.xaml.cs">
       <DependentUpon>RuleView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RunTestView.xaml.cs">
-      <DependentUpon>RunTestView.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\CreateConditionView.xaml">
       <SubType>Designer</SubType>

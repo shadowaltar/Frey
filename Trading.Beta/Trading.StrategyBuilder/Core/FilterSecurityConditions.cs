@@ -12,7 +12,7 @@ namespace Trading.StrategyBuilder.Core
 
         public void AddCondition(string sourceValue, string @operator, string targetValue)
         {
-            Add(new Condition(sourceValue, @operator, targetValue));
+            Add(new Condition(sourceValue, @operator.FromSymbol(), targetValue));
         }
 
         public void RemoveCondition(Condition condition)

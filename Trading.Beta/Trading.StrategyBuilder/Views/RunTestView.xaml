@@ -12,9 +12,43 @@
         <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
     </UserControl.Resources>
     <Grid>
-        <Button Margin="10,10,0,0" x:Name="FetchData"
+        <Button x:Name="Initialize"
+                Margin="10,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Content="Initialize" />
+        <Label Margin="10,44,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Get data from cache by security ID" />
+        <TextBox x:Name="TestSecId"
+                 Width="120"
+                 Margin="10,79,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Text="10040"
+                 TextWrapping="Wrap" />
+        <Button x:Name="TestGetPricesBySecId"
+                Margin="135,81,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Content="Fetch Data" />
+        <Label Margin="10,116,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Get data from cache by date" />
+        <TextBox x:Name="TestDate"
+                 Width="120"
+                 Margin="10,146,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Text="20131201"
+                 TextWrapping="Wrap" />
+        <Button x:Name="TestGetPricesByDate"
+                Margin="135,148,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Content="Fetch Data" />
+
     </Grid>
 </UserControl>

@@ -1,4 +1,8 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows.Documents;
 using Trading.Common.Entities;
 using Trading.Common.Utils;
 
@@ -10,13 +14,27 @@ namespace Trading.Common.Data
         {
             var table = Query("SELECT OPEN, HIGH, LOW, CLOSE, VOLUME, ADJCLOSE FROM PRICES WHERE TIME = {0} AND SECID = {1}",
                   time, sid);
-            if (table.Rows.Count == 0)
-                return null;
-            var row = table.FirstOrDefault();
+            return table.To(PriceConvert).FirstOrDefault();
+        }
+
+        public IEnumerable<int> GetHolidays()
+        {
+            var table = Query("SELECT DATE FROM CALENDAR");
+            return table.To(r => r["DATE"].Int());
+        }
+
+        public IEnumerable<Security> GetSecurities()
+        {
+            var table = Query("SELECT ID, CODE, NAME FROM SECURITIES");
+            return table.To(SecurityConvert);
+        }
+
+        protected Price PriceConvert(DataRow row)
+        {
             return new Price
             {
-                SecId = sid,
-                At = time.ConvertDate("yyyyMMdd"),
+                SecId = row["SECID"].Long(),
+                Time = row["TIME"].ConvertDate("yyyyMMdd"),
                 Open = row["OPEN"].Double(),
                 High = row["HIGH"].Double(),
                 Low = row["LOW"].Double(),
@@ -26,13 +44,13 @@ namespace Trading.Common.Data
             };
         }
 
-        protected Security SecurityConvert(DataRow r)
+        protected Security SecurityConvert(DataRow row)
         {
             return new Security
             {
-                Id = r["ID"].Long(),
-                Code = r["CODE"].String(),
-                Name = r["NAME"].String(),
+                Id = row["ID"].Long(),
+                Code = row["CODE"].String(),
+                Name = row["NAME"].String(),
             };
         }
     }

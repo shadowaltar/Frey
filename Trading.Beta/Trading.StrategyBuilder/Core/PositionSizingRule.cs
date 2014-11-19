@@ -10,6 +10,10 @@ namespace Trading.StrategyBuilder.Core
     {
         public PositionSizingType Type { get; set; }
 
+        public object Determine(HashSet<Security> filtered, Portfolio currentPortfolio)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class PositionSizingType

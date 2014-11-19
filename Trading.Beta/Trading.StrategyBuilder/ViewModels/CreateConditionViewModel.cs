@@ -41,12 +41,13 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public static CreateConditionViewModel From(Condition condition)
         {
-            return new CreateConditionViewModel(condition.SourceValue, condition.Operator, condition.TargetValue);
+            return new CreateConditionViewModel(condition.LeftOperandValue,
+                condition.Operator.ToSymbol(), condition.RightOperandValue);
         }
 
         public Condition To()
         {
-            return new Condition(SourceValue, SelectedOperator, TargetValue);
+            return new Condition(SourceValue, SelectedOperator.FromSymbol(), TargetValue);
         }
     }
 

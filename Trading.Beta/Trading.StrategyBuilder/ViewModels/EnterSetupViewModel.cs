@@ -28,7 +28,7 @@ namespace Trading.StrategyBuilder.ViewModels
             var isGood = await ViewService.ShowDialog(CreateCondition as ViewModelBase);
             if (isGood.HasValue && (bool)isGood)
             {
-                var condition = new Condition(CreateCondition.SourceValue, CreateCondition.SelectedOperator,
+                var condition = new Condition(CreateCondition.SourceValue, CreateCondition.SelectedOperator.FromSymbol(),
                     CreateCondition.TargetValue);
 
                 var i = Interlocked.Increment(ref ruleIndex);
