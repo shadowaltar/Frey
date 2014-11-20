@@ -5,18 +5,20 @@ namespace Trading.StrategyBuilder.Core
     [Equals]
     public class Condition
     {
-        private readonly string leftStringOperand;
-        private readonly string rightStringOperand;
+        public string LeftStringOperand { get; set; }
+        public string RightStringOperand { get; set; }
 
-        public Condition LeftOperand { get; private set; }
-        public Operator Operator { get; private set; }
-        public Condition RightOperand { get; private set; }
+        public Condition LeftOperand { get; set; }
+        public Operator Operator { get; set; }
+        public Condition RightOperand { get; set; }
 
-        public string LeftOperandValue { get { return leftStringOperand ?? LeftOperand.ToString(); } }
-        public string RightOperandValue { get { return rightStringOperand ?? RightOperand.ToString(); } }
+        public string LeftOperandValue { get { return LeftStringOperand ?? LeftOperand.ToString(); } }
+        public string RightOperandValue { get { return RightStringOperand ?? RightOperand.ToString(); } }
 
-        public string LeftOperandSqlValue { get { return leftStringOperand ?? LeftOperand.ToWhereClause(); } }
-        public string RightOperandSqlValue { get { return rightStringOperand ?? RightOperand.ToWhereClause(); } }
+        public string LeftOperandSqlValue { get { return LeftStringOperand ?? LeftOperand.ToWhereClause(); } }
+        public string RightOperandSqlValue { get { return RightStringOperand ?? RightOperand.ToWhereClause(); } }
+
+        public string DisplayName { get { return ToString(); } }
 
         public Condition()
         {
@@ -24,8 +26,8 @@ namespace Trading.StrategyBuilder.Core
 
         public Condition(string leftOperand, Operator @operator, string rightOperand)
         {
-            leftStringOperand = leftOperand;
-            rightStringOperand = rightOperand;
+            LeftStringOperand = leftOperand;
+            RightStringOperand = rightOperand;
             Operator = @operator;
         }
 
@@ -38,7 +40,7 @@ namespace Trading.StrategyBuilder.Core
 
         public Condition(string leftOperand, Operator @operator, Condition rightOperand)
         {
-            leftStringOperand = leftOperand;
+            LeftStringOperand = leftOperand;
             Operator = @operator;
             RightOperand = rightOperand;
         }
@@ -47,17 +49,17 @@ namespace Trading.StrategyBuilder.Core
         {
             LeftOperand = leftOperand;
             Operator = @operator;
-            rightStringOperand = rightOperand;
+            RightStringOperand = rightOperand;
         }
 
         public string ToWhereClause()
         {
-            return LeftOperandSqlValue + Operator.ToSqlLogicalOperator() + RightOperandSqlValue;
+            return LeftOperandSqlValue + " " + Operator.ToSqlLogicalOperator() + " " + RightOperandSqlValue;
         }
 
         public override string ToString()
         {
-            return LeftOperand + Operator.ToSymbol() + RightOperand;
+            return LeftOperandValue + " " + Operator.ToSymbol() + " " + RightOperandValue;
         }
     }
 

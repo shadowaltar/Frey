@@ -47,7 +47,7 @@ namespace Trading.Common.Utils
             }
         }
 
-        public static Dictionary<string, string> ReadAsDictionary(string filePath)
+        public static Dictionary<string, string> ReadAsDictionary(string filePath, char delimiter = ':')
         {
             var dict = new Dictionary<string, string>();
             var contents = File.ReadAllLines(filePath);

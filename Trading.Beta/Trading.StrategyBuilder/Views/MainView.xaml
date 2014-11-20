@@ -127,11 +127,7 @@
                         </ListBox.ContextMenu>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock Text="{Binding SourceValue}" />
-                                    <TextBlock Text="{Binding Operator}" />
-                                    <TextBlock Text="{Binding TargetValue}" />
-                                </TextBlock>
+                                <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

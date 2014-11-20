@@ -46,25 +46,27 @@ namespace Trading.StrategyBuilder.Core
                 {
                     var elemType = t.GetGenericArguments();
                     var collectionType = typeof(List<>).MakeGenericType(elemType);
-                    var ser = new XmlSerializer(collectionType);
-                    if (string.IsNullOrWhiteSpace(setting.Value))
-                        continue;
-
-                    using (var reader = new StringReader(setting.Value))
+                    try
                     {
-                        var propertyCollection = propertyInfo.GetValue(mainViewModel);
-                        var addMethod = propertyCollection.GetType().GetMethod("Add");
-                        try
+                        var ser = new XmlSerializer(collectionType);
+                        if (string.IsNullOrWhiteSpace(setting.Value))
+                            continue;
+
+                        using (var reader = new StringReader(setting.Value))
                         {
+                            var propertyCollection = propertyInfo.GetValue(mainViewModel);
+                            var addMethod = propertyCollection.GetType().GetMethod("Add");
+
                             var values = (IEnumerable)ser.Deserialize(reader);
                             foreach (var val in values)
                             {
                                 addMethod.Invoke(propertyCollection, new[] { val });
                             }
                         }
-                        catch (Exception e)
-                        {
-                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("WANRING: cannot deserialize type " + t);
                     }
                 }
                 else
