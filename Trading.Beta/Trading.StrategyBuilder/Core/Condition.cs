@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Trading.StrategyBuilder.Core
 {
@@ -60,6 +62,11 @@ namespace Trading.StrategyBuilder.Core
         public override string ToString()
         {
             return LeftOperandValue + " " + Operator.ToSymbol() + " " + RightOperandValue;
+        }
+
+        public static Condition AllTrue(IEnumerable<Condition> conditions)
+        {
+            var result = new Condition();
         }
     }
 

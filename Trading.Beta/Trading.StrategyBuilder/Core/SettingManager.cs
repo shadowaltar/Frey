@@ -17,9 +17,6 @@ namespace Trading.StrategyBuilder.Core
 
         public void LoadSettings(MainViewModel mainViewModel)
         {
-            if (!File.Exists(settingsFileName))
-                return;
-
             settings = FileHelper.ReadAsDictionary(settingsFileName);
 
             var props = typeof(MainViewModel).GetProperties();

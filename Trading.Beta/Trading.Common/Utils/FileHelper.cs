@@ -50,10 +50,13 @@ namespace Trading.Common.Utils
         public static Dictionary<string, string> ReadAsDictionary(string filePath, char delimiter = ':')
         {
             var dict = new Dictionary<string, string>();
+            if (!File.Exists(filePath))
+                return dict;
+
             var contents = File.ReadAllLines(filePath);
             foreach (var content in contents)
             {
-                var pieces = content.Split(':');
+                var pieces = content.Split(delimiter);
                 dict[pieces[0]] = content.Substring(pieces[0].Length + 1);
             }
             return dict;

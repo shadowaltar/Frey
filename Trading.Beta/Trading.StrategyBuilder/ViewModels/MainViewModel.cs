@@ -96,6 +96,7 @@ namespace Trading.StrategyBuilder.ViewModels
             {
                 RunTest.StartTime = StartTime;
                 RunTest.EndTime = EndTime;
+                RunTest.SetDataCriteria(MarketSecuritiesFilters.ToList());
             }
         }
 

@@ -15,18 +15,14 @@ namespace Trading.StrategyBuilder.Core
     {
         public IDataAccessFactory<Access> DataAccessFactory { get; set; }
 
-        public DateTime Start { get; private set; }
-        public DateTime End { get; private set; }
+        public DateTime Start { get { return dataCriteria.Start; } }
+        public DateTime End { get { return dataCriteria.End; } }
 
         private DataCriteria dataCriteria;
 
-        public void Initialize(DateTime start, DateTime end, DataCriteria criteria)
+        public void Initialize(DataCriteria criteria)
         {
-            Start = start;
-            End = end;
             dataCriteria = criteria;
-            dataCriteria.Start = start;
-            dataCriteria.End = end;
         }
 
         public async Task Prepare()

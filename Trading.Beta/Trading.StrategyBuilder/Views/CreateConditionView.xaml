@@ -53,6 +53,7 @@
                 Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Content="OK" />
+                Content="OK"
+                IsDefault="True" />
     </Grid>
 </controls:MetroWindow>

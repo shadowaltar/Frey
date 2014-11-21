@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ninject;
 using Ninject.Activation.Caching;
 using PropertyChanged;
@@ -17,8 +18,6 @@ namespace Trading.StrategyBuilder.ViewModels
         [Inject]
         public IDataAccessFactory<Access> DataAccessFactory { get; set; }
 
-        public int StartTime { get; set; }
-        public int EndTime { get; set; }
         public DataCriteria DataCriteria { get; set; }
 
         public long TestSecId { get; set; }
@@ -28,15 +27,19 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public async void Initialize()
         {
-            var start = StartTime.FromDateInt();
-            var end = EndTime.FromDateInt();
             context = new Context();
-            context.Initialize(start, end, null);
+            context.Initialize(DataCriteria);
             context.DataAccessFactory = DataAccessFactory;
 
             var progress = await ViewService.ShowProgress("Loading", "Loading data from db.");
             await context.Prepare();
             await progress.Stop();
+        }
+
+        public void SetDataCriteria(DateTime start, DateTime end, IEnumerable<Condition> dataConditions)
+        {
+            DataCriteria = new DataCriteria { Start = start, End = end };
+
         }
 
         public void TestGetPricesByDate()
@@ -58,8 +61,7 @@ namespace Trading.StrategyBuilder.ViewModels
 
     public interface IRunTestViewModel : IHasViewService, IHasDataAccessFactory<Access>
     {
-        int StartTime { get; set; }
-        int EndTime { get; set; }
         void Initialize();
+        void SetDataCriteria(DateTime start, DateTime end, IEnumerable<Condition> dataConditions);
     }
 }

@@ -20,7 +20,7 @@
                     <Label Margin="10,10,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
-                           Content="StartTime" />
+                           Content="Start Time" />
                     <TextBox x:Name="StartTime"
                              Width="120"
                              Margin="10,45,0,0"
@@ -30,7 +30,7 @@
                     <Label Margin="135,10,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
-                           Content="EndTime" />
+                           Content="End Time" />
                     <TextBox x:Name="EndTime"
                              Width="120"
                              Margin="135,45,0,0"
@@ -42,12 +42,22 @@
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Content="Init Cash" />
+                    <Label Margin="385,10,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Content="Slippery %" />
                     <TextBox x:Name="InitialCash"
                              Width="120"
                              Margin="260,45,0,0"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
                              Text="10000" />
+                    <TextBox Width="120"
+                             Margin="385,45,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Text="0"
+                             TextWrapping="Wrap" />
                     <Label Width="126"
                            Margin="10,82,0,0"
                            HorizontalAlignment="Left"
@@ -63,11 +73,6 @@
                            VerticalAlignment="Top"
                            Content="Search By Security Code"
                            IsEnabled="{Binding IsTradingPickedSecurities}" />
-                    <Label Margin="197,154,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Securities To Trade"
-                           IsEnabled="{Binding IsTradingPickedSecurities}" />
                     <TextBox x:Name="PartialSecurityInfo"
                              Width="183"
                              Margin="197,117,0,0"
@@ -75,25 +80,6 @@
                              VerticalAlignment="Top"
                              IsEnabled="{Binding IsTradingPickedSecurities}"
                              cal:Message.Attach="[KeyDown]=[Action SearchBySecurityCode($executionContext)]" />
-                    <ListBox x:Name="PickedSecurities"
-                             Width="183"
-                             Margin="197,189,0,10"
-                             HorizontalAlignment="Left"
-                             BorderBrush="{DynamicResource AccentColorBrush}"
-                             BorderThickness="1"
-                             IsEnabled="{Binding IsTradingPickedSecurities}"
-                             ItemTemplate="{StaticResource CodeNameItemDataTemplate}"
-                             cal:Message.Attach="[KeyDown]=[Action ModifySelectedSecurities($executionContext)]" />
-                    <TextBox Width="120"
-                             Margin="385,45,0,0"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Top"
-                             Text="0"
-                             TextWrapping="Wrap" />
-                    <Label Margin="385,10,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Slippery %" />
                     <Label Width="119"
                            Margin="386,82,0,0"
                            HorizontalAlignment="Left"
@@ -106,6 +92,29 @@
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top"
                               IsEnabled="{Binding IsTradingWholeMarketSecurities}" />
+                    <Label Margin="10,154,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Content="Benchmarks" />
+                    <ComboBox x:Name="Benchmarks"
+                              Width="182"
+                              Margin="10,189,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top" />
+                    <Label Margin="197,154,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Content="Securities To Trade"
+                           IsEnabled="{Binding IsTradingPickedSecurities}" />
+                    <ListBox x:Name="PickedSecurities"
+                             Width="183"
+                             Margin="197,189,0,10"
+                             HorizontalAlignment="Left"
+                             BorderBrush="{DynamicResource AccentColorBrush}"
+                             BorderThickness="1"
+                             IsEnabled="{Binding IsTradingPickedSecurities}"
+                             ItemTemplate="{StaticResource CodeNameItemDataTemplate}"
+                             cal:Message.Attach="[KeyDown]=[Action ModifySelectedSecurities($executionContext)]" />
                     <Label Margin="386,154,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
@@ -131,15 +140,6 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Label Margin="10,154,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Benchmarks" />
-                    <ComboBox x:Name="Benchmarks"
-                              Width="182"
-                              Margin="10,189,0,0"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
             <TabItem Header="ENTER">
