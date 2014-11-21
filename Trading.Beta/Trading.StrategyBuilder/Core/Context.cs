@@ -98,6 +98,16 @@ namespace Trading.StrategyBuilder.Core
 
     public class DataCriteria : Condition
     {
+        public DataCriteria(Condition condition, string timeColumn = "TIME")
+            : this(timeColumn)
+        {
+            LeftOperand = condition.LeftOperand;
+            LeftStringOperand = condition.LeftStringOperand;
+            Operator = condition.Operator;
+            RightOperand = condition.RightOperand;
+            RightStringOperand = condition.RightStringOperand;
+        }
+
         public DataCriteria(string timeColumn = "TIME")
         {
             TimeColumn = timeColumn;

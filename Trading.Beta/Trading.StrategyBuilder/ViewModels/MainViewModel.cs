@@ -94,9 +94,8 @@ namespace Trading.StrategyBuilder.ViewModels
         {
             if (IsRunTestViewActive)
             {
-                RunTest.StartTime = StartTime;
-                RunTest.EndTime = EndTime;
-                RunTest.SetDataCriteria(MarketSecuritiesFilters.ToList());
+                var criteria = Condition.AllTrue(MarketSecuritiesFilters.ToList());
+                RunTest.SetDataCriteria(StartTime, EndTime, criteria);
             }
         }
 

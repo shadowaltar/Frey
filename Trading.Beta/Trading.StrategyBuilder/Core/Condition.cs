@@ -64,9 +64,40 @@ namespace Trading.StrategyBuilder.Core
             return LeftOperandValue + " " + Operator.ToSymbol() + " " + RightOperandValue;
         }
 
-        public static Condition AllTrue(IEnumerable<Condition> conditions)
+        public static Condition AllTrue(List<Condition> conditions)
         {
-            var result = new Condition();
+            var temp = new Condition();
+            var result = temp;
+            Condition parent = null;
+            for (int i = conditions.Count - 1; i > 0; i--)
+            {
+                parent = temp;
+                temp.RightOperand = conditions[i];
+                temp.Operator = Operator.And;
+                temp.LeftOperand = new Condition();
+                temp = temp.LeftOperand;
+            }
+            if (parent != null)
+                parent.LeftOperand = conditions[0];
+            return result;
+        }
+
+        public static Condition AnyTrue(List<Condition> conditions)
+        {
+            var temp = new Condition();
+            var result = temp;
+            Condition parent = null;
+            for (int i = conditions.Count - 1; i > 0; i--)
+            {
+                parent = temp;
+                temp.RightOperand = conditions[i];
+                temp.Operator = Operator.Or;
+                temp.LeftOperand = new Condition();
+                temp = temp.LeftOperand;
+            }
+            if (parent != null)
+                parent.LeftOperand = conditions[0];
+            return result;
         }
     }
 
@@ -143,11 +174,11 @@ namespace Trading.StrategyBuilder.Core
             switch (@operator)
             {
                 case Operator.And:
-                    return " AND ";
+                    return "AND";
                 case Operator.Or:
-                    return " OR ";
+                    return "OR";
             }
-            throw new InvalidOperationException();
+            return @operator.ToSymbol();
         }
     }
 

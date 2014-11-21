@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:visualization="clr-namespace:Trading.StrategyBuilder.Core.Visualization"
              d:DesignHeight="320"
              d:DesignWidth="640"
              mc:Ignorable="d">
@@ -11,21 +13,70 @@
         <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
         <Style BasedOn="{StaticResource LabelTextStyle}" TargetType="Label" />
         <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
+
+        <DataTemplate x:Key="demoTemplate" DataType="visualization:ActionVertex">
+            <StackPanel Margin="5" Orientation="Horizontal">
+                <TextBlock Foreground="White" Text="{Binding Path=Formula, Mode=OneWay}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type graphsharp:VertexControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type graphsharp:VertexControl}">
+                        <Border Background="Black"
+                                BorderBrush="White"
+                                BorderThickness="2"
+                                CornerRadius="10,10,10,10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter Content="{TemplateBinding Vertex}" ContentTemplate="{StaticResource demoTemplate}" />
+
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="2"
+                                                  Direction="315"
+                                                  Opacity="0.3"
+                                                  Color="LightGray" />
+                            </Border.Effect>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="graphsharp:EdgeControl">
+            <Style.Resources>
+                <ToolTip x:Key="ToolTipContent">
+                    <StackPanel>
+                        <TextBlock FontWeight="Bold" Text="Edge.ID" />
+                        <TextBlock Text="{Binding ID}" />
+                    </StackPanel>
+                </ToolTip>
+            </Style.Resources>
+            <Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
+        </Style>
     </UserControl.Resources>
     <Grid>
-        <ListBox x:Name="Rules"
-                 Margin="10"
-                 ScrollViewer.HorizontalScrollBarVisibility="Visible">
+        <visualization:StrategyGraphLayout x:Name="graphLayout"
+                                           Margin="10"
+                                           Graph="{Binding Path=Graph}"
+                                           HighlightAlgorithmType="Simple"
+                                           LayoutAlgorithmType="Tree"
+                                           OverlapRemovalAlgorithmType="FSA" />
+        <!--
+            <ListBox x:Name="Rules"
+            Margin="10"
+            ScrollViewer.HorizontalScrollBarVisibility="Visible">
             <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl cal:View.Model="{Binding}" />
-                </DataTemplate>
+            <DataTemplate>
+            <ContentControl cal:View.Model="{Binding}" />
+            </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
-                </ItemsPanelTemplate>
+            <ItemsPanelTemplate>
+            <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+            </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-        </ListBox>
+            </ListBox>
+        -->
     </Grid>
 </UserControl>

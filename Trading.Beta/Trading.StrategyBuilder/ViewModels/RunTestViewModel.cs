@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Ninject;
-using Ninject.Activation.Caching;
+﻿using Ninject;
 using PropertyChanged;
+using System.Collections.Generic;
 using Trading.Common.Data;
+using Trading.Common.Entities;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.StrategyBuilder.Core;
@@ -36,17 +35,24 @@ namespace Trading.StrategyBuilder.ViewModels
             await progress.Stop();
         }
 
-        public void SetDataCriteria(DateTime start, DateTime end, IEnumerable<Condition> dataConditions)
+        public void SetDataCriteria(int start, int end, Condition dataCondition)
         {
-            DataCriteria = new DataCriteria { Start = start, End = end };
-
+            DataCriteria = new DataCriteria(dataCondition)
+            {
+                Start = start.FromDateInt(),
+                End = end.FromDateInt()
+            };
         }
 
         public void TestGetPricesByDate()
         {
             using (ReportTime.Start())
             {
-                var byDate = Database.Prices[TestDate];
+                Dictionary<long, Price> securitiesOfDay;
+                if (Database.Prices.TryGet(TestDate, out securitiesOfDay))
+                {
+                    ViewService.ShowMessage("INFO", securitiesOfDay.Count + " records retrieved.");
+                }
             }
         }
 
@@ -54,7 +60,18 @@ namespace Trading.StrategyBuilder.ViewModels
         {
             using (ReportTime.Start())
             {
-                var byDate = Database.Prices[TestSecId];
+                Security sec;
+                if (!Database.Securities.TryGetValue(TestSecId, out sec))
+                {
+                    ViewService.ShowWarning("Security not found.");
+                    return;
+                }
+
+                Dictionary<int, Price> oneSecurity;
+                if (Database.Prices.TryGet(TestSecId, out oneSecurity))
+                {
+                    ViewService.ShowMessage("INFO", oneSecurity.Count + " records retrieved.");
+                }
             }
         }
     }
@@ -62,6 +79,6 @@ namespace Trading.StrategyBuilder.ViewModels
     public interface IRunTestViewModel : IHasViewService, IHasDataAccessFactory<Access>
     {
         void Initialize();
-        void SetDataCriteria(DateTime start, DateTime end, IEnumerable<Condition> dataConditions);
+        void SetDataCriteria(int start, int end, Condition dataCondition);
     }
 }
