@@ -15,8 +15,11 @@ namespace Trading.StrategyBuilder.ViewModels
         public IViewService ViewService { get; set; }
 
         public StrategyGraph Graph { get; set; }
+        public StrategyGraphLayout GraphLayout { get; set; }
         public ActionVertex SourceVertex { get; set; }
         public ActionVertex TargetVertex { get; set; }
+
+        public string LayoutAlgorithmType { get; set; }
 
         public BindableCollection<RuleViewModel> Rules { get; private set; }
 
@@ -27,8 +30,43 @@ namespace Trading.StrategyBuilder.ViewModels
             CreateCondition = createCondition;
             Rules = new BindableCollection<RuleViewModel>();
 
-            Graph =new StrategyGraph();
+            Graph = new StrategyGraph();
             AddVertex();
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            LayoutAlgorithmType = "Tree";
+        }
+
+        public void AddFilter()
+        {
+            var vertex = new ActionVertex();
+            vertex.Formula = "Do something";
+            Graph.AddVertex(vertex);
+            // ViewService.ShowDialog()
+        }
+
+        public void AddAction()
+        {
+            var vertex = new ActionVertex();
+            // ViewService.ShowDialog()
+        }
+
+        public void EditStep()
+        {
+
+        }
+
+        public void LinkStep()
+        {
+
+        }
+
+        public void RemoveStep()
+        {
+
         }
 
         public void AddVertex()
@@ -41,7 +79,9 @@ namespace Trading.StrategyBuilder.ViewModels
             var edge = new ActionEdge(vertex, vertex2);
             Graph.AddVertex(vertex2);
             Graph.AddEdge(edge);
-            
+
+            if (GraphLayout != null)
+                GraphLayout.Relayout();
         }
 
         public void RemoveVertex()
