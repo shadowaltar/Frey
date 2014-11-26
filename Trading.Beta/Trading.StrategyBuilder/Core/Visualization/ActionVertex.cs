@@ -7,20 +7,38 @@ namespace Trading.StrategyBuilder.Core.Visualization
     [ImplementPropertyChanged]
     public class ActionVertex : ViewModelBaseSlim
     {
-        public string Formula { get; set; }
-        public string Action { get; set; }
+        public string Expression { get; set; }
 
         public bool IsSelected { get; set; }
+        public bool CanSelect { get; set; }
+
+        public event SelectEvent SelectEvent;
 
         public void OnSelected()
         {
-            Console.WriteLine("SELECTED");
-            IsSelected = true;
+            if (CanSelect)
+            {
+                IsSelected = true;
+                if (SelectEvent != null)
+                    SelectEvent(this, null);
+            }
         }
 
         public override string ToString()
         {
-            return "IF " + Formula + " THEN " + Action;
+            return Expression;
         }
     }
+
+    [ImplementPropertyChanged]
+    public class FilterVertex : ActionVertex
+    {
+        public Condition
+        public override string ToString()
+        {
+            return Expression;
+        }
+    }
+
+    public delegate void SelectEvent(object sender, EventArgs args);
 }
