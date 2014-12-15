@@ -82,6 +82,12 @@
                 <Button x:Name="LinkStep"
                         Style="{StaticResource CircleConnectButtonStyle}"
                         ToolTip="Link the two steps" />
+                <Button x:Name="ConnectOr"
+                        Style="{StaticResource CircleOrButtonStyle}"
+                        ToolTip="Link the two steps" />
+                <Button x:Name="ConnectAnd"
+                        Style="{StaticResource CircleAndButtonStyle}"
+                        ToolTip="Link the two steps" />
             </StackPanel>
             <v:StrategyGraphLayout x:Name="GraphLayout"
                                    Graph="{Binding Path=Graph}"
