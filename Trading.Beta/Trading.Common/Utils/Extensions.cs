@@ -613,5 +613,10 @@ namespace Trading.Common.Utils
         {
             return new HashSet<T>(items);
         }
+
+        public static bool IsTrue(this bool? value)
+        {
+            return value.HasValue && (bool) value;
+        }
     }
 }

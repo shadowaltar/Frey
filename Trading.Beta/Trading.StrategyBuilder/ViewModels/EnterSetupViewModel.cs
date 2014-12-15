@@ -6,6 +6,7 @@ using Caliburn.Micro;
 using GraphSharp.Algorithms.Layout;
 using GraphSharp.Algorithms.Layout.Simple.Hierarchical;
 using GraphSharp.Algorithms.Layout.Simple.Tree;
+using Ninject;
 using PropertyChanged;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
@@ -18,6 +19,7 @@ namespace Trading.StrategyBuilder.ViewModels
     [ImplementPropertyChanged]
     public class EnterSetupViewModel : ViewModelBase, IEnterSetupViewModel
     {
+        [Inject]
         public ICreateConditionViewModel CreateCondition { get; set; }
         public IViewService ViewService { get; set; }
 
@@ -28,17 +30,15 @@ namespace Trading.StrategyBuilder.ViewModels
         public bool IsInEditMode { get; set; }
         public EditMode EditMode { get; set; }
 
-        public BindableCollection<RuleViewModel> Rules { get; private set; }
+        //public BindableCollection<RuleViewModel> Rules { get; private set; }
 
         private readonly HashSet<ActionVertex> selectedVertexes = new HashSet<ActionVertex>();
 
         public ILayoutParameters X { get; set; }
 
-        public EnterSetupViewModel(ICreateConditionViewModel createCondition)
+        public EnterSetupViewModel()
         {
-            CreateCondition = createCondition;
-            Rules = new BindableCollection<RuleViewModel>();
-
+            //Rules = new BindableCollection<RuleViewModel>();
             Graph = new StrategyGraph();
         }
 
@@ -47,7 +47,7 @@ namespace Trading.StrategyBuilder.ViewModels
             base.OnViewLoaded(view);
             LayoutAlgorithmType = "Tree";
             GraphLayout = ((EnterSetupView)view).GraphLayout;
-            Graph.AddVertex(new ActionVertex { Expression = "BEGIN" });
+            Graph.AddVertex(new ActionVertex { OverridingExpression = "BEGIN" });
             var param = GraphLayout.LayoutParameters as SimpleTreeLayoutParameters;
             param.Direction = LayoutDirection.LeftToRight;
             param.LayerGap = 30;
@@ -62,18 +62,24 @@ namespace Trading.StrategyBuilder.ViewModels
             //Graph.AddVertex(vertex);
 
 
-            var vertex1 = new ActionVertex { Expression = "1" };
-            var vertex2 = new ActionVertex { Expression = "2" };
-            var vertex3 = new ActionVertex { Expression = "3" };
-            Graph.AddVerticesAndEdge(new ActionEdge(vertex1, vertex2));
-            Graph.AddVerticesAndEdge(new ActionEdge(vertex1, vertex3));
+            //var vertex1 = new ActionVertex { Expression = "1" };
+            //var vertex2 = new ActionVertex { Expression = "2" };
+            //var vertex3 = new ActionVertex { Expression = "3" };
+            //Graph.AddVerticesAndEdge(new ActionEdge(vertex1, vertex2));
+            //Graph.AddVerticesAndEdge(new ActionEdge(vertex1, vertex3));
         }
 
-        public void AddAction()
+        public async void AddAction()
         {
-            var vertex = new ActionVertex();
+            var result = await ViewService.ShowDialog(CreateCondition);
+            if (!result.IsTrue())
+            {
+                return;
+            }
+
+            var condition = CreateCondition.Get();
+            var vertex = new ActionVertex { Condition = condition };
             vertex.SelectEvent += OnVertexSelected;
-            vertex.Expression = DateTime.Now.ToTimeDouble().ToString(); // fake
             Graph.AddVertex(vertex);
         }
 

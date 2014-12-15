@@ -33,7 +33,6 @@
                                 Background="Black"
                                 BorderBrush="White"
                                 BorderThickness="2"
-                                CornerRadius="10,10,10,10"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter AllowDrop="True"
                                               Content="{TemplateBinding Vertex}"

@@ -7,7 +7,18 @@ namespace Trading.StrategyBuilder.Core.Visualization
     [ImplementPropertyChanged]
     public class ActionVertex : ViewModelBaseSlim
     {
-        public string Expression { get; set; }
+        public Condition Condition { get; set; }
+
+        public string OverridingExpression { get; set; }
+
+        public string Expression
+        {
+            get
+            {
+                if (Condition == null) return OverridingExpression;
+                return Condition.ToString();
+            }
+        }
 
         public bool IsSelected { get; set; }
         public bool CanSelect { get; set; }
@@ -33,7 +44,7 @@ namespace Trading.StrategyBuilder.Core.Visualization
     [ImplementPropertyChanged]
     public class FilterVertex : ActionVertex
     {
-        public Condition
+
         public override string ToString()
         {
             return Expression;
