@@ -167,10 +167,6 @@
     <Compile Include="Core\SettingManager.cs" />
     <Compile Include="Core\Trigger.cs" />
     <Compile Include="Core\TriggerTime.cs" />
-    <Compile Include="Core\Visualization\ActionVertex.cs" />
-    <Compile Include="Core\Visualization\StrategyGraph.cs" />
-    <Compile Include="Core\Visualization\ActionEdge.cs" />
-    <Compile Include="Core\Visualization\StrategyGraphLayout.cs" />
     <Compile Include="Data\Access.cs" />
     <Compile Include="Data\AccessFactory.cs" />
     <Compile Include="Data\Database.cs" />
@@ -185,6 +181,8 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
+    <Compile Include="Views\Adorners\AndConditionRelationshipAdorner.cs" />
+    <Compile Include="Views\Controls\DraggableCanvas.cs" />
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
     </Compile>

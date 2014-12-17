@@ -9,7 +9,6 @@ namespace Trading.StrategyBuilder.ViewModels
     public class SelectViewModel : ViewModelBase
     {
         public BindableCollection<Security> Securities { get; private set; }
-
         public Security SelectedSecurity { get; set; }
 
         public SelectViewModel()
