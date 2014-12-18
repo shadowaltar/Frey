@@ -182,7 +182,9 @@
     <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
     <Compile Include="Views\Adorners\AndConditionRelationshipAdorner.cs" />
+    <Compile Include="Views\Controls\DecisionGraphCanvas.cs" />
     <Compile Include="Views\Controls\DraggableCanvas.cs" />
+    <Compile Include="Views\Controls\INode.cs" />
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
     </Compile>
@@ -226,7 +228,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

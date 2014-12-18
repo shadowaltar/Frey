@@ -42,7 +42,9 @@
                         ToolTip="Link the two steps" />
             </StackPanel>
             <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                <controls:DraggableCanvas SnapDistance="20" SnapToGrid="True" />
+                <controls:DraggableCanvas x:Name="Canvas"
+                                          SnapDistance="20"
+                                          SnapToGrid="True" />
             </ScrollViewer>
         </DockPanel>
     </Grid>

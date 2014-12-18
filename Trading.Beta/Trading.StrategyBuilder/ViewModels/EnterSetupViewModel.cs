@@ -1,8 +1,11 @@
-﻿using Ninject;
+﻿using Caliburn.Micro;
+using Ninject;
 using PropertyChanged;
 using System;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
+using Trading.StrategyBuilder.Views;
+using Trading.StrategyBuilder.Views.Controls;
 
 namespace Trading.StrategyBuilder.ViewModels
 {
@@ -17,10 +20,18 @@ namespace Trading.StrategyBuilder.ViewModels
         public EditMode EditMode { get; set; }
 
         //public BindableCollection<RuleViewModel> Rules { get; private set; }
-
+        public BindableCollection<Node> Nodes { get; private set; }
+        private DraggableCanvas canvas;
 
         public EnterSetupViewModel()
         {
+            Nodes = new BindableCollection<Node>();
+        }
+
+        protected override void OnViewAttached(object view, object context)
+        {
+            base.OnViewAttached(view, context);
+            canvas = ((EnterSetupView)view).Canvas;
         }
 
         public void AddFilter()
@@ -45,22 +56,22 @@ namespace Trading.StrategyBuilder.ViewModels
             switch (EditMode)
             {
                 case EditMode.Delete:
-               //     if (selectedVertexes.Count == 1)
+                    //     if (selectedVertexes.Count == 1)
                     {
                         //var vertex = selectedVertexes.First();
                         //vertex.SelectEvent -= OnVertexSelected;
                         //selectedVertexes.Remove(vertex);
-                     //   Graph.RemoveVertex(vertex);
+                        //   Graph.RemoveVertex(vertex);
                         ExitEditMode();
                     }
                     break;
                 case EditMode.Link:
                     //if (selectedVertexes.Count == 2)
                     {
-                    //    var vertexes = selectedVertexes.ToList();
-                    //    edge = new ActionEdge(vertexes[0], vertexes[1]);
-                    ////    Graph.AddEdge(edge);
-                    //    selectedVertexes.Clear();
+                        //    var vertexes = selectedVertexes.ToList();
+                        //    edge = new ActionEdge(vertexes[0], vertexes[1]);
+                        ////    Graph.AddEdge(edge);
+                        //    selectedVertexes.Clear();
 
                         ExitEditMode();
                     }
