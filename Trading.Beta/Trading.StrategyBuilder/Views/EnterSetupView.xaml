@@ -42,9 +42,11 @@
                         ToolTip="Link the two steps" />
             </StackPanel>
             <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                <controls:DraggableCanvas x:Name="Canvas"
-                                          SnapDistance="20"
-                                          SnapToGrid="True" />
+                <controls:DecisionGraphCanvas x:Name="Canvas"
+                                              SnapDistance="20"
+                                              SnapToGrid="True">
+                    <Rectangle Width="40" Height="40" Fill="Green" Canvas.Left="112" Canvas.Top="81" />
+                </controls:DecisionGraphCanvas>
             </ScrollViewer>
         </DockPanel>
     </Grid>

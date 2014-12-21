@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Windows;
+using Caliburn.Micro;
 using Ninject;
 using PropertyChanged;
 using System;
@@ -6,6 +7,7 @@ using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.StrategyBuilder.Views;
 using Trading.StrategyBuilder.Views.Controls;
+using Condition = Trading.StrategyBuilder.Core.Condition;
 
 namespace Trading.StrategyBuilder.ViewModels
 {
@@ -21,7 +23,7 @@ namespace Trading.StrategyBuilder.ViewModels
 
         //public BindableCollection<RuleViewModel> Rules { get; private set; }
         public BindableCollection<Node> Nodes { get; private set; }
-        private DraggableCanvas canvas;
+        private CanvasWorker canvasWorker;
 
         public EnterSetupViewModel()
         {
@@ -31,7 +33,12 @@ namespace Trading.StrategyBuilder.ViewModels
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
-            canvas = ((EnterSetupView)view).Canvas;
+            InitializeCanvasWorker(((EnterSetupView)view).Canvas);
+        }
+
+        private void InitializeCanvasWorker(DecisionGraphCanvas graphCanvas)
+        {
+            canvasWorker = new CanvasWorker(graphCanvas);
         }
 
         public void AddFilter()
@@ -46,7 +53,7 @@ namespace Trading.StrategyBuilder.ViewModels
                 return;
             }
 
-            var condition = CreateCondition.Get();
+            canvasWorker.AddCondition(CreateCondition.Get());
         }
 
         private void OnVertexSelected(object sender, EventArgs args)
@@ -112,5 +119,21 @@ namespace Trading.StrategyBuilder.ViewModels
 
     public interface IEnterSetupViewModel : IHasViewService
     {
+    }
+
+    internal class CanvasWorker
+    {
+        private DecisionGraphCanvas canvas;
+
+        public CanvasWorker(DecisionGraphCanvas canvas)
+        {
+            this.canvas = canvas;
+        }
+
+        public bool AddCondition(Condition condition)
+        {
+            canvas.AddCondition(condition);
+            return false;
+        }
     }
 }

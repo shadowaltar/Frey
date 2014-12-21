@@ -13,10 +13,10 @@ namespace Trading.StrategyBuilder.Views.Controls
         private UIElement elementBeingDragged;
         private bool isDragInProgress;
         private bool modifyLeftOffset, modifyTopOffset;
-
         private Point originalCursorLocation;
-
         private double originalHorizontalOffset, originVerticalOffset;
+
+        protected int snapDistance;
 
         public static readonly DependencyProperty AllowDraggingProperty = DependencyProperty.Register("AllowDragging",
                 typeof(bool),
@@ -40,9 +40,43 @@ namespace Trading.StrategyBuilder.Views.Controls
         /// Define the pixel distance of snapping when dragging elements.
         /// </summary>
         public static readonly DependencyProperty SnapDistanceProperty = DependencyProperty.Register("SnapDistance",
-                typeof(double),
+                typeof(int),
                 typeof(DraggableCanvas),
-                new UIPropertyMetadata(1.0));
+                new FrameworkPropertyMetadata(1, OnSnapDistanceChanged, CoerceSnapDistance), IsValidSnapDistance);
+
+        private static object CoerceSnapDistance(DependencyObject d, object value)
+        {
+            return (int) value > 1 ? value : 1;
+        }
+
+        private static bool IsValidSnapDistance(object value)
+        {
+            int newValue = (int)value;
+            return newValue >= 1;
+        }
+
+        #region SnapDistanceChanged event
+
+        public static readonly RoutedEvent SnapDistanceChangedEvent =
+            EventManager.RegisterRoutedEvent("SnapDistanceChanged", RoutingStrategy.Direct,
+                typeof(RoutedPropertyChangedEventArgs<int>), typeof(DraggableCanvas));
+
+        public event RoutedPropertyChangedEventHandler<int> SnapDistanceChanged;
+
+        private static void OnSnapDistanceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = ((DraggableCanvas)d);
+            control.snapDistance = (int)e.NewValue;
+            control.OnSnapDistanceChanged((int)e.OldValue, control.snapDistance);
+        }
+
+        protected virtual void OnSnapDistanceChanged(int oldValue, int newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<int>(oldValue, newValue) { RoutedEvent = SnapDistanceChangedEvent };
+            RaiseEvent(e);
+        }
+
+        #endregion
 
         public bool AllowDragging
         {
@@ -62,25 +96,31 @@ namespace Trading.StrategyBuilder.Views.Controls
             set { SetValue(SnapToGridProperty, value); }
         }
 
-        public double SnapDistance
+        public int SnapDistance
         {
-            get { return (double)GetValue(SnapDistanceProperty); }
+            get { return (int)GetValue(SnapDistanceProperty); }
             set
             {
-                CheckSnapDistance(value);
+                //CheckSnapDistance(value);
                 SetValue(SnapDistanceProperty, value);
             }
         }
 
-        private void CheckSnapDistance(double value)
-        {
-            if (double.IsNaN(value) || value < 1)
-            {
-                throw new ArgumentException("Must provide a snap distance which is equal to or larger than 1.");
-            }
-        }
+        //private void CheckSnapDistance(double value)
+        //{
+        //    if (double.IsNaN(value) || value < 1)
+        //    {
+        //        throw new ArgumentException("Must provide a snap distance which is equal to or larger than 1.");
+        //    }
+        //}
 
         public UIElement ElementBeingDragged
+        {
+            get { return !AllowDragging ? null : elementBeingDragged; }
+            protected set { SetupElementBeingDragged(value); }
+        }
+
+        public UIElement SelectedElement
         {
             get { return !AllowDragging ? null : elementBeingDragged; }
             protected set { SetupElementBeingDragged(value); }
@@ -266,6 +306,8 @@ namespace Trading.StrategyBuilder.Views.Controls
         protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseUp(e);
+
+            SelectedElement = Equals(SelectedElement, ElementBeingDragged) ? null : ElementBeingDragged;
 
             // Reset the field whether the left or right mouse button was 
             // released, in case a context menu was opened on the drag element.

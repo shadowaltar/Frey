@@ -182,12 +182,26 @@
     <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
     <Compile Include="Views\Adorners\AndConditionRelationshipAdorner.cs" />
+    <Compile Include="Views\Controls\AndLinkView.xaml.cs">
+      <DependentUpon>AndLinkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ConditionView.xaml.cs">
+      <DependentUpon>ConditionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\DecisionGraphCanvas.cs" />
     <Compile Include="Views\Controls\DraggableCanvas.cs" />
     <Compile Include="Views\Controls\INode.cs" />
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Controls\AndLinkView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\ConditionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CreateConditionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
