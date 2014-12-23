@@ -45,7 +45,11 @@
                 <controls:DecisionGraphCanvas x:Name="Canvas"
                                               SnapDistance="20"
                                               SnapToGrid="True">
-                    <Rectangle Width="40" Height="40" Fill="Green" Canvas.Left="112" Canvas.Top="81" />
+                    <Rectangle Canvas.Left="112"
+                               Canvas.Top="81"
+                               Width="40"
+                               Height="40"
+                               Fill="Green" />
                 </controls:DecisionGraphCanvas>
             </ScrollViewer>
         </DockPanel>

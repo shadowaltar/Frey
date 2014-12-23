@@ -76,6 +76,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Arrowheads">
+      <HintPath>..\..\OtherLibs\Arrowheads.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro">
       <HintPath>..\packages\Caliburn.Micro.Core.2.0.1\lib\net45\Caliburn.Micro.dll</HintPath>
     </Reference>
@@ -182,9 +185,7 @@
     <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
     <Compile Include="Views\Adorners\AndConditionRelationshipAdorner.cs" />
-    <Compile Include="Views\Controls\AndLinkView.xaml.cs">
-      <DependentUpon>AndLinkView.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Views\Controls\AndLine.cs" />
     <Compile Include="Views\Controls\ConditionView.xaml.cs">
       <DependentUpon>ConditionView.xaml</DependentUpon>
     </Compile>
@@ -194,13 +195,17 @@
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\Controls\AndLinkView.xaml">
+    <Page Include="Views\Controls\AndSymbol.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\ConditionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\OrSymbol.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\CreateConditionView.xaml">
       <SubType>Designer</SubType>
