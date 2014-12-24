@@ -46,6 +46,7 @@ namespace Trading.StrategyBuilder.Views.Controls
             DragInCanvas.SetCanBeDragged(arrowLine, false);
 
             Children.Add(arrowLine);
+
             arrowLine.RecalculatePoints();
         }
 

@@ -323,7 +323,7 @@ namespace Trading.StrategyBuilder.Views.Controls
 
             if (originalHorizontalOffset != newHorizontalOffset || originVerticalOffset != newVerticalOffset)
             {
-                Console.WriteLine(originalHorizontalOffset + "->"+newHorizontalOffset+";");
+                Console.WriteLine(originalHorizontalOffset + "->"+ newHorizontalOffset+";");
                 OnElementDragged(ElementBeingDragged, newHorizontalOffset, newVerticalOffset);
             }
 

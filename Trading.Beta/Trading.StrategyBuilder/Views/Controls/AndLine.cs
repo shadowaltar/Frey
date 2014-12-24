@@ -26,14 +26,11 @@ namespace Trading.StrategyBuilder.Views.Controls
             canvas.ElementDragged += OnElementDragged;
         }
 
-        private int counter = 0;
         private void OnElementDragged(ElementDraggedEventArgs args)
         {
-
             if (Equals(args.Element, control1))
             {
-                Console.WriteLine(counter);
-                counter++;
+                RecalculatePoints();
             }
         }
 
