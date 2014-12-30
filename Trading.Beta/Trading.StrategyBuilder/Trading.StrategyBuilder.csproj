@@ -174,6 +174,7 @@
     <Compile Include="Data\AccessFactory.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Models\LogicOperator.cs" />
+    <Compile Include="ViewModels\CreateStageViewModel.cs" />
     <Compile Include="ViewModels\CreateConditionViewModel.cs" />
     <Compile Include="ViewModels\EnterSetupViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -189,9 +190,14 @@
     <Compile Include="Views\Controls\ConditionView.xaml.cs">
       <DependentUpon>ConditionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\StageView.xaml.cs">
+      <DependentUpon>StageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\DecisionGraphCanvas.cs" />
     <Compile Include="Views\Controls\DraggableCanvas.cs" />
-    <Compile Include="Views\Controls\INode.cs" />
+    <Compile Include="Views\CreateStageView.xaml.cs">
+      <DependentUpon>CreateStageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
     </Compile>
@@ -203,7 +209,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\StageView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Controls\OrSymbol.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateStageView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

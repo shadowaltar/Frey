@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaction logic for CreateConditionView.xaml
     /// </summary>
-    public partial class CreateConditionView
+    public partial class CreateStageView
     {
-        public CreateConditionView()
+        public CreateStageView()
         {
             InitializeComponent();
         }

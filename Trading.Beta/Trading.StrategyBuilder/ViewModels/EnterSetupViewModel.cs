@@ -16,46 +16,47 @@ namespace Trading.StrategyBuilder.ViewModels
     {
         [Inject]
         public ICreateConditionViewModel CreateCondition { get; set; }
+        public ICreateStageViewModel CreateStage { get; set; }
         public IViewService ViewService { get; set; }
 
         public bool IsInEditMode { get; set; }
         public EditMode EditMode { get; set; }
 
-        //public BindableCollection<RuleViewModel> Rules { get; private set; }
-        public BindableCollection<Node> Nodes { get; private set; }
-        private CanvasWorker canvasWorker;
+        public IStageViewModel SelectedStage { get; set; }
+        public BindableCollection<StageViewModel> Stages { get; private set; }
 
         public EnterSetupViewModel()
         {
-            Nodes = new BindableCollection<Node>();
+            Stages = new BindableCollection<StageViewModel>();
         }
 
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
-            InitializeCanvasWorker(((EnterSetupView)view).Canvas);
         }
 
-        private void InitializeCanvasWorker(DecisionGraphCanvas graphCanvas)
+        public async void AddStage()
         {
-            canvasWorker = new CanvasWorker(graphCanvas);
-        }
-
-        public void AddFilter()
-        {
+            var result = await ViewService.ShowDialog(CreateStage);
+            if (!result.IsTrue())
+            {
+                return;
+            }
+            Stages.Add(CreateStage.Yield());
         }
 
         public async void AddCondition()
         {
+            if (SelectedStage == null)
+                return;
+
             var result = await ViewService.ShowDialog(CreateCondition);
             if (!result.IsTrue())
             {
                 return;
             }
 
-            var newCondition = CreateCondition.Get();
-            canvasWorker.AddCondition(newCondition);
-            canvasWorker.LinkConditions(newCondition, newCondition); //todo fake
+            SelectedStage.Conditions.Add(CreateCondition.Yield());
         }
 
         public void EditStep()

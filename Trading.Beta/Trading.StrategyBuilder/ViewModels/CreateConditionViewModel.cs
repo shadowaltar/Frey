@@ -45,7 +45,7 @@ namespace Trading.StrategyBuilder.ViewModels
                 condition.Operator.ToSymbol(), condition.RightOperandValue);
         }
 
-        public Condition Get()
+        public Condition Yield()
         {
             return new Condition(SourceValue, SelectedOperator.FromSymbol(), TargetValue);
         }
@@ -56,6 +56,6 @@ namespace Trading.StrategyBuilder.ViewModels
         string SourceValue { get; set; }
         string SelectedOperator { get; set; }
         string TargetValue { get; set; }
-        Condition Get();
+        Condition Yield();
     }
 }
