@@ -22,10 +22,10 @@
                 <TextBox />
             </DockPanel>
             <StackPanel Orientation="Vertical">
-                <Button x:Name="AddFilter"
+                <Button x:Name="AddCondition"
                         Style="{StaticResource CircleFilterButtonStyle}"
                         ToolTip="Add a filter" />
-                <Button x:Name="AddCondition"
+                <Button x:Name="AddStage"
                         Style="{StaticResource CircleAddButtonStyle}"
                         ToolTip="Add an action" />
                 <Button x:Name="EditStep"
@@ -41,13 +41,7 @@
                         Style="{StaticResource CircleAndButtonStyle}"
                         ToolTip="Link the two steps" />
             </StackPanel>
-            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                <controls:DecisionGraphCanvas x:Name="Canvas"
-                                              SnapDistance="20"
-                                              SnapToGrid="True">
-                    <Rectangle Width="40" Height="40" Fill="Green" Canvas.Left="112" Canvas.Top="81" />
-                </controls:DecisionGraphCanvas>
-            </ScrollViewer>
+            <ListView x:Name="Stages" />
         </DockPanel>
     </Grid>
 </UserControl>

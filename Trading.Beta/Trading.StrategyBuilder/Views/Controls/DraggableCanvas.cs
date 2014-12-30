@@ -16,7 +16,10 @@ namespace Trading.StrategyBuilder.Views.Controls
         private Point originalCursorLocation;
         private double originalHorizontalOffset, originVerticalOffset;
 
-        protected int snapDistance;
+        public static readonly DependencyProperty SelectedElementProperty = DependencyProperty.Register("SelectedElement",
+                typeof(object),
+                typeof(DraggableCanvas),
+                new FrameworkPropertyMetadata(null, OnSelectedElementChangedStatic));
 
         public static readonly DependencyProperty AllowDraggingProperty = DependencyProperty.Register("AllowDragging",
                 typeof(bool),
@@ -36,24 +39,14 @@ namespace Trading.StrategyBuilder.Views.Controls
                 typeof(DraggableCanvas),
                 new UIPropertyMetadata(false));
 
+        protected int snapDistance;
         /// <summary>
         /// Define the pixel distance of snapping when dragging elements.
         /// </summary>
         public static readonly DependencyProperty SnapDistanceProperty = DependencyProperty.Register("SnapDistance",
                 typeof(int),
                 typeof(DraggableCanvas),
-                new FrameworkPropertyMetadata(1, OnSnapDistanceChanged, CoerceSnapDistance), IsValidSnapDistance);
-
-        private static object CoerceSnapDistance(DependencyObject d, object value)
-        {
-            return (int) value > 1 ? value : 1;
-        }
-
-        private static bool IsValidSnapDistance(object value)
-        {
-            int newValue = (int)value;
-            return newValue >= 1;
-        }
+                new FrameworkPropertyMetadata(1, OnSnapDistanceChanged, (d, v) => (int)v > 1 ? v : 1), v => (int)v >= 1);
 
         #region SnapDistanceChanged event
 
@@ -74,6 +67,44 @@ namespace Trading.StrategyBuilder.Views.Controls
         {
             var e = new RoutedPropertyChangedEventArgs<int>(oldValue, newValue) { RoutedEvent = SnapDistanceChangedEvent };
             RaiseEvent(e);
+        }
+
+        #endregion
+
+        #region SelectedElementChanged event
+
+        public static readonly RoutedEvent SelectedElementChangedEvent =
+            EventManager.RegisterRoutedEvent("SelectedElementChanged", RoutingStrategy.Direct,
+                typeof(RoutedPropertyChangedEventArgs<object>), typeof(DraggableCanvas));
+
+        public event RoutedPropertyChangedEventHandler<int> SelectedElementChanged;
+
+        private static void OnSelectedElementChangedStatic(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = ((DraggableCanvas)d);
+            control.SelectedElement = e.NewValue;
+            control.OnSelectedElementChanged(e.OldValue, control.SelectedElement);
+        }
+
+        protected virtual void OnSelectedElementChanged(object oldValue, object newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<object>(oldValue, newValue) { RoutedEvent = SelectedElementChangedEvent };
+            RaiseEvent(e);
+        }
+
+        #endregion
+
+        #region OnElementDragged event
+
+        public event ElementDraggedDelegate ElementDragged;
+
+        protected virtual void OnElementDragged(object element, double xOffset, double yOffset)
+        {
+            if (ElementDragged != null)
+            {
+                var args = new ElementDraggedEventArgs { Element = element, XOffset = xOffset, YOffset = yOffset };
+                ElementDragged.Invoke(args);
+            }
         }
 
         #endregion
@@ -99,20 +130,8 @@ namespace Trading.StrategyBuilder.Views.Controls
         public int SnapDistance
         {
             get { return (int)GetValue(SnapDistanceProperty); }
-            set
-            {
-                //CheckSnapDistance(value);
-                SetValue(SnapDistanceProperty, value);
-            }
+            set { SetValue(SnapDistanceProperty, value); }
         }
-
-        //private void CheckSnapDistance(double value)
-        //{
-        //    if (double.IsNaN(value) || value < 1)
-        //    {
-        //        throw new ArgumentException("Must provide a snap distance which is equal to or larger than 1.");
-        //    }
-        //}
 
         public UIElement ElementBeingDragged
         {
@@ -120,10 +139,10 @@ namespace Trading.StrategyBuilder.Views.Controls
             protected set { SetupElementBeingDragged(value); }
         }
 
-        public UIElement SelectedElement
+        public object SelectedElement
         {
-            get { return !AllowDragging ? null : elementBeingDragged; }
-            protected set { SetupElementBeingDragged(value); }
+            get { return GetValue(SelectedElementProperty); }
+            set { SetValue(SelectedElementProperty, value); }
         }
 
         public DraggableCanvas() { }
@@ -203,6 +222,8 @@ namespace Trading.StrategyBuilder.Views.Controls
             ElementBeingDragged = FindCanvasChild(e.Source as DependencyObject);
             if (ElementBeingDragged == null)
                 return;
+
+            SelectedElement = ElementBeingDragged;
 
             // Get the element's offsets from the four sides of the Canvas.
             double left = GetLeft(ElementBeingDragged);
@@ -299,6 +320,12 @@ namespace Trading.StrategyBuilder.Views.Controls
                 SetTop(ElementBeingDragged, newVerticalOffset);
             else
                 SetBottom(ElementBeingDragged, newVerticalOffset);
+
+            if (originalHorizontalOffset != newHorizontalOffset || originVerticalOffset != newVerticalOffset)
+            {
+                Console.WriteLine(originalHorizontalOffset + "->"+ newHorizontalOffset+";");
+                OnElementDragged(ElementBeingDragged, newHorizontalOffset, newVerticalOffset);
+            }
 
             #endregion // Move Drag Element
         }
@@ -457,6 +484,15 @@ namespace Trading.StrategyBuilder.Views.Controls
 
             #endregion // Update Z-Indices
         }
+    }
+
+    public delegate void ElementDraggedDelegate(ElementDraggedEventArgs args);
+
+    public class ElementDraggedEventArgs : EventArgs
+    {
+        public object Element { get; set; }
+        public double XOffset { get; set; }
+        public double YOffset { get; set; }
     }
 
     public static class DragInCanvas

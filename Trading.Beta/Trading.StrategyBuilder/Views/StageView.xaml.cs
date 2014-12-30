@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Trading.StrategyBuilder.Views.Controls
+namespace Trading.StrategyBuilder.Views
 {
     /// <summary>
-    /// Interaction logic for AndLinkView.xaml
+    /// Interaction logic for StageView.xaml
     /// </summary>
-    public partial class AndLinkView : UserControl
+    public partial class StageView : UserControl
     {
-        public AndLinkView()
+        public StageView()
         {
             InitializeComponent();
         }
