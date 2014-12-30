@@ -1,5 +1,0 @@
-D:\Trading\TWS API\source\csharpclient\bin\Debug\TWSLib.dll
-D:\Trading\TWS API\source\csharpclient\bin\Debug\TWSLib.pdb
-D:\Trading\TWS API\source\csharpclient\bin\Debug\TWSLib.tlb
-D:\Trading\TWS API\source\csharpclient\obj\x86\Debug\TWSLib.dll
-D:\Trading\TWS API\source\csharpclient\obj\x86\Debug\TWSLib.pdb
