@@ -13,5 +13,10 @@ namespace Trading.StrategyBuilder.Core
         {
             Conditions = new List<Condition>();
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

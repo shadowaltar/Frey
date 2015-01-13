@@ -1,11 +1,11 @@
-﻿using System.Windows;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Ninject;
 using PropertyChanged;
-using System;
+using System.Collections.Generic;
 using Trading.Common.Utils;
 using Trading.Common.ViewModels;
-using Trading.StrategyBuilder.Views;
+using Trading.StrategyBuilder.Core;
+using Trading.StrategyBuilder.Utils;
 using Trading.StrategyBuilder.Views.Controls;
 using Condition = Trading.StrategyBuilder.Core.Condition;
 
@@ -16,6 +16,7 @@ namespace Trading.StrategyBuilder.ViewModels
     {
         [Inject]
         public ICreateConditionViewModel CreateCondition { get; set; }
+        [Inject]
         public ICreateStageViewModel CreateStage { get; set; }
         public IViewService ViewService { get; set; }
 
@@ -25,14 +26,11 @@ namespace Trading.StrategyBuilder.ViewModels
         public IStageViewModel SelectedStage { get; set; }
         public BindableCollection<StageViewModel> Stages { get; private set; }
 
+        private readonly List<Stage> stages = new List<Stage>();
+
         public EnterSetupViewModel()
         {
             Stages = new BindableCollection<StageViewModel>();
-        }
-
-        protected override void OnViewAttached(object view, object context)
-        {
-            base.OnViewAttached(view, context);
         }
 
         public async void AddStage()
@@ -42,7 +40,9 @@ namespace Trading.StrategyBuilder.ViewModels
             {
                 return;
             }
-            Stages.Add(CreateStage.Yield());
+            var stage = CreateStage.Yield();
+            stages.Add(stage);
+            Stages.Add(stage.CreateViewModel());
         }
 
         public async void AddCondition()

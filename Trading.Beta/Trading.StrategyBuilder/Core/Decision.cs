@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Trading.StrategyBuilder.Core
+﻿namespace Trading.StrategyBuilder.Core
 {
     public class Decision
     {
+        public DecisionType Type { get; set; }
+        public Stage NextStage { get; set; }
 
+        public override string ToString()
+        {
+            return string.Format("{0}, NextStage: {1}", Type, NextStage);
+        }
     }
 
     public enum DecisionType

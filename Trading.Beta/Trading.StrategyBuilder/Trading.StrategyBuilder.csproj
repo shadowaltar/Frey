@@ -159,6 +159,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\Context.cs" />
+    <Compile Include="Core\Decision.cs" />
     <Compile Include="Core\EnterTrigger.cs" />
     <Compile Include="Core\ExitTrigger.cs" />
     <Compile Include="Core\Filter.cs" />
@@ -168,12 +169,14 @@
     <Compile Include="Core\RuleFactory.cs" />
     <Compile Include="Core\Condition.cs" />
     <Compile Include="Core\SettingManager.cs" />
+    <Compile Include="Core\Stage.cs" />
     <Compile Include="Core\Trigger.cs" />
     <Compile Include="Core\TriggerTime.cs" />
     <Compile Include="Data\Access.cs" />
     <Compile Include="Data\AccessFactory.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Models\LogicOperator.cs" />
+    <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\CreateStageViewModel.cs" />
     <Compile Include="ViewModels\CreateConditionViewModel.cs" />
     <Compile Include="ViewModels\EnterSetupViewModel.cs" />
@@ -185,6 +188,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
+    <Compile Include="ViewModels\StageViewModel.cs" />
     <Compile Include="Views\Adorners\AndConditionRelationshipAdorner.cs" />
     <Compile Include="Views\Controls\AndLine.cs" />
     <Compile Include="Views\Controls\ConditionView.xaml.cs">

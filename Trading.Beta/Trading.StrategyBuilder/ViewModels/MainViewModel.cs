@@ -153,7 +153,7 @@ namespace Trading.StrategyBuilder.ViewModels
             var r = await ViewService.ShowDialog(CreateCondition);
             if (r != null && (bool)r)
             {
-                var condition = CreateCondition.Get();
+                var condition = CreateCondition.Yield();
                 if (MarketSecuritiesFilters.Contains(condition))
                 {
                     await ViewService.ShowWarning("Condition already exists!");

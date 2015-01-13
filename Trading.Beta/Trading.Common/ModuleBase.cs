@@ -1,10 +1,16 @@
 ﻿using System.Linq;
+using Ninject;
 using Ninject.Modules;
 
 namespace Trading.Common
 {
     public abstract class ModuleBase : NinjectModule
     {
+        public T Create<T>()
+        {
+            return Kernel.Get<T>();
+        }
+
         /// <summary>
         /// Try to bind an interface to one of its implementation.
         /// It would avoid duplicated binding error.

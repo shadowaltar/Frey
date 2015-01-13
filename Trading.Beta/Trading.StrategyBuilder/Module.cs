@@ -13,10 +13,10 @@ namespace Trading.StrategyBuilder
 
             Bind<IMainViewModel>().To<MainViewModel>();
             Bind<IEnterSetupViewModel>().To<EnterSetupViewModel>();
-            //Bind<IRuleViewModel>().To<RuleViewModel>();
             Bind<ICreateConditionViewModel>().To<CreateConditionViewModel>();
             Bind<ICreateStageViewModel>().To<CreateStageViewModel>();
             Bind<IRunTestViewModel>().To<RunTestViewModel>();
+            Bind<IStageViewModel>().To<StageViewModel>();
 
             Constants.InitializeDirectories();
         }
