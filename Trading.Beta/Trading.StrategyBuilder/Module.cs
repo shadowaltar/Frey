@@ -14,9 +14,9 @@ namespace Trading.StrategyBuilder
             Bind<IMainViewModel>().To<MainViewModel>();
             Bind<IEnterSetupViewModel>().To<EnterSetupViewModel>();
             Bind<ICreateConditionViewModel>().To<CreateConditionViewModel>();
-            Bind<ICreateStageViewModel>().To<CreateStageViewModel>();
+            Bind<ICreateFilterViewModel>().To<CreateFilterViewModel>();
+            Bind<ICreateDecisionViewModel>().To<CreateDecisionViewModel>();
             Bind<IRunTestViewModel>().To<RunTestViewModel>();
-            Bind<IStageViewModel>().To<StageViewModel>();
 
             Constants.InitializeDirectories();
         }

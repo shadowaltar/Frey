@@ -158,28 +158,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\ConditionManager.cs" />
+    <Compile Include="Core\ConditionResult.cs" />
     <Compile Include="Core\Context.cs" />
     <Compile Include="Core\Decision.cs" />
-    <Compile Include="Core\EnterTrigger.cs" />
-    <Compile Include="Core\ExitTrigger.cs" />
+    <Compile Include="Core\DecisionTargetType.cs" />
+    <Compile Include="Core\DecisionType.cs" />
     <Compile Include="Core\Filter.cs" />
-    <Compile Include="Core\FilterSecurityConditions.cs" />
-    <Compile Include="Core\IConditions.cs" />
-    <Compile Include="Core\PositionSizingRule.cs" />
-    <Compile Include="Core\RuleFactory.cs" />
     <Compile Include="Core\Condition.cs" />
     <Compile Include="Core\SettingManager.cs" />
-    <Compile Include="Core\Stage.cs" />
-    <Compile Include="Core\Trigger.cs" />
-    <Compile Include="Core\TriggerTime.cs" />
     <Compile Include="Data\Access.cs" />
     <Compile Include="Data\AccessFactory.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Models\LogicOperator.cs" />
+    <Compile Include="Resources\ComboboxItem_English.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComboboxItem_English.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ComboboxItemManager.cs" />
     <Compile Include="Utils\ViewModelExtensions.cs" />
-    <Compile Include="ViewModels\CreateStageViewModel.cs" />
+    <Compile Include="ViewModels\CreateFilterViewModel.cs" />
+    <Compile Include="ViewModels\CreateDecisionViewModel.cs" />
     <Compile Include="ViewModels\CreateConditionViewModel.cs" />
     <Compile Include="ViewModels\EnterSetupViewModel.cs" />
+    <Compile Include="ViewModels\Entities\FilterViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -188,19 +191,22 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="ViewModels\RunTestViewModel.cs" />
     <Compile Include="ViewModels\SelectViewModel.cs" />
-    <Compile Include="ViewModels\StageViewModel.cs" />
     <Compile Include="Views\Adorners\AndConditionRelationshipAdorner.cs" />
     <Compile Include="Views\Controls\AndLine.cs" />
     <Compile Include="Views\Controls\ConditionView.xaml.cs">
       <DependentUpon>ConditionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StageView.xaml.cs">
-      <DependentUpon>StageView.xaml</DependentUpon>
+    <Compile Include="Views\CreateFilterView.xaml.cs">
+      <DependentUpon>CreateFilterView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Entities\FilterView.xaml.cs">
+      <DependentUpon>FilterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Items\ComboboxItem.cs" />
     <Compile Include="Views\Controls\DecisionGraphCanvas.cs" />
     <Compile Include="Views\Controls\DraggableCanvas.cs" />
-    <Compile Include="Views\CreateStageView.xaml.cs">
-      <DependentUpon>CreateStageView.xaml</DependentUpon>
+    <Compile Include="Views\CreateDecisionView.xaml.cs">
+      <DependentUpon>CreateDecisionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CreateConditionView.xaml.cs">
       <DependentUpon>CreateConditionView.xaml</DependentUpon>
@@ -213,7 +219,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\StageView.xaml">
+    <Page Include="Views\CreateFilterView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -221,7 +227,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\CreateStageView.xaml">
+    <Page Include="Views\CreateDecisionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -230,6 +236,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EnterSetupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Entities\FilterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -264,6 +274,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ComboboxItem_English.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ComboboxItem_English.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>

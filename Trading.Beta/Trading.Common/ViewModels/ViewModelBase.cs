@@ -1,9 +1,9 @@
 using Caliburn.Micro;
 using MahApps.Metro.Controls;
-using Trading.Common.Utils;
+using Ninject;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Ninject;
+using Trading.Common.Utils;
 using ILog = log4net.ILog;
 using LogManager = log4net.LogManager;
 

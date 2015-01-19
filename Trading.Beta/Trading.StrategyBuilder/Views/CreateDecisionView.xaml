@@ -1,0 +1,77 @@
+﻿<controls:MetroWindow x:Class="Trading.StrategyBuilder.Views.CreateDecisionView"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Title="StageView"
+                      Width="470"
+                      Height="343"
+                      ResizeMode="NoResize"
+                      Style="{DynamicResource GlowingWindowStyle}">
+    <controls:MetroWindow.Resources>
+        <Style BasedOn="{StaticResource TextBoxStyle}" TargetType="TextBox" />
+        <Style BasedOn="{StaticResource LabelTextStyle}" TargetType="Label" />
+        <Style BasedOn="{StaticResource BodyTextStyle}" TargetType="TextBlock" />
+        <Style BasedOn="{StaticResource DropdownTextStyle}" TargetType="ComboBox" />
+
+        <DataTemplate x:Key="ComboBoxItemTemplate">
+            <TextBlock Text="{Binding DisplayName}" />
+        </DataTemplate>
+    </controls:MetroWindow.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Label Width="89"
+               Height="30"
+               Margin="10,10,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Stage Name" />
+        <TextBox x:Name="StageName"
+                 Margin="10,45,5,0"
+                 VerticalAlignment="Top"
+                 AutoWordSelection="True"
+                 CharacterCasing="Upper"
+                 Text="Name"
+                 TextAlignment="Center" />
+
+        <Button x:Name="Ok"
+                Grid.Column="1"
+                Width="75"
+                Height="29"
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Content="OK"
+                IsDefault="True" />
+        <Label Height="30"
+               Margin="10,82,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="If this is satisfied" />
+        <ComboBox x:Name="ConditionResults"
+                  Grid.ColumnSpan="2"
+                  Margin="131,82,10,0"
+                  VerticalAlignment="Top"
+                  ItemTemplate="{StaticResource ComboBoxItemTemplate}" />
+        <Label Margin="10,119,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="Will do this" />
+        <ComboBox x:Name="DecisionTypes"
+                  Grid.ColumnSpan="2"
+                  Margin="131,119,10,0"
+                  VerticalAlignment="Top"
+                  ItemTemplate="{StaticResource ComboBoxItemTemplate}" />
+        <Label Margin="10,156,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Content="For those" />
+        <ComboBox x:Name="DecisionTargetTypes"
+                  Grid.ColumnSpan="2"
+                  Margin="131,156,10,0"
+                  VerticalAlignment="Top"
+                  ItemTemplate="{StaticResource ComboBoxItemTemplate}" />
+    </Grid>
+</controls:MetroWindow>

@@ -6,8 +6,7 @@ using Trading.Common.Utils;
 using Trading.Common.ViewModels;
 using Trading.StrategyBuilder.Core;
 using Trading.StrategyBuilder.Utils;
-using Trading.StrategyBuilder.Views.Controls;
-using Condition = Trading.StrategyBuilder.Core.Condition;
+using Trading.StrategyBuilder.ViewModels.Entities;
 
 namespace Trading.StrategyBuilder.ViewModels
 {
@@ -15,72 +14,93 @@ namespace Trading.StrategyBuilder.ViewModels
     public class EnterSetupViewModel : ViewModelBase, IEnterSetupViewModel
     {
         [Inject]
-        public ICreateConditionViewModel CreateCondition { get; set; }
+        public ICreateFilterViewModel CreateFilter { get; set; }
         [Inject]
-        public ICreateStageViewModel CreateStage { get; set; }
+        public ICreateDecisionViewModel CreateDecision { get; set; }
         public IViewService ViewService { get; set; }
 
         public bool IsInEditMode { get; set; }
         public EditMode EditMode { get; set; }
 
-        public IStageViewModel SelectedStage { get; set; }
-        public BindableCollection<StageViewModel> Stages { get; private set; }
+        public BindableCollection<FilterViewModel> Filters { get; private set; }
 
-        private readonly List<Stage> stages = new List<Stage>();
+        private readonly List<Filter> filters = new List<Filter>();
 
         public EnterSetupViewModel()
         {
-            Stages = new BindableCollection<StageViewModel>();
+            Filters = new BindableCollection<FilterViewModel>();
         }
 
-        public async void AddStage()
+        protected override void OnViewLoaded(object view)
         {
-            var result = await ViewService.ShowDialog(CreateStage);
-            if (!result.IsTrue())
+            CreateFilter.ViewService = ViewService;
+        }
+
+        public async void AddFilter()
+        {
+            var r = await ViewService.ShowDialog(CreateFilter);
+            if (r.HasValue && (bool)r)
             {
-                return;
+                var filter = CreateFilter.Generate();
+                filters.Add(filter);
+                Filters.Add(filter.CreateViewModel());
             }
-            var stage = CreateStage.Yield();
-            stages.Add(stage);
-            Stages.Add(stage.CreateViewModel());
         }
 
-        public async void AddCondition()
+        public async void AddDecision()
         {
-            if (SelectedStage == null)
-                return;
-
-            var result = await ViewService.ShowDialog(CreateCondition);
-            if (!result.IsTrue())
-            {
-                return;
-            }
-
-            SelectedStage.Conditions.Add(CreateCondition.Yield());
+            var x = CreateDecision.ConditionResults;
+            await ViewService.ShowDialog(CreateDecision);
         }
 
-        public void EditStep()
-        {
+        //public async void AddDecision()
+        //{
+        //    var result = await ViewService.ShowDialog(CreateDecision);
+        //    if (!result.IsTrue())
+        //    {
+        //        return;
+        //    }
+        //    //var stage = CreateDecision.Yield();
+        //    //stages.Add(stage);
+        //    //Stages.Add(stage.CreateViewModel());
+        //}
 
-        }
+        //public async void AddCondition()
+        //{
+        //    if (SelectedStage == null)
+        //        return;
 
-        public void LinkStep()
-        {
-            IsInEditMode = true;
-            EditMode = EditMode.Link;
-        }
+        //    var result = await ViewService.ShowDialog(CreateCondition);
+        //    if (!result.IsTrue())
+        //    {
+        //        return;
+        //    }
 
-        public void RemoveStep()
-        {
-            IsInEditMode = true;
-            EditMode = EditMode.Delete;
-        }
+        //    SelectedStage.Conditions.Add(CreateCondition.Yield());
+        //}
 
-        private void ExitEditMode()
-        {
-            IsInEditMode = false;
-            EditMode = EditMode.None;
-        }
+        //public void EditStep()
+        //{
+
+        //}
+
+        //public void LinkStep()
+        //{
+        //    IsInEditMode = true;
+        //    EditMode = EditMode.Link;
+        //}
+
+        //public void RemoveStep()
+        //{
+        //    IsInEditMode = true;
+        //    EditMode = EditMode.Delete;
+        //}
+
+        //private void ExitEditMode()
+        //{
+        //    IsInEditMode = false;
+        //    EditMode = EditMode.None;
+        //}
     }
 
     public enum EditMode
@@ -94,25 +114,25 @@ namespace Trading.StrategyBuilder.ViewModels
     {
     }
 
-    internal class CanvasWorker
-    {
-        private DecisionGraphCanvas canvas;
+    //internal class CanvasWorker
+    //{
+    //    private DecisionGraphCanvas canvas;
 
-        public CanvasWorker(DecisionGraphCanvas canvas)
-        {
-            this.canvas = canvas;
-        }
+    //    public CanvasWorker(DecisionGraphCanvas canvas)
+    //    {
+    //        this.canvas = canvas;
+    //    }
 
-        public bool AddCondition(Condition condition)
-        {
-            canvas.AddCondition(condition);
-            return false;
-        }
+    //    public bool AddCondition(Condition condition)
+    //    {
+    //        canvas.AddCondition(condition);
+    //        return false;
+    //    }
 
-        public bool LinkConditions(Condition c1, Condition c2)
-        {
-            canvas.LinkConditionsWithAnd(c1, c2);
-            return true;
-        }
-    }
+    //    public bool LinkConditions(Condition c1, Condition c2)
+    //    {
+    //        canvas.LinkConditionsWithAnd(c1, c2);
+    //        return true;
+    //    }
+    //}
 }

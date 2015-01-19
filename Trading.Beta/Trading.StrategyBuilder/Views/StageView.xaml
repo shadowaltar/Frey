@@ -4,26 +4,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="160"
-             d:DesignWidth="120"
+             d:DesignWidth="160"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource SmallTextStyle}" TargetType="TextBlock" />
     </UserControl.Resources>
-    <Border MinWidth="80"
-            MinHeight="160"
-            Background="Gainsboro"
-            BorderBrush="LightGray"
-            BorderThickness="1"
-            CornerRadius="4">
-        <DockPanel LastChildFill="True">
-            <TextBlock MinHeight="20"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       DockPanel.Dock="Top"
-                       Text="{Binding StageName}" />
-            <ListView>
-                <TextBlock Text="{Binding DisplayName}" />
-            </ListView>
-        </DockPanel>
-    </Border>
+
+    <DockPanel LastChildFill="True">
+        <TextBlock MinHeight="20"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   DockPanel.Dock="Top"
+                   Text="{Binding StageName}" />
+        <StackPanel Height="24"
+                    Background="Gray"
+                    DockPanel.Dock="Bottom"
+                    Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Style.Setters>
+                        <Setter Property="Foreground" Value="White" />
+                    </Style.Setters>
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock VerticalAlignment="Center" Text="Decision: " />
+            <TextBlock VerticalAlignment="Center" Text="{Binding StageName}" />
+        </StackPanel>
+
+        <ListView>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </DockPanel>
 </UserControl>
