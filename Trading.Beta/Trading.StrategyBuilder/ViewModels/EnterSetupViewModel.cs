@@ -42,6 +42,7 @@ namespace Trading.StrategyBuilder.ViewModels
             if (r.HasValue && (bool)r)
             {
                 var filter = CreateFilter.Generate();
+                ConditionManager.AllFilters.AddIfNotExist(filter);
                 filters.Add(filter);
                 Filters.Add(filter.CreateViewModel());
             }
@@ -49,7 +50,7 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public async void AddDecision()
         {
-            var x = CreateDecision.ConditionResults;
+            CreateDecision.ConditionResults.ClearAndAddRange(ConditionManager.AllConditionResults);
             await ViewService.ShowDialog(CreateDecision);
         }
 

@@ -3,8 +3,8 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       Title="ConditionView"
-                      Width="398"
-                      Height="300"
+                      Width="480"
+                      Height="345"
                       ResizeMode="NoResize"
                       Style="{DynamicResource GlowingWindowStyle}">
     <controls:MetroWindow.Resources>
@@ -17,28 +17,44 @@
         <Label Margin="10,10,0,0"
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
-               Content="Name" />
+               Content="Condition Name" />
         <TextBox x:Name="FilterName"
-                 Width="225"
-                 Margin="64,10,0,0"
-                 HorizontalAlignment="Left"
+                 Margin="131,10,97,0"
                  VerticalAlignment="Top"
                  AutoWordSelection="True"
                  CharacterCasing="Upper"
                  Text="Volume"
                  TextAlignment="Center" />
         <Button x:Name="AddCondition"
-                Margin="0,13,10,0"
+                Margin="0,11,10,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Content="Add More" />
-        <Button x:Name="Ok"
+        <ListBox x:Name="ConditionDescriptions" Margin="10,47,97,80" />
+        <Label Height="30"
+               Margin="10,0,0,9"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Bottom"
+               Content="Result Name" />
+        <TextBox x:Name="ResultName"
+                 Height="32"
+                 Margin="131,0,97,8"
+                 VerticalAlignment="Bottom"
+                 AutoWordSelection="True"
+                 CharacterCasing="Upper"
+                 Text="My Result Name"
+                 TextAlignment="Center" />
+        <Button x:Name="Save"
                 Width="82"
                 Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Content="OK"
+                Content="Save"
                 IsDefault="True" />
-        <ListBox x:Name="ConditionDescriptions" Margin="10,47,97,10" />
+        <Label x:Name="Message"
+               Height="30"
+               Margin="10,0,10,45"
+               VerticalAlignment="Bottom"
+               Content="Add at least one condition and fill in condition and result names." />
     </Grid>
 </controls:MetroWindow>

@@ -11,11 +11,21 @@ namespace Trading.StrategyBuilder.ViewModels
         public string SourceValue { get; set; }
         public string TargetValue { get; set; }
         public string SelectedOperator { get; set; }
+        public BindableCollection<string> SourceItems { get; private set; }
+        public BindableCollection<string> TargetItems { get; private set; }
         public BindableCollection<string> Operators { get; private set; }
+
+        public string SelectedSourceItem { get; set; }
+        public string SelectedTargetItem { get; set; }
 
         public CreateConditionViewModel()
         {
-            Operators = new BindableCollection<string> { ">", "<", "=", ">=", "<=", "<>" };
+            Operators = new BindableCollection<string>
+            {
+                "Larger than", "Smaller than", "Equal to", "Larger/Equal to", "Smaller/Equal to", "Not Equal to"
+            };
+            SourceItems = new BindableCollection<string>();
+            TargetItems = new BindableCollection<string>();
             SelectedOperator = Operators[0];
         }
 
@@ -45,7 +55,7 @@ namespace Trading.StrategyBuilder.ViewModels
                 condition.Operator.ToSymbol(), condition.RightOperandValue);
         }
 
-        public Condition Yield()
+        public Condition Generate()
         {
             return new Condition(SourceValue, SelectedOperator.FromSymbol(), TargetValue);
         }
@@ -56,6 +66,6 @@ namespace Trading.StrategyBuilder.ViewModels
         string SourceValue { get; set; }
         string SelectedOperator { get; set; }
         string TargetValue { get; set; }
-        Condition Yield();
+        Condition Generate();
     }
 }
