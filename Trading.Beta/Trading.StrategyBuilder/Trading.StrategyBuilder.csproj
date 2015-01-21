@@ -161,6 +161,7 @@
     <Compile Include="Core\ConditionManager.cs" />
     <Compile Include="Core\ConditionResult.cs" />
     <Compile Include="Core\Context.cs" />
+    <Compile Include="Core\CriteriaType.cs" />
     <Compile Include="Core\Decision.cs" />
     <Compile Include="Core\DecisionTargetType.cs" />
     <Compile Include="Core\DecisionType.cs" />

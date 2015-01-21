@@ -1,31 +1,46 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using System.Linq;
+using Caliburn.Micro;
 using PropertyChanged;
 using Trading.Common.ViewModels;
 using Trading.StrategyBuilder.Core;
+using Trading.StrategyBuilder.Utils;
+using Trading.StrategyBuilder.Views.Items;
 
 namespace Trading.StrategyBuilder.ViewModels
 {
     [ImplementPropertyChanged]
     public class CreateConditionViewModel : ViewModelBase, ICreateConditionViewModel
     {
+        public BindableCollection<ComboboxItem<CriteriaType>> CriteriaTypes { get; private set; }
+        public BindableCollection<ComboboxItem<CriteriaTargetType>> SourceItems { get; private set; }
+        public BindableCollection<ComboboxItem<CriteriaTargetType>> TargetItems { get; private set; }
+        public BindableCollection<ComboboxItem<Operator>> Operators { get; private set; }
+
+        public ComboboxItem<CriteriaType> SelectedCriteriaType { get; set; }
         public string SourceValue { get; set; }
         public string TargetValue { get; set; }
-        public string SelectedOperator { get; set; }
-        public BindableCollection<string> SourceItems { get; private set; }
-        public BindableCollection<string> TargetItems { get; private set; }
-        public BindableCollection<string> Operators { get; private set; }
+        public ComboboxItem<CriteriaTargetType> SelectedSourceItem { get; set; }
+        public ComboboxItem<CriteriaTargetType> SelectedTargetItem { get; set; }
+        public ComboboxItem<Operator> SelectedOperator { get; set; }
 
-        public string SelectedSourceItem { get; set; }
-        public string SelectedTargetItem { get; set; }
+        public bool IsUnary { get; set; }
+        public bool IsBinary { get; set; }
+
+        public Operator CurrentOperator { get { return SelectedOperator.Type; } }
+        public CriteriaTargetType CurrentSourceItem { get { return SelectedSourceItem.Type; } }
+        public CriteriaTargetType CurrentTargetItem { get { return SelectedTargetItem.Type; } }
+        public CriteriaType CurrentCriteriaType { get { return SelectedCriteriaType.Type; } }
 
         public CreateConditionViewModel()
         {
-            Operators = new BindableCollection<string>
-            {
-                "Larger than", "Smaller than", "Equal to", "Larger/Equal to", "Smaller/Equal to", "Not Equal to"
-            };
-            SourceItems = new BindableCollection<string>();
-            TargetItems = new BindableCollection<string>();
+            CriteriaTypes = ComboboxItemManager.NewBindables<CriteriaType>();
+            SourceItems = ComboboxItemManager.NewBindables<CriteriaTargetType>();
+            TargetItems = ComboboxItemManager.NewBindables<CriteriaTargetType>();
+            Operators = ComboboxItemManager.NewBindables<Operator>();
+
+            SelectedSourceItem = SourceItems[0];
+            SelectedTargetItem = TargetItems[1];
             SelectedOperator = Operators[0];
         }
 
@@ -33,13 +48,35 @@ namespace Trading.StrategyBuilder.ViewModels
             : this()
         {
             SourceValue = sourceValue;
-            SelectedOperator = @operator;
+            SelectedOperator = new ComboboxItem<Operator>(@operator, @operator.FromSymbol());
             TargetValue = targetValue;
         }
 
-        public void Ok()
+        public void Add()
         {
-            TryClose(true);
+            if (Verify())
+            {
+                TryClose(true);
+            }
+        }
+
+        public void OnSelectedCriteriaTypeChanged()
+        {
+            if (CurrentCriteriaType == CriteriaType.Unary)
+            {
+                IsUnary = true;
+                IsBinary = false;
+            }
+            else
+            {
+                IsBinary = true;
+                IsUnary = false;
+            }
+        }
+
+        private bool Verify()
+        {
+            return true;
         }
 
         public void Reset()
@@ -57,14 +94,14 @@ namespace Trading.StrategyBuilder.ViewModels
 
         public Condition Generate()
         {
-            return new Condition(SourceValue, SelectedOperator.FromSymbol(), TargetValue);
+            return new Condition(SourceValue, SelectedOperator.Type, TargetValue);
         }
     }
 
     public interface ICreateConditionViewModel
     {
         string SourceValue { get; set; }
-        string SelectedOperator { get; set; }
+        ComboboxItem<Operator> SelectedOperator { get; set; }
         string TargetValue { get; set; }
         Condition Generate();
     }

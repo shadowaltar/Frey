@@ -210,6 +210,9 @@
             <TextBlock Foreground="{DynamicResource AccentColorBrush}" Text="{Binding Name}" />
         </StackPanel>
     </DataTemplate>
+    <DataTemplate x:Key="DisplayNameItemDataTemplate">
+        <TextBlock Text="{Binding DisplayName}" />
+    </DataTemplate>
     <DataTemplate x:Key="NameItemDataTemplate">
         <TextBlock Text="{Binding Name}" />
     </DataTemplate>
